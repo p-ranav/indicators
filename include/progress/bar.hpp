@@ -54,7 +54,6 @@ public:
   void increment(float value) {
     std::unique_lock<std::mutex> lock{_mutex};    
     _progress = value / 100.0;
-    hide_cursor();
     std::cout << _start;
     float pos = _progress * static_cast<float>(_bar_width);
     for (size_t i = 0; i < _bar_width; ++i) {
@@ -65,6 +64,5 @@ public:
     std::cout << _end << " " << static_cast<int>(value) << "%";
     std::cout << " " << _name << "\r";
     std::cout.flush();
-    show_cursor();
   }
 };
