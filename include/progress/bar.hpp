@@ -9,10 +9,11 @@ class ProgressBar {
   std::string _name{""};
   float _progress{0.0};
   size_t _bar_width{80};  
-  std::string _start{"["};
-  std::string _step{"■"};
-  std::string _head{"■"};
-  std::string _end{"]"};
+  std::string _start{"[ "};
+  std::string _fill{"■"};
+  std::string _lead{"■"};
+  std::string _negative_space{"-"};
+  std::string _end{" ]"};
   std::mutex _mutex;
 
   void hide_cursor() {
@@ -25,7 +26,30 @@ class ProgressBar {
   
 public:
 
-  explicit ProgressBar(const std::string& name) : _name(name) {}
+  ProgressBar& start_with(const std::string& start) {
+    _start = start;
+    return *this;
+  }
+
+  ProgressBar& fill_with(const std::string& fill) {
+    _fill = fill;
+    return *this;
+  }
+
+  ProgressBar& lead_with(const std::string& lead) {
+    _lead = lead;
+    return *this;
+  }
+
+  ProgressBar& negative_space(const std::string& negative_space) {
+    _negative_space = negative_space;
+    return *this;
+  }    
+
+  ProgressBar& end_with(const std::string& end) {
+    _end = end;
+    return *this;
+  }  
 
   void increment(float value) {
     std::unique_lock<std::mutex> lock{_mutex};    
@@ -34,9 +58,9 @@ public:
     std::cout << _start;
     float pos = _progress * static_cast<float>(_bar_width);
     for (size_t i = 0; i < _bar_width; ++i) {
-      if (i < pos) std::cout << _step;
-      else if (i == pos) std::cout << _head;
-      else std::cout << "-";
+      if (i < pos) std::cout << _fill;
+      else if (i == pos) std::cout << _lead;
+      else std::cout << _negative_space;
     }
     std::cout << _end << " " << static_cast<int>(value) << "%";
     std::cout << " " << _name << "\r";
