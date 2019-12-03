@@ -12,7 +12,7 @@ class ProgressBar {
   std::string _start{"[ "};
   std::string _fill{"■"};
   std::string _lead{"■"};
-  std::string _negative_space{"-"};
+  std::string _remainder{"-"};
   std::string _end{" ]"};
   std::mutex _mutex;
 
@@ -41,8 +41,8 @@ public:
     return *this;
   }
 
-  ProgressBar& negative_space(const std::string& negative_space) {
-    _negative_space = negative_space;
+  ProgressBar& remainder_with(const std::string& remainder) {
+    _remainder = remainder;
     return *this;
   }    
 
@@ -59,7 +59,7 @@ public:
     for (size_t i = 0; i < _bar_width; ++i) {
       if (i < pos) std::cout << _fill;
       else if (i == pos) std::cout << _lead;
-      else std::cout << _negative_space;
+      else std::cout << _remainder;
     }
     std::cout << _end << " " << static_cast<int>(value) << "%";
     std::cout << " " << _name << "\r";
