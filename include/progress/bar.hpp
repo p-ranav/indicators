@@ -8,7 +8,7 @@
 class ProgressBar {
   std::string _name{""};
   float _progress{0.0};
-  size_t _bar_width{80};  
+  size_t _bar_width{100};  
   std::string _start{"[ "};
   std::string _fill{"■"};
   std::string _lead{"■"};
