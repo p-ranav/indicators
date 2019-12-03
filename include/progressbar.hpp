@@ -5,13 +5,14 @@
 #include <mutex>
 #include <thread>
 
+template <typename T>
 class progress_bar {
   std::string _name{"Running"};
-  size_t _bar_width{100};
+  size_t _bar_width{80};  
   std::string _start{"|"};
   std::string _end{"|"};
   std::mutex _mutex;
-  std::atomic<size_t> _progress{0};
+  T _progress{T()};
   
 public:
 
@@ -19,20 +20,16 @@ public:
     std::cout << std::endl;
   }
   
-  void increment(size_t value) {
+  void increment(T value) {
     std::unique_lock<std::mutex> lock{_mutex};
-    _progress = value;
+    _progress = value / 100.0;
     std::cout << _name << " [";
-    for (size_t i = 0; i < _bar_width; i++) {
-      if (i < value) std::cout << "#";
-      else if (i == value) std::cout << ">";
+    T pos = _progress * static_cast<T>(_bar_width);
+    for (size_t i = 0; i < _bar_width; ++i) {
+      if (i < pos) std::cout << '#';
+      else if (i == pos) std::cout << ">";
       else std::cout << " ";
     }
-    std::cout << "] " << int(_progress) << " %\r";
-    std::cout.flush();
-  }
-
-  size_t current() {
-    return _progress;
+    std::cout << "] " << static_cast<int>(value) << " %\r" << std::flush;
   }
 };
