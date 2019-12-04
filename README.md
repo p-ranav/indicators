@@ -6,9 +6,13 @@
 
 ```cpp
 #include <progress/bar.hpp>
+#include <vector>
 
 int main() {
+
   ProgressBar bar;
+
+  // Configure progress bar
   bar.bar_width(50);
   bar.start_with("[");
   bar.fill_progress_with("■");
@@ -18,30 +22,46 @@ int main() {
   bar.color(ProgressBar::Color::YELLOW);
 
   // As configured, the bar will look like this:
-  // 
+  //
   // [■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■-------------] 70%
   //
   //
 
-  auto job = [&bar]() {
-	       while(true) {
-		 if (bar.completed())
-		   break;
-		 bar.tick();
-		 std::this_thread::sleep_for(std::chrono::milliseconds(100));
-	       }   
-	     };
+  std::atomic<size_t> index{0};
+  std::vector<std::string> status_text =
+    {
+     "Rocket.exe is not responding",
+     "Finding a replacement engineer",
+     "Buying more snacks",
+     "Assimilating the modding community",
+     "Crossing fingers",
+     "Porting KSP to a Nokia 3310"
+  };
 
-  std::thread first_thread(job);
-  std::thread second_thread(job);
-  std::thread third_thread(job);
-  std::thread last_thread(job);
+  auto job = [&bar, &index, &status_text]() {
+    while (true) {
+      if (bar.completed()) {
+        break;
+      }
+      bar.append_text(status_text[index % status_text.size()]);
+      bar.tick();
+      index += 1;
+      std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    }
+  };
 
-  first_thread.join();
-  second_thread.join();
-  third_thread.join();
-  last_thread.join();
+  std::thread first_job(job);
+  std::thread second_job(job);
+  std::thread third_job(job);
+  std::thread last_job(job);
 
+  first_job.join();
+  second_job.join();
+  third_job.join();
+  last_job.join();
+
+  std::cout << "Done\n";
+  
   return 0;
 }
 ```
