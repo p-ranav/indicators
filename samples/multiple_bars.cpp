@@ -154,18 +154,9 @@ int main() {
   p5.end_with("🌑");
   p5.show_percentage(true);
   p5.color(ProgressBar::Color::WHITE);
-  std::atomic<int> trail_index{0};
-  std::vector<std::string> trail {"■", "□", "▪", "▫"};
-  auto job5 = [&p5, &trail, &trail_index]() {
+  auto job5 = [&p5]() {
     while (true) {
-      p5.lead_progress_with(
-        trail[(trail_index - 3) % trail.size()] + 
-        trail[(trail_index - 2) % trail.size()] + 
-        trail[(trail_index - 1) % trail.size()] + 
-        trail[trail_index % trail.size()] + 
-        "🛸");
       p5.tick();
-      trail_index += 1;
       if (p5.completed()) {
         break;
       }
