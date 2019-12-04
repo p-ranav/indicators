@@ -164,7 +164,12 @@ int main() {
       if (p4.current() + 2 >= 100) {
 	std::cout << std::endl;
         p4.set_foreground_color(indica::Color::RED);
-        p4.set_prefix_text("{ ERROR } ");
+        p4.set_prefix_text("{ ERROR }");
+	p4.start_bar_with("");
+	p4.fill_bar_progress_with("");
+	p4.lead_bar_progress_with("");
+	p4.fill_bar_remainder_with("");
+	p4.end_bar_with("");	
         p4.show_percentage();
         p4.set_postfix_text("Failed to restore system");
         p4.mark_as_completed();
