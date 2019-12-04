@@ -54,7 +54,7 @@ int main() {
   p1.lead_bar_progress_with("■");
   p1.fill_bar_remainder_with(" ");
   p1.end_bar_with("]");
-  p1.set_foreground_color(indicator::ProgressBar::Color::YELLOW);
+  p1.set_foreground_color(indicator::Color::YELLOW);
 
   std::atomic<size_t> index1{0};
   std::vector<std::string> status_text1 = {"Rocket.exe is not responding",
@@ -91,7 +91,7 @@ int main() {
   p3.lead_bar_progress_with("");
   p3.fill_bar_remainder_with("");
   p3.end_bar_with("");
-  p3.set_foreground_color(indicator::ProgressBar::Color::WHITE);
+  p3.set_foreground_color(indicator::Color::WHITE);
   p3.hide_percentage();
   auto job3 = [&p3]() {
     while (true) {
@@ -119,7 +119,7 @@ int main() {
   p2.fill_bar_remainder_with(" ");
   p2.end_bar_with("]");
   p2.set_postfix_text("Getting started");
-  p2.set_foreground_color(indicator::ProgressBar::Color::GREEN);
+  p2.set_foreground_color(indicator::Color::GREEN);
   auto job2 = [&p2]() {
     while (true) {
       auto ticks = p2.current();
@@ -151,7 +151,7 @@ int main() {
   p4.lead_bar_progress_with("");
   p4.fill_bar_remainder_with(" ");
   p4.end_bar_with("");
-  p4.set_foreground_color(indicator::ProgressBar::Color::CYAN);
+  p4.set_foreground_color(indicator::Color::CYAN);
   p4.set_postfix_text("Restoring system state");
   p4.hide_percentage();
   std::atomic<size_t> index4{0};
@@ -161,7 +161,7 @@ int main() {
       p4.lead_bar_progress_with(lead_spinner[index4 % lead_spinner.size()]);
       index4 += 1;
       if (p4.current() + 2 >= 100) {
-        p4.set_foreground_color(indicator::ProgressBar::Color::RED);
+        p4.set_foreground_color(indicator::Color::RED);
         p4.set_prefix_text("{ ERROR } ");
         p4.show_percentage();
         p4.set_postfix_text("Failed to restore system");
@@ -189,7 +189,7 @@ int main() {
     p.fill_bar_remainder_with("-");
     p.end_bar_with("]");
     p.set_progress(100);
-    p.set_foreground_color(indicator::ProgressBar::Color::WHITE);
+    p.set_foreground_color(indicator::Color::WHITE);
     p.set_postfix_text("Reverting system restore");
     std::atomic<size_t> progress{100};
     auto job = [&p, &progress]() {
@@ -217,7 +217,7 @@ int main() {
     p.fill_bar_remainder_with("");
     p.end_bar_with("");
     p.set_postfix_text("Checking credentials");
-    p.set_foreground_color(indicator::ProgressBar::Color::YELLOW);
+    p.set_foreground_color(indicator::Color::YELLOW);
     std::atomic<int> spinner_index{0};
     std::vector<std::string> spinner{"⠁", "⠂", "⠄", "⡀", "⢀", "⠠", "⠐", "⠈"};
     auto job = [&p, &spinner_index, &spinner]() {
@@ -227,7 +227,7 @@ int main() {
         spinner_index -= 1;
         if (p.current() + 2 >= 100) {
           std::cout << std::endl;
-          p.set_foreground_color(indicator::ProgressBar::Color::GREEN);
+          p.set_foreground_color(indicator::Color::GREEN);
           p.set_prefix_text("✔");
           p.hide_percentage();
           p.set_postfix_text("Authenticated!");

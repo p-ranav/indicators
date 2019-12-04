@@ -1,6 +1,6 @@
 #pragma once
 #include <atomic>
-#include <indicator/termcolor.hpp>
+#include <indicator/color.hpp>
 #include <iostream>
 #include <mutex>
 #include <string>
@@ -10,8 +10,6 @@ namespace indicator {
 
 class ProgressBar {
 public:
-  enum class Color { GREY, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE };
-
   void set_foreground_color(Color color) {
     std::unique_lock<std::mutex> lock{_mutex};
     _foreground_color = color;
