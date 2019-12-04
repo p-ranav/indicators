@@ -235,24 +235,37 @@ int main() {
     thread.join();    
   }  
 
-  std::cout << "Compiling code\n";
+  std::cout << "Compiling mission\n";
   {
     indicator::ProgressSpinner p;
     p.set_prefix_text(" - ");
-    p.set_postfix_text("Checking project dependencies");
+    p.set_postfix_text("Searching for planet");
     p.set_foreground_color(indicator::Color::WHITE);    
     p.set_spinner_states({"▖", "▘", "▝", "▗"});
     p.hide_percentage();
     auto job = [&p]() {
       while (true) {
-        if (p.current() + 1 == 100) {
+	auto current = p.current();
+	if (current == 25) {
+	  std::cout << std::endl;
+	  p.set_postfix_text("Designing spaceship");
+	}
+	else if (current == 50) {
+	  std::cout << std::endl;
+	  p.set_postfix_text("Contacting Elon Musk");
+	}
+	else if (current == 75) {
+	  std::cout << std::endl;
+	  p.set_postfix_text("Launching rocket");
+	}		
+        else if (current + 1 == 100) {
           p.set_prefix_text(" - ✔");
 	  p.hide_spinner();
         }
 	p.tick();
 	if (p.is_completed())
 	  break;
-        std::this_thread::sleep_for(std::chrono::milliseconds(30));
+        std::this_thread::sleep_for(std::chrono::milliseconds(60));
       }
     };
     std::thread thread(job);
