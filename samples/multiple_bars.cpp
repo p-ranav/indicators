@@ -104,7 +104,35 @@ int main() {
   std::thread thread3(job3);  
   thread3.join();
 
-  std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+  //
+  // PROGRESS BAR 4
+  //
+  std::vector<std::string> lead_spinner{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"};  
+  ProgressBar p4;
+  p4.bar_width(50);
+  p4.start_with("[");
+  // p4.fill_progress_with(lead_spinner[0]);
+  p4.fill_progress_with(" ");
+  p4.lead_progress_with("");  
+  p4.fill_remainder_with(" ");
+  p4.end_with("]");
+  p4.color(ProgressBar::Color::CYAN);
+  std::atomic<size_t> index4{0};
+  auto job4 = [&p4, &index4, &lead_spinner]() {
+	       while (true) {
+		 p4.lead_progress_with(lead_spinner[index4 % lead_spinner.size()]);
+		 index4 += 1;
+		 p4.tick();
+		 if (p4.completed()) {
+		   break;
+		 }		 
+		 std::this_thread::sleep_for(std::chrono::milliseconds(50));
+	       }
+	     };
+  std::thread thread4(job4);  
+  thread4.join();
+
+  std::this_thread::sleep_for(std::chrono::milliseconds(5000));  
 
   // Show cursor
   std::cout << "\e[?25h";
