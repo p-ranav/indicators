@@ -151,7 +151,7 @@ int main() {
   p4.lead_bar_progress_with("");
   p4.fill_bar_remainder_with(" ");
   p4.end_bar_with("");
-  p4.set_foreground_color(ProgressBar::Color::BLUE);
+  p4.set_foreground_color(ProgressBar::Color::CYAN);
   p4.set_postfix_text("Restoring system state");
   p4.hide_percentage();
   std::atomic<size_t> index4{0};
@@ -169,11 +169,44 @@ int main() {
         break;
       }
       p4.tick();
-      std::this_thread::sleep_for(std::chrono::milliseconds(80));
+      std::this_thread::sleep_for(std::chrono::milliseconds(40));
     }
   };
   std::thread thread4(job4);
   thread4.join();
+
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+  {
+    //
+    // GOING BACKWARDS
+    //
+    ProgressBar p;
+    p.set_bar_width(50);
+    p.start_bar_with("[");
+    p.fill_bar_progress_with("■");
+    p.lead_bar_progress_with("■");
+    p.fill_bar_remainder_with(" ");
+    p.end_bar_with("]");
+    p.set_progress(100);
+    p.set_foreground_color(ProgressBar::Color::WHITE);
+    p.set_postfix_text("Reverting system restore");
+    std::atomic<size_t> progress{100};
+    auto job = [&p, &progress]() {
+      while (true) {
+        progress -= 1;
+        p.set_progress(progress);
+        if (progress == 0) {
+          p.set_postfix_text("Revert complete!");
+          p.mark_as_completed();
+          break;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(60));
+      }
+    };
+    std::thread thread(job);
+    thread.join();
+  }
 
   std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 
