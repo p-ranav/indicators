@@ -59,6 +59,8 @@ public:
 
   void show_percentage(bool flag) { _show_percentage = flag; }
 
+  void hide_percentage() { _show_percentage = false; }
+
   void set_progress(float value) {
     {
       std::unique_lock<std::mutex> lock{_mutex};
@@ -81,6 +83,11 @@ public:
   }
 
   bool is_completed() const { return _completed; }
+
+  void mark_as_completed() { 
+    _completed = true;
+    _print_progress();
+  }
 
 private:
   float _progress{0.0};

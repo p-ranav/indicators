@@ -94,7 +94,7 @@ int main() {
   p3.fill_bar_remainder_with("");
   p3.end_bar_with("");
   p3.set_foreground_color(ProgressBar::Color::WHITE);
-  p3.show_percentage(false);
+  p3.hide_percentage();
   auto job3 = [&p3]() {
     while (true) {
       p3.set_prefix_text("Reading package list... " + std::to_string(p3.current()) +
@@ -144,30 +144,6 @@ int main() {
   thread2.join();
 
   //
-  // PROGRESS BAR 5
-  //
-  ProgressBar p5;
-  p5.set_bar_width(100);
-  p5.start_bar_with("🌏");
-  p5.fill_bar_progress_with("-");
-  p5.lead_bar_progress_with("🛸");
-  p5.fill_bar_remainder_with(" ");
-  p5.end_bar_with("🌑");
-  p5.show_percentage(true);
-  p5.set_foreground_color(ProgressBar::Color::WHITE);
-  auto job5 = [&p5]() {
-    while (true) {
-      p5.tick();
-      if (p5.is_completed()) {
-        break;
-      }
-      std::this_thread::sleep_for(std::chrono::milliseconds(75));
-    }
-  };
-  std::thread thread5(job5);
-  thread5.join();
-
-  //
   // PROGRESS BAR 4
   //
   std::vector<std::string> lead_spinner{"⠋", "⠙", "⠹", "⠸", "⠼",
@@ -179,20 +155,24 @@ int main() {
   p4.lead_bar_progress_with("");
   p4.fill_bar_remainder_with(" ");
   p4.end_bar_with(" ]");
-  p4.set_foreground_color(ProgressBar::Color::CYAN);
+  p4.set_foreground_color(ProgressBar::Color::BLUE);
   p4.set_postfix_text("Restoring system state");
+  p4.hide_percentage();
   std::atomic<size_t> index4{0};
   auto job4 = [&p4, &index4, &lead_spinner]() {
     while (true) {
+      p4.set_prefix_text("{ " + std::to_string(p4.current()) + "% } ");
       p4.lead_bar_progress_with(lead_spinner[index4 % lead_spinner.size()]);
       index4 += 1;
-      if (p4.current() + 2 >= 100)
-        p4.set_postfix_text("State restored to Restore_Point_1241531");
-      p4.tick();
-      if (p4.is_completed()) {
+      if (p4.current() + 2 >= 100) {
+        p4.set_foreground_color(ProgressBar::Color::RED);
+        p4.set_prefix_text("{ FAILURE } ");
+        p4.set_postfix_text("Failed to restore from Restore_Point_1241531");
+        p4.mark_as_completed();
         break;
       }
-      std::this_thread::sleep_for(std::chrono::milliseconds(50));
+      p4.tick();
+      std::this_thread::sleep_for(std::chrono::milliseconds(80));
     }
   };
   std::thread thread4(job4);
