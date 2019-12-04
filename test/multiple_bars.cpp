@@ -47,27 +47,28 @@ int main() {
   //
   ProgressBar p2;
   p2.bar_width(50);
-  p2.start_with("Getting started [");
-  p2.fill_progress_with("#");
-  p2.lead_progress_with("#");
+  p2.start_with("[");
+  p2.fill_progress_with("=");
+  p2.lead_progress_with(">");
   p2.fill_remainder_with(" ");
-  p2.end_with("]");  
+  p2.end_with("]");
+  p2.append_text("Getting started");
   p2.color(ProgressBar::Color::GREEN);
   auto job2 = [&p2]() {
 	       while (true) {
-		 if (p2.completed())
-		   break;
-		 p2.tick();
 		 auto ticks = p2.current();
 		 if (ticks > 20 && ticks < 50)
-		   p2.start_with("Delaying the inevitable [");
+		   p2.append_text("Delaying the inevitable");
 		 else if (ticks > 50 && ticks < 80)
-		   p2.start_with("Crying quietly [");
-		 else if (ticks > 80)
-		   p2.start_with("Almost there [");
-		 else if (ticks > 98)
-		   p2.start_with("Done [");
-		 std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		   p2.append_text("Crying quietly");
+		 else if (ticks > 80 && ticks < 98)
+		   p2.append_text("Almost there");
+		 else if (ticks >= 98)
+		   p2.append_text("Done");		 
+		 p2.tick();
+		 if (p2.completed())
+		   break;		 
+		 std::this_thread::sleep_for(std::chrono::milliseconds(30));
 	       }
 	     };
   std::thread thread2(job2);  
@@ -94,11 +95,11 @@ int main() {
 		 if (p3.completed()) {
 		   break;
 		 }		 
-		 std::this_thread::sleep_for(std::chrono::milliseconds(50));
+		 std::this_thread::sleep_for(std::chrono::milliseconds(25));
 	       }
 	     };
   std::thread thread3(job3);  
   thread3.join();
-  
+
   return 0;
 }
