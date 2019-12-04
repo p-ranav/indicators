@@ -239,7 +239,7 @@ int main() {
   {
     indica::ProgressSpinner p;
     p.set_prefix_text(" - ");
-    p.set_postfix_text("Searching for planet");
+    p.set_postfix_text("Searching for the Moon");
     p.set_foreground_color(indica::Color::WHITE);    
     p.set_spinner_states({"▖", "▘", "▝", "▗"});
     p.hide_percentage();
@@ -257,11 +257,49 @@ int main() {
 	else if (current == 75) {
 	  std::cout << std::endl;
 	  p.set_postfix_text("Launching rocket");
-	}		
-        else if (current + 1 == 100) {
+	}
+        else if (current == 95) {
           p.set_prefix_text(" - ✔");
 	  p.hide_spinner();
-        }
+        }	
+	else if (current == 99) {
+	  std::cout << std::endl;
+	  //
+	  // NESTED PROGRESS BAR
+	  //
+	  indica::ProgressBar p2;
+	  p2.set_bar_width(50);
+	  p2.set_prefix_text(" - ");
+	  p2.start_bar_with("[");
+	  p2.fill_bar_progress_with("=");
+	  p2.lead_bar_progress_with(">");
+	  p2.fill_bar_remainder_with(" ");
+	  p2.end_bar_with("]");
+	  p2.set_postfix_text("Achieved low-Earth orbit");
+	  p2.set_foreground_color(indica::Color::WHITE);
+	  auto job2 = [&p2]() {
+	    while (true) {
+	      auto ticks = p2.current();
+	      if (ticks > 20 && ticks < 50)
+		p2.set_postfix_text("Switching to trans-lunar trajectory");
+	      else if (ticks > 50 && ticks < 80)
+		p2.set_postfix_text("Transfered to Lunar lander");
+	      else if (ticks > 80 && ticks < 98)
+		p2.set_postfix_text("Almost there");
+	      else if (ticks >= 98)
+		p2.set_postfix_text("Landed on the Moon");
+	      p2.tick();
+	      if (p2.is_completed())
+		break;
+	      std::this_thread::sleep_for(std::chrono::milliseconds(80));
+	    }
+	  };
+	  std::thread thread2(job2);
+	  thread2.join();
+	  p.set_postfix_text("Mission successful!");
+	  p.mark_as_completed();
+	  break;
+	}
 	p.tick();
 	if (p.is_completed())
 	  break;
