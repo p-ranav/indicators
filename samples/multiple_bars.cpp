@@ -238,18 +238,21 @@ int main() {
   std::cout << "Compiling code\n";
   {
     indicator::ProgressSpinner p;
-    p.set_prefix_text("- ");
+    p.set_prefix_text(" - ");
     p.set_postfix_text("Checking project dependencies");
     p.set_foreground_color(indicator::Color::WHITE);    
     p.set_spinner_states({"▖", "▘", "▝", "▗"});
+    p.hide_percentage();
     auto job = [&p]() {
       while (true) {
-        if (p.is_completed()) {
-          break;
+        if (p.current() + 1 == 100) {
+          p.set_prefix_text(" - ✔");
+	  p.hide_spinner();
         }
-	else
-	  p.tick();
-        std::this_thread::sleep_for(std::chrono::milliseconds(60));
+	p.tick();
+	if (p.is_completed())
+	  break;
+        std::this_thread::sleep_for(std::chrono::milliseconds(30));
       }
     };
     std::thread thread(job);
