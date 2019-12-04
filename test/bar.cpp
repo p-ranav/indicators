@@ -1,6 +1,7 @@
 #include <progress/bar.hpp>
 
 int main() {
+
   ProgressBar bar;
 
   // Configure progress bar
@@ -9,22 +10,23 @@ int main() {
   bar.fill_progress_with("■");
   bar.lead_progress_with("■");
   bar.fill_remainder_with("-");
-  bar.end_with("]");
+  bar.end_with(" ]");
+  bar.color(ProgressBar::Color::GREEN);
 
   // As configured, the bar will look like this:
-  // 
-  // [■■■■■■■■■■■■■■■■■■■■--------] 70% 
+  //
+  // [■■■■■■■■■■■■■■■■■■■■--------] 70%
   //
   //
 
   auto job = [&bar]() {
-	       while(true) {
-		 if (bar.completed())
-		   break;
-		 bar.tick();
-		 std::this_thread::sleep_for(std::chrono::milliseconds(100));
-	       }   
-	     };
+    while (true) {
+      if (bar.completed())
+        break;
+      bar.tick();
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+  };
 
   std::thread first_job(job);
   std::thread second_job(job);
@@ -36,5 +38,7 @@ int main() {
   third_job.join();
   last_job.join();
 
+  std::cout << "Done\n";
+  
   return 0;
 }

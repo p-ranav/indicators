@@ -1,84 +1,60 @@
 #pragma once
-#include <iostream>
-#include <string>
 #include <atomic>
+#include <iostream>
 #include <mutex>
+#include <string>
+#include <progress/termcolor.hpp>
 #include <thread>
 
 class ProgressBar {
-  float _progress{0.0};
-  size_t _bar_width{100};  
-  std::string _start{"["};
-  std::string _fill{"="};
-  std::string _lead{">"};
-  std::string _remainder{" "};
-  std::string _end{"]"};
-  std::atomic<bool> _completed{false};
-  std::atomic<bool> _show_percentage{true};  
-  std::mutex _mutex;
-
-  void _print_progress() {
-    std::unique_lock<std::mutex> lock{_mutex};    
-    std::cout << _start;
-    float pos = _progress * static_cast<float>(_bar_width) / 100.0;
-    for (size_t i = 0; i < _bar_width; ++i) {
-      if (i < pos) std::cout << _fill;
-      else if (i == pos) std::cout << _lead;
-      else std::cout << _remainder;
-    }
-    std::cout << _end;
-    if (_show_percentage)
-      std::cout << " " << static_cast<int>(_progress) << "%\r";
-    else
-      std::cout << "\r";
-    std::cout.flush();
-    if (_completed)
-      std::cout << std::endl;    
-  }
-
 public:
+  enum class Color { GREY, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE };
+
+  void color(Color color) {
+    std::unique_lock<std::mutex> lock{_mutex};
+    _color = color;
+  }
 
   void bar_width(size_t bar_width) {
     std::unique_lock<std::mutex> lock{_mutex};
     _bar_width = bar_width;
   }
 
-  void start_with(const std::string& start) {
+  void start_with(const std::string &start) {
     std::unique_lock<std::mutex> lock{_mutex};
     _start = start;
   }
 
-  void fill_progress_with(const std::string& fill) {
-    std::unique_lock<std::mutex> lock{_mutex};    
+  void fill_progress_with(const std::string &fill) {
+    std::unique_lock<std::mutex> lock{_mutex};
     _fill = fill;
   }
 
-  void lead_progress_with(const std::string& lead) {
-    std::unique_lock<std::mutex> lock{_mutex};    
+  void lead_progress_with(const std::string &lead) {
+    std::unique_lock<std::mutex> lock{_mutex};
     _lead = lead;
   }
 
-  void fill_remainder_with(const std::string& remainder) {
-    std::unique_lock<std::mutex> lock{_mutex};    
+  void fill_remainder_with(const std::string &remainder) {
+    std::unique_lock<std::mutex> lock{_mutex};
     _remainder = remainder;
-  }    
+  }
 
-  void end_with(const std::string& end) {
-    std::unique_lock<std::mutex> lock{_mutex};    
+  void end_with(const std::string &end) {
+    std::unique_lock<std::mutex> lock{_mutex};
     _end = end;
   }
 
-  void show_percentage(bool flag) {
-    _show_percentage = flag;
-  }
+  void show_percentage(bool flag) { _show_percentage = flag; }
 
   void set_progress(float value) {
     {
       std::unique_lock<std::mutex> lock{_mutex};
-      if (_completed) return;
+      if (_completed)
+        return;
       _progress = value;
       if (_progress >= 100.0) {
-	_completed = true;
+        _completed = true;
       }
     }
     _print_progress();
@@ -87,17 +63,76 @@ public:
   void tick() {
     {
       std::unique_lock<std::mutex> lock{_mutex};
-      if (_completed) return;
+      if (_completed)
+        return;
       _progress += 1;
       if (_progress >= 100.0) {
-	_completed = true;
+        _completed = true;
       }
     }
     _print_progress();
   }
 
-  bool completed() {
-    return _completed;
-  }
-  
+  bool completed() { return _completed; }
+
+private:
+  float _progress{0.0};
+  size_t _bar_width{100};
+  std::string _start{"["};
+  std::string _fill{"="};
+  std::string _lead{">"};
+  std::string _remainder{" "};
+  std::string _end{"]"};
+  std::atomic<bool> _completed{false};
+  std::atomic<bool> _show_percentage{true};
+  std::mutex _mutex;
+  Color _color;
+
+  void _print_progress() {
+    std::unique_lock<std::mutex> lock{_mutex};
+    switch(_color) {
+    case Color::GREY:
+      std::cout << termcolor::grey;
+      break;
+    case Color::RED:
+      std::cout << termcolor::red;
+      break;
+    case Color::GREEN:
+      std::cout << termcolor::green;
+      break;
+    case Color::YELLOW:
+      std::cout << termcolor::yellow;
+      break;
+    case Color::BLUE:
+      std::cout << termcolor::blue;
+      break;
+    case Color::MAGENTA:
+      std::cout << termcolor::magenta;
+      break;
+    case Color::CYAN:
+      std::cout << termcolor::cyan;
+      break;
+    case Color::WHITE:
+      std::cout << termcolor::white;
+      break;      
+    }
+    std::cout << _start;
+    float pos = _progress * static_cast<float>(_bar_width) / 100.0;
+    for (size_t i = 0; i < _bar_width; ++i) {
+      if (i < pos)
+        std::cout << _fill;
+      else if (i == pos)
+        std::cout << _lead;
+      else
+        std::cout << _remainder;
+    }
+    std::cout << _end;
+    if (_show_percentage)
+      std::cout << " " << static_cast<int>(_progress) << "%\r";
+    else
+      std::cout << "\r";
+    std::cout.flush();
+    if (_completed)
+      std::cout << termcolor::reset << std::endl;
+  }  
 };

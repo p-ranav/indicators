@@ -1,30 +1,25 @@
 #pragma once
-#include <iostream>
-#include <string>
 #include <atomic>
+#include <iostream>
 #include <mutex>
+#include <string>
 #include <thread>
 #include <vector>
 
 class ProgressSpinner {
   std::string _name{"Running"};
-  size_t _bar_width{80};  
+  size_t _bar_width{80};
   std::mutex _mutex;
   float _progress{0.0};
   size_t _index{0};
   std::vector<std::string> _states{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"};
 
-  void hide_cursor() {
-    std::cout << "\e[?25l";
-  }
+  void hide_cursor() { std::cout << "\e[?25l"; }
 
-  void show_cursor() {
-    std::cout << "\e[?25h";
-  }
-  
+  void show_cursor() { std::cout << "\e[?25h"; }
+
 public:
-
-  explicit ProgressSpinner(const std::string& name) : _name(name) {}
+  explicit ProgressSpinner(const std::string &name) : _name(name) {}
 
   void increment(float value) {
     std::unique_lock<std::mutex> lock{_mutex};
