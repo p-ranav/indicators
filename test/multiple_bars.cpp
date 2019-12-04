@@ -34,9 +34,9 @@ int main() {
 		 if (p1.completed())
 		   break;
 		 p1.append_text(status_text1[index1 % status_text1.size()]);
-		 p1.set_progress(index1 * 15);
+		 p1.set_progress(index1 * 10);
 		 index1 += 1;
-		 std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+		 std::this_thread::sleep_for(std::chrono::milliseconds(600));
 	       }
 	     };
   std::thread thread1(job1);
