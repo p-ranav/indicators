@@ -42,9 +42,7 @@ int main() {
   // Hide cursor
   std::cout << "\e[?25l";
 
-  {
-
-  }
+  {}
 
   //
   // PROGRESS BAR 1
@@ -97,8 +95,7 @@ int main() {
   p3.hide_percentage();
   auto job3 = [&p3]() {
     while (true) {
-      p3.set_prefix_text("Reading package list... " + std::to_string(p3.current()) +
-                    "% ");
+      p3.set_prefix_text("Reading package list... " + std::to_string(p3.current()) + "% ");
       if (p3.current() + 2 >= 100)
         p3.set_prefix_text("Reading package list... Done");
       p3.tick();
@@ -146,8 +143,7 @@ int main() {
   //
   // PROGRESS BAR 4
   //
-  std::vector<std::string> lead_spinner{"⠋", "⠙", "⠹", "⠸", "⠼",
-                                        "⠴", "⠦", "⠧", "⠇", "⠏"};
+  std::vector<std::string> lead_spinner{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"};
   ProgressBar p4;
   p4.set_bar_width(50);
   p4.start_bar_with("");

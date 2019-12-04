@@ -1,9 +1,9 @@
 #pragma once
 #include <atomic>
+#include <gauge/termcolor.hpp>
 #include <iostream>
 #include <mutex>
 #include <string>
-#include <gauge/termcolor.hpp>
 #include <thread>
 
 class ProgressBar {
@@ -45,12 +45,12 @@ public:
     _end = end;
   }
 
-  void set_prefix_text(const std::string& text) {
+  void set_prefix_text(const std::string &text) {
     std::unique_lock<std::mutex> lock{_mutex};
     _prefix_text = text;
   }
 
-  void set_postfix_text(const std::string& text) {
+  void set_postfix_text(const std::string &text) {
     std::unique_lock<std::mutex> lock{_mutex};
     _postfix_text = text;
     if (_postfix_text.length() > _max_postfix_text_length)
@@ -84,7 +84,7 @@ public:
 
   bool is_completed() const { return _completed; }
 
-  void mark_as_completed() { 
+  void mark_as_completed() {
     _completed = true;
     _print_progress();
   }
@@ -108,7 +108,7 @@ private:
   void _print_progress() {
     std::unique_lock<std::mutex> lock{_mutex};
     std::cout << termcolor::bold;
-    switch(_foreground_color) {
+    switch (_foreground_color) {
     case Color::GREY:
       std::cout << termcolor::grey;
       break;
@@ -132,7 +132,7 @@ private:
       break;
     case Color::WHITE:
       std::cout << termcolor::white;
-      break;      
+      break;
     }
     std::cout << _prefix_text;
     std::cout << _start;
@@ -149,13 +149,14 @@ private:
     if (_show_percentage) {
       std::cout << " " << std::min(static_cast<size_t>(_progress), size_t(100)) << "%";
     }
-    if (_max_postfix_text_length == 0) _max_postfix_text_length = 10;
+    if (_max_postfix_text_length == 0)
+      _max_postfix_text_length = 10;
     std::cout << " " << _postfix_text << std::string(_max_postfix_text_length, ' ') << "\r";
     std::cout.flush();
     if (_progress > 100.0) {
       _completed = true;
-    }        
+    }
     if (_completed)
       std::cout << termcolor::reset << std::endl;
-  }  
+  }
 };
