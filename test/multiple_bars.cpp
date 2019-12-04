@@ -78,19 +78,20 @@ int main() {
   //
   ProgressBar p3;
   p3.bar_width(40);
-  p3.start_with("Downloading the Sun ");
-  p3.fill_progress_with(".");
-  p3.lead_progress_with(".");
-  p3.fill_remainder_with(" ");
-  p3.end_with("");  
+  p3.start_with("Reading package list... ");
+  p3.fill_progress_with("");
+  p3.lead_progress_with("");
+  p3.fill_remainder_with("");
+  p3.end_with("");
   p3.color(ProgressBar::Color::WHITE);
   p3.show_percentage(false);
   auto job3 = [&p3]() {
 	       while (true) {
-		 p3.start_with("Downloading the Sun " + std::to_string(p3.current()) + "% ");
+		 p3.start_with("Reading package list... " + std::to_string(p3.current()) + "% ");
+		 if (p3.current() + 2 >= 100)
+		   p3.start_with("Reading package list... Done");		 
 		 p3.tick();
 		 if (p3.completed()) {
-		   p3.start_with("Downloading the Sun 100%");
 		   break;
 		 }		 
 		 std::this_thread::sleep_for(std::chrono::milliseconds(50));
