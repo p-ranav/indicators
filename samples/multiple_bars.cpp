@@ -1,4 +1,4 @@
-#include <gauge/progressbar.hpp>
+#include <indicators/progressbar.hpp>
 #include <vector>
 
 /*

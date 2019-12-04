@@ -1,6 +1,6 @@
 #pragma once
 #include <atomic>
-#include <gauge/termcolor.hpp>
+#include <indicators/termcolor.hpp>
 #include <iostream>
 #include <mutex>
 #include <string>
