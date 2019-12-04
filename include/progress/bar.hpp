@@ -80,7 +80,7 @@ public:
     return std::min(static_cast<size_t>(_progress), size_t(100));
   }
 
-  bool completed() const { return _completed; }
+  bool is_completed() const { return _completed; }
 
 private:
   float _progress{0.0};

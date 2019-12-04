@@ -71,7 +71,7 @@ int main() {
 
   auto job1 = [&p1, &index1, &status_text1]() {
     while (true) {
-      if (p1.completed())
+      if (p1.is_completed())
         break;
       p1.set_postfix_text(status_text1[index1 % status_text1.size()]);
       p1.set_progress(index1 * 10);
@@ -102,7 +102,7 @@ int main() {
       if (p3.current() + 2 >= 100)
         p3.set_prefix_text("Reading package list... Done");
       p3.tick();
-      if (p3.completed()) {
+      if (p3.is_completed()) {
         break;
       }
       std::this_thread::sleep_for(std::chrono::milliseconds(25));
@@ -135,7 +135,7 @@ int main() {
       else if (ticks >= 98)
         p2.set_postfix_text("Done");
       p2.tick();
-      if (p2.completed())
+      if (p2.is_completed())
         break;
       std::this_thread::sleep_for(std::chrono::milliseconds(30));
     }
@@ -158,7 +158,7 @@ int main() {
   auto job5 = [&p5]() {
     while (true) {
       p5.tick();
-      if (p5.completed()) {
+      if (p5.is_completed()) {
         break;
       }
       std::this_thread::sleep_for(std::chrono::milliseconds(75));
@@ -189,7 +189,7 @@ int main() {
       if (p4.current() + 2 >= 100)
         p4.set_postfix_text("State restored to Restore_Point_1241531");
       p4.tick();
-      if (p4.completed()) {
+      if (p4.is_completed()) {
         break;
       }
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
