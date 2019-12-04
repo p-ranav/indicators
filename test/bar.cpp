@@ -18,10 +18,24 @@ int main() {
   //
   //
 
-  for (size_t i = 0; i < 101; i += 5) {
-    bar.set_progress(i);
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-  }
+  std::thread first_job(
+    [&bar]() {
+      for (size_t i = 0; i <= 50; ++i) {
+	bar.tick();
+	std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      }
+    });
+
+  std::thread second_job(
+    [&bar]() {
+      for (size_t i = 0; i <= 50; ++i) {
+  	bar.tick();
+  	std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      }
+    });
+
+  first_job.join();
+  second_job.join();
 
   return 0;
 }

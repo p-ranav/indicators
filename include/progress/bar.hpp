@@ -15,7 +15,7 @@ class ProgressBar {
   std::string _remainder{"-"};
   std::string _end{" ]"};
   std::mutex _mutex;
-  bool _completed;
+  std::atomic<bool> _completed;
 
   void _print_progress() {
     std::unique_lock<std::mutex> lock{_mutex};    
@@ -29,6 +29,8 @@ class ProgressBar {
     std::cout << _end << " " << static_cast<int>(_progress) << "%";
     std::cout << " " << _name << "\r";
     std::cout.flush();
+    if (_completed)
+      std::cout << std::endl;    
   }
 
 public:
@@ -64,19 +66,18 @@ public:
   }  
 
   void set_progress(float value) {
-    std::unique_lock<std::mutex> lock{_mutex};
-    if (_completed) return;
-    _progress = value;
-    if (static_cast<int>(_progress) == 100) {
-      _completed = true;
+    {
+      std::unique_lock<std::mutex> lock{_mutex};
+      if (_completed) return;
+      _progress = value;
+      if (static_cast<int>(_progress) == 100) {
+	_completed = true;
+      }
     }
     _print_progress();
-    if (_completed)
-      std::cout << std::endl;
   }
 
   void tick() {
-    std::unique_lock<std::mutex> lock{_mutex};
     if (_completed) return;
     set_progress(_progress + 1);
   }
