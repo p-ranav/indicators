@@ -16,7 +16,7 @@ int main() {
 
   // As configured, the bar will look like this:
   //
-  // [■■■■■■■■■■■■■■■■■■■■--------] 70%
+  // [■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■-------------] 70%
   //
   //
 
@@ -33,6 +33,13 @@ int main() {
      "Releasing space whales",
      "Watching paint dry"
   };
+
+  // Let's say you want to append some status text to the right of the progress bar
+  // You can use bar.append_text(...) to append text to the right
+  //
+  // [■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■-------------] 70% Finding a replacement engineer
+  //                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  //  
 
   auto job = [&bar, &index, &status_text]() {
     while (true) {
