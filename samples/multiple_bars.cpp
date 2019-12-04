@@ -162,7 +162,7 @@ int main() {
       index4 += 1;
       if (p4.current() + 2 >= 100) {
         p4.set_foreground_color(ProgressBar::Color::RED);
-        p4.set_prefix_text("{ CRITICAL ERROR } ");
+        p4.set_prefix_text("{ ERROR } ");
         p4.show_percentage();
         p4.set_postfix_text("Failed to restore system");
         p4.mark_as_completed();
@@ -206,6 +206,39 @@ int main() {
     };
     std::thread thread(job);
     thread.join();
+  }
+
+  {
+    ProgressBar p;
+    p.set_bar_width(50);
+    p.start_bar_with("");
+    p.fill_bar_progress_with("");
+    p.lead_bar_progress_with("");
+    p.fill_bar_remainder_with("");
+    p.end_bar_with("");
+    p.set_postfix_text("Checking credentials");
+    p.set_foreground_color(ProgressBar::Color::YELLOW);
+    std::atomic<int> spinner_index{0};
+    std::vector<std::string> spinner{"⠁", "⠂", "⠄", "⡀", "⢀", "⠠", "⠐", "⠈"};
+    auto job = [&p, &spinner_index, &spinner]() {
+      while (true) {
+        p.set_prefix_text(spinner[spinner_index % spinner.size()]);
+        p.tick();
+        spinner_index -= 1;
+        if (p.current() + 2 >= 100) {
+          std::cout << std::endl;
+          p.set_foreground_color(ProgressBar::Color::GREEN);
+          p.set_prefix_text("✔");
+          p.hide_percentage();
+          p.set_postfix_text("Authenticated!");
+          p.mark_as_completed();
+          break;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(60));
+      }
+    };
+    std::thread thread(job);
+    thread.join();    
   }
 
   std::this_thread::sleep_for(std::chrono::milliseconds(5000));
