@@ -15,54 +15,70 @@ class ProgressBar {
   std::string _remainder{"-"};
   std::string _end{" ]"};
   std::mutex _mutex;
+  bool _completed;
 
-  void hide_cursor() {
-    std::cout << "\e[?25l";
-  }
-
-  void show_cursor() {
-    std::cout << "\e[?25h";
-  }
-  
-public:
-
-  ProgressBar& start_with(const std::string& start) {
-    _start = start;
-    return *this;
-  }
-
-  ProgressBar& fill_with(const std::string& fill) {
-    _fill = fill;
-    return *this;
-  }
-
-  ProgressBar& lead_with(const std::string& lead) {
-    _lead = lead;
-    return *this;
-  }
-
-  ProgressBar& remainder_with(const std::string& remainder) {
-    _remainder = remainder;
-    return *this;
-  }    
-
-  ProgressBar& end_with(const std::string& end) {
-    _end = end;
-    return *this;
-  }  
-
-  void increment(float value) {
+  void _print_progress() {
     std::unique_lock<std::mutex> lock{_mutex};    
-    _progress = value / 100.0;
     std::cout << _start;
-    float pos = _progress * static_cast<float>(_bar_width);
+    float pos = _progress * static_cast<float>(_bar_width) / 100.0;
     for (size_t i = 0; i < _bar_width; ++i) {
       if (i < pos) std::cout << _fill;
       else if (i == pos) std::cout << _lead;
       else std::cout << _remainder;
     }
-    std::cout << _end << " " << static_cast<int>(value) << "%";
+    std::cout << _end << " " << static_cast<int>(_progress) << "%";
     std::cout << " " << _name << "\r";
     std::cout.flush();
   }
+
+public:
+
+  void bar_width(size_t bar_width) {
+    std::unique_lock<std::mutex> lock{_mutex};
+    _bar_width = bar_width;
+  }
+
+  void start_with(const std::string& start) {
+    std::unique_lock<std::mutex> lock{_mutex};
+    _start = start;
+  }
+
+  void fill_progress_with(const std::string& fill) {
+    std::unique_lock<std::mutex> lock{_mutex};    
+    _fill = fill;
+  }
+
+  void lead_progress_with(const std::string& lead) {
+    std::unique_lock<std::mutex> lock{_mutex};    
+    _lead = lead;
+  }
+
+  void fill_remainder_with(const std::string& remainder) {
+    std::unique_lock<std::mutex> lock{_mutex};    
+    _remainder = remainder;
+  }    
+
+  void end_with(const std::string& end) {
+    std::unique_lock<std::mutex> lock{_mutex};    
+    _end = end;
+  }  
+
+  void set_progress(float value) {
+    std::unique_lock<std::mutex> lock{_mutex};
+    if (_completed) return;
+    _progress = value;
+    if (static_cast<int>(_progress) == 100) {
+      _completed = true;
+    }
+    _print_progress();
+    if (_completed)
+      std::cout << std::endl;
+  }
+
+  void tick() {
+    std::unique_lock<std::mutex> lock{_mutex};
+    if (_completed) return;
+    set_progress(_progress + 1);
+  }
+  
 };
