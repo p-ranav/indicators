@@ -136,7 +136,7 @@ private:
     }
     std::cout << _prefix_text;
     std::cout << _start;
-    float pos = _progress * static_cast<float>(_bar_width) / 100.0;
+    auto pos = static_cast<size_t>(_progress * static_cast<float>(_bar_width) / 100.0);
     for (size_t i = 0; i < _bar_width; ++i) {
       if (i < pos)
         std::cout << _fill;

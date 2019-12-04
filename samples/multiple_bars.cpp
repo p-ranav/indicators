@@ -228,7 +228,7 @@ int main() {
         }
 	else
 	  p.tick();
-        std::this_thread::sleep_for(std::chrono::milliseconds(60));
+        std::this_thread::sleep_for(std::chrono::milliseconds(40));
       }
     };
     std::thread thread(job);
@@ -246,35 +246,53 @@ int main() {
     auto job = [&p]() {
       while (true) {
 	auto current = p.current();
-	if (current == 25) {
+	if (current == 24) {
+	  p.set_prefix_text(" - ✔");
+	  p.hide_spinner();
+	}
+	else if (current == 25) {
 	  std::cout << std::endl;
+	  p.show_spinner();
+	  p.set_prefix_text(" - ");
 	  p.set_postfix_text("Designing spaceship");
 	}
+	else if (current == 49) {
+	  p.set_prefix_text(" - ✔");
+	  p.hide_spinner();
+	}	
 	else if (current == 50) {
 	  std::cout << std::endl;
+	  p.show_spinner();
+	  p.set_prefix_text(" - ");
 	  p.set_postfix_text("Contacting Elon Musk");
 	}
+	else if (current == 74) {
+	  p.set_prefix_text(" - ✔");
+	  p.hide_spinner();
+	}		
 	else if (current == 75) {
 	  std::cout << std::endl;
+	  p.show_spinner();
+	  p.set_prefix_text(" - ");
 	  p.set_postfix_text("Launching rocket");
 	}
         else if (current == 95) {
           p.set_prefix_text(" - ✔");
 	  p.hide_spinner();
-        }	
+        }
 	else if (current == 99) {
 	  std::cout << std::endl;
 	  //
 	  // NESTED PROGRESS BAR
 	  //
 	  indica::ProgressBar p2;
-	  p2.set_bar_width(50);
+	  p2.set_bar_width(30);
 	  p2.set_prefix_text(" - ");
-	  p2.start_bar_with("[");
-	  p2.fill_bar_progress_with("=");
-	  p2.lead_bar_progress_with(">");
+	  p2.start_bar_with("[🌎");
+	  p2.fill_bar_progress_with(" ");
+	  p2.lead_bar_progress_with("🚀");
 	  p2.fill_bar_remainder_with(" ");
-	  p2.end_bar_with("]");
+	  p2.end_bar_with("🌑]");
 	  p2.set_postfix_text("Achieved low-Earth orbit");
 	  p2.set_foreground_color(indica::Color::WHITE);
 	  auto job2 = [&p2]() {
