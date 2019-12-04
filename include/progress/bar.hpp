@@ -45,6 +45,13 @@ public:
     _end = end;
   }
 
+  void append_text(const std::string& text) {
+    std::unique_lock<std::mutex> lock{_mutex};
+    _text_after = text;
+    if (_text_after.length() > _max_text_after_length)
+      _max_text_after_length = _text_after.length();
+  }
+
   void show_percentage(bool flag) { _show_percentage = flag; }
 
   void set_progress(float value) {
@@ -78,11 +85,14 @@ public:
 private:
   float _progress{0.0};
   size_t _bar_width{100};
+  std::string _text_before{""};
   std::string _start{"["};
   std::string _fill{"="};
   std::string _lead{">"};
   std::string _remainder{" "};
   std::string _end{"]"};
+  std::string _text_after{""};
+  std::atomic<size_t> _max_text_after_length{0};
   std::atomic<bool> _completed{false};
   std::atomic<bool> _show_percentage{true};
   std::mutex _mutex;
@@ -128,9 +138,8 @@ private:
     }
     std::cout << _end;
     if (_show_percentage)
-      std::cout << " " << static_cast<int>(_progress) << "%\r";
-    else
-      std::cout << "\r";
+      std::cout << " " << static_cast<int>(_progress) << "%";
+    std::cout << " " << _text_after << std::string(_max_text_after_length, ' ') << "\r";
     std::cout.flush();
     if (_completed)
       std::cout << termcolor::reset << std::endl;
