@@ -57,7 +57,7 @@ public:
       _max_postfix_text_length = _postfix_text.length();
   }
 
-  void show_percentage(bool flag) { _show_percentage = flag; }
+  void show_percentage() { _show_percentage = true; }
 
   void hide_percentage() { _show_percentage = false; }
 

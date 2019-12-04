@@ -150,11 +150,11 @@ int main() {
                                         "⠴", "⠦", "⠧", "⠇", "⠏"};
   ProgressBar p4;
   p4.set_bar_width(50);
-  p4.start_bar_with("[");
+  p4.start_bar_with("");
   p4.fill_bar_progress_with("⠸");
   p4.lead_bar_progress_with("");
   p4.fill_bar_remainder_with(" ");
-  p4.end_bar_with(" ]");
+  p4.end_bar_with("");
   p4.set_foreground_color(ProgressBar::Color::BLUE);
   p4.set_postfix_text("Restoring system state");
   p4.hide_percentage();
@@ -166,8 +166,9 @@ int main() {
       index4 += 1;
       if (p4.current() + 2 >= 100) {
         p4.set_foreground_color(ProgressBar::Color::RED);
-        p4.set_prefix_text("{ FAILURE } ");
-        p4.set_postfix_text("Failed to restore from Restore_Point_1241531");
+        p4.set_prefix_text("{ CRITICAL ERROR } ");
+        p4.show_percentage();
+        p4.set_postfix_text("Failed to restore system");
         p4.mark_as_completed();
         break;
       }
