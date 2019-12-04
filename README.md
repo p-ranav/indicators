@@ -1,5 +1,5 @@
 <p align="center">
-  <img height="100" src="https://i.imgur.com/BfflF5h.png"/>	
+  <img height="80" src="https://i.imgur.com/BfflF5h.png"/>	
 </p>
 
 ## Progress Bar
