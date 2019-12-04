@@ -57,8 +57,6 @@ int main() {
   second_job.join();
   third_job.join();
   last_job.join();
-
-  std::cout << "Done\n";
   
   return 0;
 }
