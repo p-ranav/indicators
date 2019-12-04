@@ -22,8 +22,8 @@ int main() {
   std::vector<std::string> status_text1 =
     {
      "Rocket.exe is not responding",
-     "Finding a replacement engineer",
      "Buying more snacks",
+     "Finding a replacement engineer",
      "Assimilating the modding community",
      "Crossing fingers",
      "Porting KSP to a Nokia 3310",
@@ -44,6 +44,33 @@ int main() {
 	     };
   std::thread thread1(job1);
   thread1.join();
+
+  //
+  // PROGRESS BAR 3
+  //
+  ProgressBar p3;
+  p3.bar_width(40);
+  p3.start_with("Reading package list... ");
+  p3.fill_progress_with("");
+  p3.lead_progress_with("");
+  p3.fill_remainder_with("");
+  p3.end_with("");
+  p3.color(ProgressBar::Color::WHITE);
+  p3.show_percentage(false);
+  auto job3 = [&p3]() {
+	       while (true) {
+		 p3.start_with("Reading package list... " + std::to_string(p3.current()) + "% ");
+		 if (p3.current() + 2 >= 100)
+		   p3.start_with("Reading package list... Done");		 
+		 p3.tick();
+		 if (p3.completed()) {
+		   break;
+		 }		 
+		 std::this_thread::sleep_for(std::chrono::milliseconds(25));
+	       }
+	     };
+  std::thread thread3(job3);  
+  thread3.join();
 
   //
   // PROGRESS BAR 2
@@ -78,31 +105,33 @@ int main() {
   thread2.join();
 
   //
-  // PROGRESS BAR 3
+  // PROGRESS BAR 5
   //
-  ProgressBar p3;
-  p3.bar_width(40);
-  p3.start_with("Reading package list... ");
-  p3.fill_progress_with("");
-  p3.lead_progress_with("");
-  p3.fill_remainder_with("");
-  p3.end_with("");
-  p3.color(ProgressBar::Color::WHITE);
-  p3.show_percentage(false);
-  auto job3 = [&p3]() {
+  ProgressBar p5;
+  p5.bar_width(100);
+  p5.start_with("🌏");
+  p5.fill_progress_with("·");
+  p5.lead_progress_with("🛸");  
+  p5.fill_remainder_with(" ");
+  p5.end_with("🌑");
+  p5.show_percentage(true);
+  p5.color(ProgressBar::Color::WHITE);
+  auto job5 = [&p5]() {
 	       while (true) {
-		 p3.start_with("Reading package list... " + std::to_string(p3.current()) + "% ");
-		 if (p3.current() + 2 >= 100)
-		   p3.start_with("Reading package list... Done");		 
-		 p3.tick();
-		 if (p3.completed()) {
+     if (p5.current() % 5 == 0) {
+      p5.fill_progress_with("·");       
+     } else {
+      p5.fill_progress_with(" ");
+     }
+		 p5.tick();
+		 if (p5.completed()) {
 		   break;
 		 }		 
-		 std::this_thread::sleep_for(std::chrono::milliseconds(25));
+		 std::this_thread::sleep_for(std::chrono::milliseconds(75));
 	       }
 	     };
-  std::thread thread3(job3);  
-  thread3.join();
+  std::thread thread5(job5);  
+  thread5.join();  
 
   //
   // PROGRESS BAR 4
@@ -111,17 +140,19 @@ int main() {
   ProgressBar p4;
   p4.bar_width(50);
   p4.start_with("[");
-  // p4.fill_progress_with(lead_spinner[0]);
-  p4.fill_progress_with(" ");
+  p4.fill_progress_with("⠸");
   p4.lead_progress_with("");  
   p4.fill_remainder_with(" ");
-  p4.end_with("]");
+  p4.end_with(" ]");
   p4.color(ProgressBar::Color::CYAN);
+  p4.set_status_text("Restoring system state");
   std::atomic<size_t> index4{0};
   auto job4 = [&p4, &index4, &lead_spinner]() {
 	       while (true) {
 		 p4.lead_progress_with(lead_spinner[index4 % lead_spinner.size()]);
 		 index4 += 1;
+		 if (p4.current() + 2 >= 100)
+		   p4.set_status_text("State restored to Restore_Point_1241531");	
 		 p4.tick();
 		 if (p4.completed()) {
 		   break;
