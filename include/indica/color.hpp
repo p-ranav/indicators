@@ -1,6 +1,6 @@
 #pragma once
-#include <indicator/termcolor.hpp>
+#include <indica/termcolor.hpp>
 
-namespace indicator {
+namespace indica {
   enum class Color { GREY, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE };
 }

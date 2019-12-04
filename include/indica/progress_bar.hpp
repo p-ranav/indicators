@@ -1,12 +1,12 @@
 #pragma once
 #include <atomic>
-#include <indicator/color.hpp>
+#include <indica/color.hpp>
 #include <iostream>
 #include <mutex>
 #include <string>
 #include <thread>
 
-namespace indicator {
+namespace indica {
 
 class ProgressBar {
 public:

@@ -1,13 +1,13 @@
 #pragma once
 #include <atomic>
-#include <indicator/color.hpp>
+#include <indica/color.hpp>
 #include <iostream>
 #include <mutex>
 #include <string>
 #include <thread>
 #include <vector>
 
-namespace indicator {
+namespace indica {
 
 class ProgressSpinner {
 public:
