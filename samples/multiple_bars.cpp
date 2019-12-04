@@ -209,9 +209,9 @@ int main() {
     std::thread thread(job);
     thread.join();
   }
-
+  
   {
-    indicator::ProgressSpinner p;
+    indicator::ProgressSpinner p;    
     p.set_postfix_text("Checking credentials");
     p.set_foreground_color(indicator::Color::YELLOW);
     p.set_spinner_states({"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"});
@@ -224,6 +224,27 @@ int main() {
           p.hide_percentage();
           p.set_postfix_text("Authenticated!");
           p.mark_as_completed();
+          break;
+        }
+	else
+	  p.tick();
+        std::this_thread::sleep_for(std::chrono::milliseconds(60));
+      }
+    };
+    std::thread thread(job);
+    thread.join();    
+  }  
+
+  std::cout << "Compiling code\n";
+  {
+    indicator::ProgressSpinner p;
+    p.set_prefix_text("- ");
+    p.set_postfix_text("Checking project dependencies");
+    p.set_foreground_color(indicator::Color::WHITE);    
+    p.set_spinner_states({"▖", "▘", "▝", "▗"});
+    auto job = [&p]() {
+      while (true) {
+        if (p.is_completed()) {
           break;
         }
 	else
