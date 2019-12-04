@@ -70,7 +70,7 @@ public:
       std::unique_lock<std::mutex> lock{_mutex};
       if (_completed) return;
       _progress = value;
-      if (static_cast<int>(_progress) == 100) {
+      if (_progress >= 100.0) {
 	_completed = true;
       }
     }
@@ -78,8 +78,19 @@ public:
   }
 
   void tick() {
-    if (_completed) return;
-    set_progress(_progress + 1);
+    {
+      std::unique_lock<std::mutex> lock{_mutex};
+      if (_completed) return;
+      _progress += 1;
+      if (_progress >= 100.0) {
+	_completed = true;
+      }
+    }
+    _print_progress();
+  }
+
+  bool completed() {
+    return _completed;
   }
   
 };

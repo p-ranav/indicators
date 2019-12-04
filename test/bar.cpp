@@ -5,7 +5,7 @@ int main() {
   ProgressBar bar;
 
   // Configure progress bar
-  bar.bar_width(100);
+  bar.bar_width(50);
   bar.start_with("[");
   bar.fill_progress_with("=");
   bar.lead_progress_with(">");
@@ -18,24 +18,24 @@ int main() {
   //
   //
 
-  std::thread first_job(
-    [&bar]() {
-      for (size_t i = 0; i <= 50; ++i) {
-	bar.tick();
-	std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      }
-    });
+  auto job = [&bar]() {
+	       while(true) {
+		 if (bar.completed())
+		   break;
+		 bar.tick();
+		 std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	       }   
+	     };
 
-  std::thread second_job(
-    [&bar]() {
-      for (size_t i = 0; i <= 50; ++i) {
-  	bar.tick();
-  	std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      }
-    });
+  std::thread first_job(job);
+  std::thread second_job(job);
+  std::thread third_job(job);
+  std::thread last_job(job);
 
   first_job.join();
   second_job.join();
+  third_job.join();
+  last_job.join();
 
   return 0;
 }
