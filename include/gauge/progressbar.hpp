@@ -3,7 +3,7 @@
 #include <iostream>
 #include <mutex>
 #include <string>
-#include <progress/termcolor.hpp>
+#include <gauge/termcolor.hpp>
 #include <thread>
 
 class ProgressBar {
