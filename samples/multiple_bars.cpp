@@ -1,4 +1,4 @@
-#include <indicators/progressbar.hpp>
+#include <indicator/progressbar.hpp>
 #include <vector>
 
 /*
@@ -47,14 +47,14 @@ int main() {
   //
   // PROGRESS BAR 1
   //
-  ProgressBar p1;
+  indicator::ProgressBar p1;
   p1.set_bar_width(50);
   p1.start_bar_with("[");
   p1.fill_bar_progress_with("■");
   p1.lead_bar_progress_with("■");
   p1.fill_bar_remainder_with(" ");
   p1.end_bar_with("]");
-  p1.set_foreground_color(ProgressBar::Color::YELLOW);
+  p1.set_foreground_color(indicator::ProgressBar::Color::YELLOW);
 
   std::atomic<size_t> index1{0};
   std::vector<std::string> status_text1 = {"Rocket.exe is not responding",
@@ -83,7 +83,7 @@ int main() {
   //
   // PROGRESS BAR 3
   //
-  ProgressBar p3;
+  indicator::ProgressBar p3;
   p3.set_bar_width(40);
   p3.set_prefix_text("Reading package list... ");
   p3.start_bar_with("");
@@ -91,7 +91,7 @@ int main() {
   p3.lead_bar_progress_with("");
   p3.fill_bar_remainder_with("");
   p3.end_bar_with("");
-  p3.set_foreground_color(ProgressBar::Color::WHITE);
+  p3.set_foreground_color(indicator::ProgressBar::Color::WHITE);
   p3.hide_percentage();
   auto job3 = [&p3]() {
     while (true) {
@@ -111,7 +111,7 @@ int main() {
   //
   // PROGRESS BAR 2
   //
-  ProgressBar p2;
+  indicator::ProgressBar p2;
   p2.set_bar_width(50);
   p2.start_bar_with("[");
   p2.fill_bar_progress_with("=");
@@ -119,7 +119,7 @@ int main() {
   p2.fill_bar_remainder_with(" ");
   p2.end_bar_with("]");
   p2.set_postfix_text("Getting started");
-  p2.set_foreground_color(ProgressBar::Color::GREEN);
+  p2.set_foreground_color(indicator::ProgressBar::Color::GREEN);
   auto job2 = [&p2]() {
     while (true) {
       auto ticks = p2.current();
@@ -144,14 +144,14 @@ int main() {
   // PROGRESS BAR 4
   //
   std::vector<std::string> lead_spinner{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"};
-  ProgressBar p4;
+  indicator::ProgressBar p4;
   p4.set_bar_width(50);
   p4.start_bar_with("");
   p4.fill_bar_progress_with("⠸");
   p4.lead_bar_progress_with("");
   p4.fill_bar_remainder_with(" ");
   p4.end_bar_with("");
-  p4.set_foreground_color(ProgressBar::Color::CYAN);
+  p4.set_foreground_color(indicator::ProgressBar::Color::CYAN);
   p4.set_postfix_text("Restoring system state");
   p4.hide_percentage();
   std::atomic<size_t> index4{0};
@@ -161,7 +161,7 @@ int main() {
       p4.lead_bar_progress_with(lead_spinner[index4 % lead_spinner.size()]);
       index4 += 1;
       if (p4.current() + 2 >= 100) {
-        p4.set_foreground_color(ProgressBar::Color::RED);
+        p4.set_foreground_color(indicator::ProgressBar::Color::RED);
         p4.set_prefix_text("{ ERROR } ");
         p4.show_percentage();
         p4.set_postfix_text("Failed to restore system");
@@ -181,7 +181,7 @@ int main() {
     //
     // GOING BACKWARDS
     //
-    ProgressBar p;
+    indicator::ProgressBar p;
     p.set_bar_width(50);
     p.start_bar_with("[");
     p.fill_bar_progress_with("■");
@@ -189,7 +189,7 @@ int main() {
     p.fill_bar_remainder_with("-");
     p.end_bar_with("]");
     p.set_progress(100);
-    p.set_foreground_color(ProgressBar::Color::WHITE);
+    p.set_foreground_color(indicator::ProgressBar::Color::WHITE);
     p.set_postfix_text("Reverting system restore");
     std::atomic<size_t> progress{100};
     auto job = [&p, &progress]() {
@@ -209,7 +209,7 @@ int main() {
   }
 
   {
-    ProgressBar p;
+    indicator::ProgressBar p;
     p.set_bar_width(50);
     p.start_bar_with("");
     p.fill_bar_progress_with("");
@@ -217,7 +217,7 @@ int main() {
     p.fill_bar_remainder_with("");
     p.end_bar_with("");
     p.set_postfix_text("Checking credentials");
-    p.set_foreground_color(ProgressBar::Color::YELLOW);
+    p.set_foreground_color(indicator::ProgressBar::Color::YELLOW);
     std::atomic<int> spinner_index{0};
     std::vector<std::string> spinner{"⠁", "⠂", "⠄", "⡀", "⢀", "⠠", "⠐", "⠈"};
     auto job = [&p, &spinner_index, &spinner]() {
@@ -227,7 +227,7 @@ int main() {
         spinner_index -= 1;
         if (p.current() + 2 >= 100) {
           std::cout << std::endl;
-          p.set_foreground_color(ProgressBar::Color::GREEN);
+          p.set_foreground_color(indicator::ProgressBar::Color::GREEN);
           p.set_prefix_text("✔");
           p.hide_percentage();
           p.set_postfix_text("Authenticated!");

@@ -1,10 +1,12 @@
 #pragma once
 #include <atomic>
-#include <indicators/termcolor.hpp>
+#include <indicator/termcolor.hpp>
 #include <iostream>
 #include <mutex>
 #include <string>
 #include <thread>
+
+namespace indicator {
 
 class ProgressBar {
 public:
@@ -160,3 +162,5 @@ private:
       std::cout << termcolor::reset << std::endl;
   }
 };
+
+}
