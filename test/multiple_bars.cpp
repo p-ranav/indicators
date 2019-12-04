@@ -3,6 +3,9 @@
 
 int main() {
 
+  // Hide cursor
+  std::cout << "\e[?25l";
+
   //
   // PROGRESS BAR 1
   //
@@ -102,6 +105,9 @@ int main() {
   thread3.join();
 
   std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-  
+
+  // Show cursor
+  std::cout << "\e[?25h";
+
   return 0;
 }
