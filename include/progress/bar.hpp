@@ -136,7 +136,7 @@ private:
     if (_show_percentage) {
       std::cout << " " << std::min(static_cast<size_t>(_progress), size_t(100)) << "%";
     }
-    if (_max_text_after_length == 0) _max_text_after_length = 20;
+    if (_max_text_after_length == 0) _max_text_after_length = 10;
     std::cout << " " << _text_after << std::string(_max_text_after_length, ' ') << "\r";
     std::cout.flush();
     if (_progress > 100.0) {
