@@ -40,7 +40,7 @@ int main() {
   // You can use bar.append_text(...) to append text to the right
   //
   // [■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■-------------] 70% Finding a replacement engineer
-  //
+  //                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   //  
 
   auto job = [&bar, &index, &status_text]() {
