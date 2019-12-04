@@ -15,6 +15,7 @@ int main() {
   bar.lead_progress_with("■");
   bar.fill_remainder_with("-");
   bar.end_with("]");
+  bar.color(ProgressBar::Color::YELLOW);
 
   // As configured, the bar will look like this:
   // 
