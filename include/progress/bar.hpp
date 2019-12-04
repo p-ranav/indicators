@@ -57,12 +57,7 @@ public:
   void set_progress(float value) {
     {
       std::unique_lock<std::mutex> lock{_mutex};
-      if (_completed)
-        return;
       _progress = value;
-      if (_progress >= 100.0) {
-        _completed = true;
-      }
     }
     _print_progress();
   }
@@ -70,12 +65,7 @@ public:
   void tick() {
     {
       std::unique_lock<std::mutex> lock{_mutex};
-      if (_completed)
-        return;
       _progress += 1;
-      if (_progress >= 100.0) {
-        _completed = true;
-      }
     }
     _print_progress();
   }
@@ -146,8 +136,12 @@ private:
     if (_show_percentage) {
       std::cout << " " << std::min(static_cast<size_t>(_progress), size_t(100)) << "%";
     }
+    if (_max_text_after_length == 0) _max_text_after_length = 20;
     std::cout << " " << _text_after << std::string(_max_text_after_length, ' ') << "\r";
     std::cout.flush();
+    if (_progress > 100.0) {
+      _completed = true;
+    }        
     if (_completed)
       std::cout << termcolor::reset << std::endl;
   }  

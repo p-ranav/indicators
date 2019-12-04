@@ -47,13 +47,12 @@ int main() {
   //
   ProgressBar p2;
   p2.bar_width(50);
-  p2.start_with("[");
+  p2.start_with("Getting started [");
   p2.fill_progress_with("#");
   p2.lead_progress_with("#");
   p2.fill_remainder_with(" ");
   p2.end_with("]");  
   p2.color(ProgressBar::Color::GREEN);
-  p2.append_text("Getting started");
   auto job2 = [&p2]() {
 	       while (true) {
 		 if (p2.completed())
@@ -61,13 +60,13 @@ int main() {
 		 p2.tick();
 		 auto ticks = p2.current();
 		 if (ticks > 20 && ticks < 50)
-		   p2.append_text("Calling Lionel Messi");
+		   p2.start_with("Delaying the inevitable [");
 		 else if (ticks > 50 && ticks < 80)
-		   p2.append_text("Crying quietly");
+		   p2.start_with("Crying quietly [");
 		 else if (ticks > 80)
-		   p2.append_text("Almost there");
+		   p2.start_with("Almost there [");
 		 else if (ticks > 98)
-		   p2.append_text("Done");
+		   p2.start_with("Done [");
 		 std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	       }
 	     };
@@ -91,6 +90,7 @@ int main() {
 		 p3.start_with("Downloading the Sun " + std::to_string(p3.current()) + "% ");
 		 p3.tick();
 		 if (p3.completed()) {
+		   p3.start_with("Downloading the Sun 100%");
 		   break;
 		 }		 
 		 std::this_thread::sleep_for(std::chrono::milliseconds(50));
