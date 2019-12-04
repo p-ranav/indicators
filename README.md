@@ -11,8 +11,6 @@
 int main() {
 
   ProgressBar bar;
-
-  // Configure progress bar
   bar.bar_width(50);
   bar.start_with("[");
   bar.fill_progress_with("■");
