@@ -45,11 +45,11 @@ public:
     _end = end;
   }
 
-  void append_text(const std::string& text) {
+  void set_status_text(const std::string& text) {
     std::unique_lock<std::mutex> lock{_mutex};
-    _text_after = text;
-    if (_text_after.length() > _max_text_after_length)
-      _max_text_after_length = _text_after.length();
+    _status_text = text;
+    if (_status_text.length() > _max_status_text_length)
+      _max_status_text_length = _status_text.length();
   }
 
   void show_percentage(bool flag) { _show_percentage = flag; }
@@ -86,8 +86,8 @@ private:
   std::string _lead{">"};
   std::string _remainder{" "};
   std::string _end{"]"};
-  std::string _text_after{""};
-  std::atomic<size_t> _max_text_after_length{0};
+  std::string _status_text{""};
+  std::atomic<size_t> _max_status_text_length{0};
   std::atomic<bool> _completed{false};
   std::atomic<bool> _show_percentage{true};
   std::mutex _mutex;
@@ -136,8 +136,8 @@ private:
     if (_show_percentage) {
       std::cout << " " << std::min(static_cast<size_t>(_progress), size_t(100)) << "%";
     }
-    if (_max_text_after_length == 0) _max_text_after_length = 10;
-    std::cout << " " << _text_after << std::string(_max_text_after_length, ' ') << "\r";
+    if (_max_status_text_length == 0) _max_status_text_length = 10;
+    std::cout << " " << _status_text << std::string(_max_status_text_length, ' ') << "\r";
     std::cout.flush();
     if (_progress > 100.0) {
       _completed = true;
