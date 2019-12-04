@@ -80,7 +80,12 @@ public:
     _print_progress();
   }
 
-  bool completed() { return _completed; }
+  size_t current() {
+    std::unique_lock<std::mutex> lock{_mutex};
+    return std::min(static_cast<size_t>(_progress), size_t(100));
+  }
+
+  bool completed() const { return _completed; }
 
 private:
   float _progress{0.0};
@@ -100,6 +105,7 @@ private:
 
   void _print_progress() {
     std::unique_lock<std::mutex> lock{_mutex};
+    std::cout << termcolor::bold;
     switch(_color) {
     case Color::GREY:
       std::cout << termcolor::grey;
@@ -137,8 +143,9 @@ private:
         std::cout << _remainder;
     }
     std::cout << _end;
-    if (_show_percentage)
-      std::cout << " " << static_cast<int>(_progress) << "%";
+    if (_show_percentage) {
+      std::cout << " " << std::min(static_cast<size_t>(_progress), size_t(100)) << "%";
+    }
     std::cout << " " << _text_after << std::string(_max_text_after_length, ' ') << "\r";
     std::cout.flush();
     if (_completed)
