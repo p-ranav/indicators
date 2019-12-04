@@ -1,4 +1,3 @@
-#include <iostream>
 #include <progress/bar.hpp>
 
 int main() {
@@ -10,11 +9,11 @@ int main() {
   bar.fill_progress_with("■");
   bar.lead_progress_with("■");
   bar.fill_remainder_with("-");
-  bar.end_with(" ]");
+  bar.end_with("]");
 
   // As configured, the bar will look like this:
   // 
-  // [■■■■■■■■■■■■■■■■■■■■ --------] 70% 
+  // [■■■■■■■■■■■■■■■■■■■■--------] 70% 
   //
   //
 
