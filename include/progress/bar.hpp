@@ -10,46 +10,51 @@ class ProgressBar {
 public:
   enum class Color { GREY, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE };
 
-  void color(Color color) {
+  void set_foreground_color(Color color) {
     std::unique_lock<std::mutex> lock{_mutex};
-    _color = color;
+    _foreground_color = color;
   }
 
-  void bar_width(size_t bar_width) {
+  void set_bar_width(size_t bar_width) {
     std::unique_lock<std::mutex> lock{_mutex};
     _bar_width = bar_width;
   }
 
-  void start_with(const std::string &start) {
+  void start_bar_with(const std::string &start) {
     std::unique_lock<std::mutex> lock{_mutex};
     _start = start;
   }
 
-  void fill_progress_with(const std::string &fill) {
+  void fill_bar_progress_with(const std::string &fill) {
     std::unique_lock<std::mutex> lock{_mutex};
     _fill = fill;
   }
 
-  void lead_progress_with(const std::string &lead) {
+  void lead_bar_progress_with(const std::string &lead) {
     std::unique_lock<std::mutex> lock{_mutex};
     _lead = lead;
   }
 
-  void fill_remainder_with(const std::string &remainder) {
+  void fill_bar_remainder_with(const std::string &remainder) {
     std::unique_lock<std::mutex> lock{_mutex};
     _remainder = remainder;
   }
 
-  void end_with(const std::string &end) {
+  void end_bar_with(const std::string &end) {
     std::unique_lock<std::mutex> lock{_mutex};
     _end = end;
   }
 
-  void set_status_text(const std::string& text) {
+  void set_prefix_text(const std::string& text) {
     std::unique_lock<std::mutex> lock{_mutex};
-    _status_text = text;
-    if (_status_text.length() > _max_status_text_length)
-      _max_status_text_length = _status_text.length();
+    _prefix_text = text;
+  }
+
+  void set_postfix_text(const std::string& text) {
+    std::unique_lock<std::mutex> lock{_mutex};
+    _postfix_text = text;
+    if (_postfix_text.length() > _max_postfix_text_length)
+      _max_postfix_text_length = _postfix_text.length();
   }
 
   void show_percentage(bool flag) { _show_percentage = flag; }
@@ -80,23 +85,23 @@ public:
 private:
   float _progress{0.0};
   size_t _bar_width{100};
-  std::string _text_before{""};
+  std::string _prefix_text{""};
   std::string _start{"["};
   std::string _fill{"="};
   std::string _lead{">"};
   std::string _remainder{" "};
   std::string _end{"]"};
-  std::string _status_text{""};
-  std::atomic<size_t> _max_status_text_length{0};
+  std::string _postfix_text{""};
+  std::atomic<size_t> _max_postfix_text_length{0};
   std::atomic<bool> _completed{false};
   std::atomic<bool> _show_percentage{true};
   std::mutex _mutex;
-  Color _color;
+  Color _foreground_color;
 
   void _print_progress() {
     std::unique_lock<std::mutex> lock{_mutex};
     std::cout << termcolor::bold;
-    switch(_color) {
+    switch(_foreground_color) {
     case Color::GREY:
       std::cout << termcolor::grey;
       break;
@@ -122,6 +127,7 @@ private:
       std::cout << termcolor::white;
       break;      
     }
+    std::cout << _prefix_text;
     std::cout << _start;
     float pos = _progress * static_cast<float>(_bar_width) / 100.0;
     for (size_t i = 0; i < _bar_width; ++i) {
@@ -136,8 +142,8 @@ private:
     if (_show_percentage) {
       std::cout << " " << std::min(static_cast<size_t>(_progress), size_t(100)) << "%";
     }
-    if (_max_status_text_length == 0) _max_status_text_length = 10;
-    std::cout << " " << _status_text << std::string(_max_status_text_length, ' ') << "\r";
+    if (_max_postfix_text_length == 0) _max_postfix_text_length = 10;
+    std::cout << " " << _postfix_text << std::string(_max_postfix_text_length, ' ') << "\r";
     std::cout.flush();
     if (_progress > 100.0) {
       _completed = true;
