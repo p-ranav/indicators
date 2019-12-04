@@ -186,7 +186,7 @@ int main() {
     p.start_bar_with("[");
     p.fill_bar_progress_with("■");
     p.lead_bar_progress_with("■");
-    p.fill_bar_remainder_with(" ");
+    p.fill_bar_remainder_with("-");
     p.end_bar_with("]");
     p.set_progress(100);
     p.set_foreground_color(ProgressBar::Color::WHITE);
