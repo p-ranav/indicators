@@ -17,8 +17,8 @@
 
 * Thread-safe `ProgressBar` and `ProgressSpinner` classes
 * Header-only library. Grab a copy of `include/indicators`
-* MIT License
 * Source for the above GIF can be found [here](demo/demo.cpp)
+* MIT License
 
 # Progress bar
 
