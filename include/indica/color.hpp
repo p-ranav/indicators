@@ -1,10 +1,6 @@
 /*
-.__            .___.__               
-|__| ____    __| _/|__| ____ _____   
-|  |/    \  / __ | |  |/ ___\\__  \    Activity Indicator for Modern C++
-|  |   |  \/ /_/ | |  \  \___ / __ \_  https://github.com/p-ranav/indica
-|__|___|  /\____ | |__|\___  >____  /
-        \/      \/         \/     \/ 
+Activity Indicator for Modern C++
+https://github.com/p-ranav/indica
 
 Licensed under the MIT License <http://opensource.org/licenses/MIT>.
 SPDX-License-Identifier: MIT
