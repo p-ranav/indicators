@@ -2,92 +2,54 @@
 #include <indica/progress_spinner.hpp>
 #include <vector>
 
-/*
-  [
-    "|/-\\",
-    "⠂-–—–-",
-    "◐◓◑◒",
-    "◴◷◶◵",
-    "◰◳◲◱",
-    "▖▘▝▗",
-    "■□▪▫",
-    "▌▀▐▄",
-    "▉▊▋▌▍▎▏▎▍▌▋▊▉",
-    "▁▃▄▅▆▇█▇▆▅▄▃",
-    "←↖↑↗→↘↓↙",
-    "┤┘┴└├┌┬┐",
-    "◢◣◤◥",
-    ".oO°Oo.",
-    ".oO@*",
-    ["🌍", "🌎", "🌏"],
-    "◡◡ ⊙⊙ ◠◠",
-    "☱☲☴",
-    "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏",
-    "⠋⠙⠚⠞⠖⠦⠴⠲⠳⠓",
-    "⠄⠆⠇⠋⠙⠸⠰⠠⠰⠸⠙⠋⠇⠆",
-    "⠋⠙⠚⠒⠂⠂⠒⠲⠴⠦⠖⠒⠐⠐⠒⠓⠋",
-    "⠁⠉⠙⠚⠒⠂⠂⠒⠲⠴⠤⠄⠄⠤⠴⠲⠒⠂⠂⠒⠚⠙⠉⠁",
-    "⠈⠉⠋⠓⠒⠐⠐⠒⠖⠦⠤⠠⠠⠤⠦⠖⠒⠐⠐⠒⠓⠋⠉⠈",
-    "⠁⠁⠉⠙⠚⠒⠂⠂⠒⠲⠴⠤⠄⠄⠤⠠⠠⠤⠦⠖⠒⠐⠐⠒⠓⠋⠉⠈⠈",
-    "⢄⢂⢁⡁⡈⡐⡠",
-    "⢹⢺⢼⣸⣇⡧⡗⡏",
-    "⣾⣽⣻⢿⡿⣟⣯⣷",
-    "⠁⠂⠄⡀⢀⠠⠐⠈",
-    ["🌑", "🌒", "🌓", "🌔", "🌕", "🌝", "🌖", "🌗", "🌘", "🌚"],
-    ["🕛", "🕐", "🕑", "🕒", "🕓", "🕔", "🕕", "🕖", "🕗", "🕘", "🕙", "🕚"]
-  ]
-*/
-
 int main() {
 
   // Hide cursor
   std::cout << "\e[?25l";
-  std::cout << "\n\n";
+  {
+    //
+    // PROGRESS BAR 1
+    //
+    indica::ProgressBar p;
+    p.set_bar_width(50);
+    p.start_bar_with("[");
+    p.fill_bar_progress_with("■");
+    p.lead_bar_progress_with("■");
+    p.fill_bar_remainder_with(" ");
+    p.end_bar_with(" ]");
+    p.set_foreground_color(indica::Color::YELLOW);
 
-  {}
+    std::atomic<size_t> index{0};
+    std::vector<std::string> status_text = {"Rocket.exe is not responding",
+					     "Buying more snacks",
+					     "Finding a replacement engineer",
+					     "Assimilating the modding community",
+					     "Crossing fingers",
+					     "Porting KSP to a Nokia 3310",
+					     "Flexing struts",
+					     "Releasing space whales",
+					     "Watching paint dry"};
 
-  //
-  // PROGRESS BAR 1
-  //
-  indica::ProgressBar p1;
-  p1.set_bar_width(50);
-  p1.start_bar_with("  [");
-  p1.fill_bar_progress_with("■");
-  p1.lead_bar_progress_with("■");
-  p1.fill_bar_remainder_with(" ");
-  p1.end_bar_with(" ]");
-  p1.set_foreground_color(indica::Color::YELLOW);
-
-  std::atomic<size_t> index1{0};
-  std::vector<std::string> status_text1 = {"Rocket.exe is not responding",
-                                           "Buying more snacks",
-                                           "Finding a replacement engineer",
-                                           "Assimilating the modding community",
-                                           "Crossing fingers",
-                                           "Porting KSP to a Nokia 3310",
-                                           "Flexing struts",
-                                           "Releasing space whales",
-                                           "Watching paint dry"};
-
-  auto job1 = [&p1, &index1, &status_text1]() {
-    while (true) {
-      if (p1.is_completed())
-        break;
-      p1.set_postfix_text(status_text1[index1 % status_text1.size()]);
-      p1.set_progress(index1 * 10);
-      index1 += 1;
-      std::this_thread::sleep_for(std::chrono::milliseconds(600));
-    }
-  };
-  std::thread thread1(job1);
-  thread1.join();
+    auto job = [&p, &index, &status_text]() {
+		  while (true) {
+		    if (p.is_completed())
+		      break;
+		    p.set_postfix_text(status_text[index % status_text.size()]);
+		    p.set_progress(index * 10);
+		    index += 1;
+		    std::this_thread::sleep_for(std::chrono::milliseconds(600));
+		  }
+		};
+    std::thread thread(job);
+    thread.join();    
+  }
 
   //
   // PROGRESS BAR 3
   //
   indica::ProgressBar p3;
   p3.set_bar_width(40);
-  p3.set_prefix_text("  Reading package list... ");
+  p3.set_prefix_text("Reading package list... ");
   p3.start_bar_with("");
   p3.fill_bar_progress_with("");
   p3.lead_bar_progress_with("");
@@ -97,10 +59,10 @@ int main() {
   p3.hide_percentage();
   auto job3 = [&p3]() {
     while (true) {
-      p3.set_prefix_text("  Reading package list... " +
+      p3.set_prefix_text("Reading package list... " +
                          std::to_string(p3.current()) + "% ");
       if (p3.current() + 2 >= 100)
-        p3.set_prefix_text("  Reading package list... Done");
+        p3.set_prefix_text("Reading package list... Done");
       p3.tick();
       if (p3.is_completed()) {
         break;
@@ -116,7 +78,7 @@ int main() {
   //
   indica::ProgressBar p2;
   p2.set_bar_width(50);
-  p2.start_bar_with("  [");
+  p2.start_bar_with("[");
   p2.fill_bar_progress_with("=");
   p2.lead_bar_progress_with(">");
   p2.fill_bar_remainder_with(" ");
@@ -161,13 +123,13 @@ int main() {
   std::atomic<size_t> index4{0};
   auto job4 = [&p4, &index4, &lead_spinner]() {
     while (true) {
-      p4.set_prefix_text("  { " + std::to_string(p4.current()) + "% } ");
+      p4.set_prefix_text("{ " + std::to_string(p4.current()) + "% } ");
       p4.lead_bar_progress_with(lead_spinner[index4 % lead_spinner.size()]);
       index4 += 1;
       if (p4.current() + 2 >= 100) {
         std::cout << std::endl;
         p4.set_foreground_color(indica::Color::RED);
-        p4.set_prefix_text("  { ERROR }");
+        p4.set_prefix_text("{ ERROR }");
         p4.start_bar_with("");
         p4.fill_bar_progress_with("");
         p4.lead_bar_progress_with("");
@@ -193,7 +155,7 @@ int main() {
     //
     indica::ProgressBar p;
     p.set_bar_width(50);
-    p.start_bar_with("  [");
+    p.start_bar_with("[");
     p.fill_bar_progress_with("■");
     p.lead_bar_progress_with("■");
     p.fill_bar_remainder_with("-");
@@ -220,7 +182,7 @@ int main() {
 
   {
     indica::ProgressSpinner p;
-    p.set_prefix_text("  ");
+    p.set_prefix_text("");
     p.set_postfix_text("Checking credentials");
     p.set_foreground_color(indica::Color::YELLOW);
     p.set_spinner_states({"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"});
@@ -228,7 +190,7 @@ int main() {
       while (true) {
         if (p.is_completed()) {
           p.set_foreground_color(indica::Color::GREEN);
-          p.set_prefix_text("  ✔");
+          p.set_prefix_text("✔");
           p.hide_spinner();
           p.hide_percentage();
           p.set_postfix_text("Authenticated!");
@@ -246,7 +208,7 @@ int main() {
   std::cout << "  Compiling mission\n";
   {
     indica::ProgressSpinner p;
-    p.set_prefix_text("   - ");
+    p.set_prefix_text(" - ");
     p.set_postfix_text("Searching for the Moon");
     p.set_foreground_color(indica::Color::WHITE);
     p.set_spinner_states({"▖", "▘", "▝", "▗"});
@@ -255,31 +217,31 @@ int main() {
       while (true) {
         auto current = p.current();
         if (current == 24) {
-          p.set_prefix_text("   - ✔");
+          p.set_prefix_text(" - ✔");
           p.hide_spinner();
         } else if (current == 25) {
           std::cout << std::endl;
           p.show_spinner();
-          p.set_prefix_text("   - ");
+          p.set_prefix_text(" - ");
           p.set_postfix_text("Contacting Kerbal headquarters");
         } else if (current == 49) {
-          p.set_prefix_text("   - ✔");
+          p.set_prefix_text(" - ✔");
           p.hide_spinner();
         } else if (current == 50) {
           std::cout << std::endl;
           p.show_spinner();
-          p.set_prefix_text("   - ");
+          p.set_prefix_text(" - ");
           p.set_postfix_text("Designing spaceship");
         } else if (current == 74) {
-          p.set_prefix_text("   - ✔");
+          p.set_prefix_text(" - ✔");
           p.hide_spinner();
         } else if (current == 75) {
           std::cout << std::endl;
           p.show_spinner();
-          p.set_prefix_text("   - ");
+          p.set_prefix_text(" - ");
           p.set_postfix_text("Launching rocket");
         } else if (current == 95) {
-          p.set_prefix_text("   - ✔");
+          p.set_prefix_text(" - ✔");
           p.hide_spinner();
         } else if (current == 99) {
           std::cout << std::endl;
@@ -288,7 +250,7 @@ int main() {
           //
           indica::ProgressBar p2;
           p2.set_bar_width(30);
-          p2.set_prefix_text("   - ");
+          p2.set_prefix_text(" - ");
           p2.start_bar_with("🌎");
           p2.fill_bar_progress_with("·");
           p2.lead_bar_progress_with("🚀");
@@ -332,11 +294,8 @@ int main() {
     thread.join();
   }
 
-  std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-
   // Show cursor
   std::cout << "\e[?25h";
-  std::cout << "\n\n";
 
   return 0;
 }
