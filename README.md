@@ -208,8 +208,6 @@ int main() {
 }
 ```
 
-For more examples, checkout the examples in the `samples/` directory.
-
 # Progress Spinner
 
 To introduce a progress spinner in your application, include `indicators/progress_spinner.hpp` and create a `ProgressSpinner` object. 
