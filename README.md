@@ -6,7 +6,7 @@
   <img src="img/demo.gif"/> 
 </p>
 
-## Progress bar
+# Progress bar
 
 To introduce a progress bar in your application, include `indica/progress_bar.hpp` and create a `ProgressBar` object. 
 
@@ -52,7 +52,7 @@ Now that the bar is configured, let's update the state of the bar. The amount of
 
 From application-level code, there are two ways in which you can update this progress:
 
-### Update progress using `tick()`
+## Update progress using `tick()`
 
 You can update the progress bar using `bar.tick()` which increments progress by exactly `1%`.
 
@@ -88,7 +88,7 @@ int main() {
 
 The above code will print a progress bar that goes from 0 to 100% at the rate of 1% every 100 ms.
 
-### Updating progress using `bar.set_progress(value)`
+## Updating progress using `bar.set_progress(value)`
 
 If you'd rather control progress of the bar in discrete steps, consider using `bar.set_progress(value)`. Example:
 
@@ -124,7 +124,7 @@ int main() {
 
 The above code will print a progress bar that goes from 0 to 100% at the rate of 10% every 100 ms.
 
-### Multi-threaded Example
+## Multi-threaded Example
 
 ```cpp
 #include <indica/progress_bar.hpp>
