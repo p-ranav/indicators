@@ -127,13 +127,24 @@ int main() {
   bar.set_foreground_color(indicators::Color::GREEN); 
   
   // Update bar state
-  size_t i = 0;
-  while (i < 101) {
-    bar.set_progress(i);
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    i += 10;
-  }
-
+  
+  bar.set_progress(10); // 10% done
+  
+  // do some work
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  
+  bar.set_progress(30); // 30% done
+  
+  // do some more work             
+  std::this_thread::sleep_for(std::chrono::milliseconds(600));
+  
+  bar.set_progress(65); // 65% done
+  
+  // do final bit of work
+  std::this_thread::sleep_for(std::chrono::milliseconds(300));
+  
+  bar.set_progress(100); // all done
+  
   return 0;
 }
 ```
