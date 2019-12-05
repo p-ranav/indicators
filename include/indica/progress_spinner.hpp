@@ -60,7 +60,7 @@ public:
 
   void show_spinner() { _show_spinner = true; }
 
-  void hide_spinner() { _show_spinner = false; }  
+  void hide_spinner() { _show_spinner = false; }
 
   void set_progress(float value) {
     {
@@ -90,21 +90,21 @@ public:
     _print_progress();
   }
 
-  void set_spinner_states(const std::vector<std::string>& states) {
+  void set_spinner_states(const std::vector<std::string> &states) {
     std::unique_lock<std::mutex> lock{_mutex};
     _states = states;
   }
-  
+
 private:
   float _progress{0.0};
   std::string _prefix_text{""};
   size_t _index{0};
-  std::vector<std::string> _states{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"};  
+  std::vector<std::string> _states{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"};
   std::string _postfix_text{""};
   std::atomic<size_t> _max_postfix_text_length{0};
   std::atomic<bool> _completed{false};
   std::atomic<bool> _show_percentage{true};
-  std::atomic<bool> _show_spinner{true};  
+  std::atomic<bool> _show_spinner{true};
   std::mutex _mutex;
   Color _foreground_color;
 
@@ -156,4 +156,4 @@ private:
   }
 };
 
-}
+} // namespace indica

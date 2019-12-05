@@ -187,4 +187,4 @@ private:
   }
 };
 
-}
+} // namespace indica
