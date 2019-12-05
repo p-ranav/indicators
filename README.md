@@ -242,7 +242,7 @@ int main() {
 }
 ```
 
-ProgressSpinner has a vector of strings: `spinner_states`. At each update, the spinner will pick the next string from this sequence to print to the console. Updates to the spinner has similar to ProgressBars: Use either `tick()` or `set_progress(value)`. 
+ProgressSpinner has a vector of strings: `spinner_states`. At each update, the spinner will pick the next string from this sequence to print to the console. The spinner state can be updated similarly to ProgressBars: Using either `tick()` or `set_progress(value)`. 
 
 ```cpp
 #include <indica/progress_spinner.hpp>
