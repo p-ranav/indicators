@@ -124,8 +124,6 @@ int main() {
 
 The above code will print a progress bar that goes from 0 to 100% at the rate of 10% every 100 ms.
 
-For more examples, checkout the examples in the `samples/` directory.
-
 ### Multi-threaded Example
 
 ```cpp
@@ -193,3 +191,5 @@ int main() {
   return 0;
 }
 ```
+
+For more examples, checkout the examples in the `samples/` directory.
