@@ -13,6 +13,12 @@
   <img src="img/demo.gif"/> 
 </p>
 
+# Highlights
+
+* Thread-safe `ProgressBar` and `ProgressSpinner` classes
+* Header-only library. Grab a copy of `include/indica`
+* MIT License
+
 # Progress bar
 
 To introduce a progress bar in your application, include `indica/progress_bar.hpp` and create a `ProgressBar` object. 
