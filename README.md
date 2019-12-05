@@ -26,7 +26,7 @@ Here's the general structure of a progress bar:
               ^^^^^^^^^^^^^^^^^^ Bar Width ^^^^^^^^^^^^^^^^^^   ^^^^^ Show/Hide ^^^^^
 ```
 
-Each of these elements can be configured using the ProgressBar API:
+Each of these elements (and more) can be configured using the ProgressBar API:
 
 ```cpp
 #include <indica/progress_bar.hpp>
