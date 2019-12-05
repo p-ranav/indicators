@@ -68,7 +68,7 @@ Now that the bar is configured, let's update the state of the bar. The amount of
 
 From application-level code, there are two ways in which you can update this progress:
 
-## Update progress using `tick()`
+## Update progress using `bar.tick()`
 
 You can update the progress bar using `bar.tick()` which increments progress by exactly `1%`.
 
