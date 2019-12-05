@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/p-ranav/indica/blob/master/LICENSE">
+  <a href="https://github.com/p-ranav/indicators/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="license"/>
   </a>
   <img src="https://img.shields.io/badge/version-1.0-blue.svg?cacheSeconds=2592000" alt="version"/>
@@ -16,19 +16,19 @@
 # Highlights
 
 * Thread-safe `ProgressBar` and `ProgressSpinner` classes
-* Header-only library. Grab a copy of `include/indica`
+* Header-only library. Grab a copy of `include/indicators`
 * MIT License
 * Source for the above GIF can be found [here](demo/demo.cpp)
 
 # Progress bar
 
-To introduce a progress bar in your application, include `indica/progress_bar.hpp` and create a `ProgressBar` object. 
+To introduce a progress bar in your application, include `indicators/progress_bar.hpp` and create a `ProgressBar` object. 
 
 ```cpp
-#include <indica/progress_bar.hpp>
+#include <indicators/progress_bar.hpp>
 
 int main() {
-  indica::ProgressBar bar;
+  indicators::ProgressBar bar;
   return 0;
 }
 ```
@@ -43,10 +43,10 @@ Here's the general structure of a progress bar:
 Each of these elements (and more) can be configured using the ProgressBar API. Here's an example configuration:
 
 ```cpp
-#include <indica/progress_bar.hpp>
+#include <indicators/progress_bar.hpp>
 
 int main() {
-  indica::ProgressBar bar;
+  indicators::ProgressBar bar;
   
   // Configure the bar
   bar.set_bar_width(50);
@@ -56,7 +56,7 @@ int main() {
   bar.fill_bar_remainder_with(" ");
   bar.end_bar_with("]");
   bar.set_postfix_text("Getting started");
-  bar.set_foreground_color(indica::Color::GREEN); 
+  bar.set_foreground_color(indicators::Color::GREEN); 
   
   // Update bar state
 
@@ -73,12 +73,12 @@ From application-level code, there are two ways in which you can update this pro
 You can update the progress bar using `bar.tick()` which increments progress by exactly `1%`.
 
 ```cpp
-#include <indica/progress_bar.hpp>
+#include <indicators/progress_bar.hpp>
 #include <thread>
 #include <chrono>
 
 int main() {
-  indica::ProgressBar bar;
+  indicators::ProgressBar bar;
   
   // Configure the bar
   bar.set_bar_width(50);
@@ -88,7 +88,7 @@ int main() {
   bar.fill_bar_remainder_with(" ");
   bar.end_bar_with("]");
   bar.set_postfix_text("Getting started");
-  bar.set_foreground_color(indica::Color::GREEN); 
+  bar.set_foreground_color(indicators::Color::GREEN); 
   
   // Update bar state
   while (true) {
@@ -109,12 +109,12 @@ The above code will print a progress bar that goes from 0 to 100% at the rate of
 If you'd rather control progress of the bar in discrete steps, consider using `bar.set_progress(value)`. Example:
 
 ```cpp
-#include <indica/progress_bar.hpp>
+#include <indicators/progress_bar.hpp>
 #include <thread>
 #include <chrono>
 
 int main() {
-  indica::ProgressBar bar;
+  indicators::ProgressBar bar;
   
   // Configure the bar
   bar.set_bar_width(50);
@@ -124,7 +124,7 @@ int main() {
   bar.fill_bar_remainder_with(" ");
   bar.end_bar_with("]");
   bar.set_postfix_text("Getting started");
-  bar.set_foreground_color(indica::Color::GREEN); 
+  bar.set_foreground_color(indicators::Color::GREEN); 
   
   // Update bar state
   size_t i = 0;
@@ -143,19 +143,19 @@ The above code will print a progress bar that goes from 0 to 100% at the rate of
 ## Multi-threaded Example
 
 ```cpp
-#include <indica/progress_bar.hpp>
+#include <indicators/progress_bar.hpp>
 #include <vector>
 
 int main() {
 
-  indica::ProgressBar bar;
+  indicators::ProgressBar bar;
   bar.set_bar_width(50);
   bar.start_bar_with("[");
   bar.fill_bar_progress_with("■");
   bar.lead_bar_progress_with("■");
   bar.fill_bar_remainder_with("-");
   bar.end_bar_with("]");
-  bar.set_foreground_color(indica::Color::YELLOW);
+  bar.set_foreground_color(indicators::Color::YELLOW);
 
   // As configured, the bar will look like this:
   //
@@ -212,13 +212,13 @@ For more examples, checkout the examples in the `samples/` directory.
 
 # Progress Spinner
 
-To introduce a progress spinner in your application, include `indica/progress_spinner.hpp` and create a `ProgressSpinner` object. 
+To introduce a progress spinner in your application, include `indicators/progress_spinner.hpp` and create a `ProgressSpinner` object. 
 
 ```cpp
-#include <indica/progress_spinner.hpp>
+#include <indicators/progress_spinner.hpp>
 
 int main() {
-  indica::ProgressSpinner spinner;
+  indicators::ProgressSpinner spinner;
   return 0;
 }
 ```
@@ -232,15 +232,15 @@ Here's the general structure of a progress spinner:
 Each of these elements (and more) can be configured using the ProgressSpinner API. Here's an example configuration:
 
 ```cpp
-#include <indica/progress_spinner.hpp>
+#include <indicators/progress_spinner.hpp>
 
 int main() {
-  indica::ProgressSpinner spinner;
+  indicators::ProgressSpinner spinner;
   
   // Configure the spinner
   spinner.set_prefix_text("  ");
   spinner.set_postfix_text("Checking credentials");
-  spinner.set_foreground_color(indica::Color::YELLOW);
+  spinner.set_foreground_color(indicators::Color::YELLOW);
   spinner.set_spinner_states({"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"});
   
   // Update spinner state
@@ -252,21 +252,21 @@ int main() {
 ProgressSpinner has a vector of strings: `spinner_states`. At each update, the spinner will pick the next string from this sequence to print to the console. The spinner state can be updated similarly to ProgressBars: Using either `tick()` or `set_progress(value)`. 
 
 ```cpp
-#include <indica/progress_spinner.hpp>
+#include <indicators/progress_spinner.hpp>
 
 int main() {
-  indica::ProgressSpinner spinner;
+  indicators::ProgressSpinner spinner;
   
   // Configure the spinner
   spinner.set_postfix_text("Checking credentials");
-  spinner.set_foreground_color(indica::Color::YELLOW);
+  spinner.set_foreground_color(indicators::Color::YELLOW);
   spinner.set_spinner_states({"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"});
   
   // Update spinner state
   auto job = [&spinner]() {
     while (true) {
       if (spinner.is_completed()) {
-        spinner.set_foreground_color(indica::Color::GREEN);
+        spinner.set_foreground_color(indicators::Color::GREEN);
         spinner.set_prefix_text("✔");
         spinner.hide_spinner();
         spinner.hide_percentage();

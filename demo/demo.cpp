@@ -1,5 +1,5 @@
-#include <indica/progress_bar.hpp>
-#include <indica/progress_spinner.hpp>
+#include <indicators/progress_bar.hpp>
+#include <indicators/progress_spinner.hpp>
 #include <vector>
 
 int main() {
@@ -11,14 +11,14 @@ int main() {
     //
     // PROGRESS BAR 1
     //
-    indica::ProgressBar p;
+    indicators::ProgressBar p;
     p.set_bar_width(50);
     p.start_bar_with("[");
     p.fill_bar_progress_with("■");
     p.lead_bar_progress_with("■");
     p.fill_bar_remainder_with(" ");
     p.end_bar_with(" ]");
-    p.set_foreground_color(indica::Color::YELLOW);
+    p.set_foreground_color(indicators::Color::YELLOW);
 
     std::atomic<size_t> index{0};
     std::vector<std::string> status_text = {"Rocket.exe is not responding",
@@ -49,7 +49,7 @@ int main() {
     //
     // PROGRESS BAR 2
     //
-    indica::ProgressBar p;
+    indicators::ProgressBar p;
     p.set_bar_width(40);
     p.set_prefix_text("Reading package list... ");
     p.start_bar_with("");
@@ -57,7 +57,7 @@ int main() {
     p.lead_bar_progress_with("");
     p.fill_bar_remainder_with("");
     p.end_bar_with("");
-    p.set_foreground_color(indica::Color::WHITE);
+    p.set_foreground_color(indicators::Color::WHITE);
     p.hide_percentage();
     auto job = [&p]() {
       while (true) {
@@ -79,7 +79,7 @@ int main() {
     //
     // PROGRESS BAR 3
     //
-    indica::ProgressBar p;
+    indicators::ProgressBar p;
     p.set_bar_width(50);
     p.start_bar_with("[");
     p.fill_bar_progress_with("=");
@@ -87,7 +87,7 @@ int main() {
     p.fill_bar_remainder_with(" ");
     p.end_bar_with("]");
     p.set_postfix_text("Getting started");
-    p.set_foreground_color(indica::Color::GREEN);
+    p.set_foreground_color(indicators::Color::GREEN);
     auto job = [&p]() {
       while (true) {
         auto ticks = p.current();
@@ -114,14 +114,14 @@ int main() {
     // PROGRESS BAR 4
     //
     std::vector<std::string> lead_spinner{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"};
-    indica::ProgressBar p4;
+    indicators::ProgressBar p4;
     p4.set_bar_width(40);
     p4.start_bar_with("");
     p4.fill_bar_progress_with("⠸");
     p4.lead_bar_progress_with("");
     p4.fill_bar_remainder_with(" ");
     p4.end_bar_with("");
-    p4.set_foreground_color(indica::Color::CYAN);
+    p4.set_foreground_color(indicators::Color::CYAN);
     p4.set_postfix_text("Restoring system state");
     p4.hide_percentage();
     std::atomic<size_t> index4{0};
@@ -132,7 +132,7 @@ int main() {
         index4 += 1;
         if (p4.current() + 2 >= 100) {
           std::cout << std::endl;
-          p4.set_foreground_color(indica::Color::RED);
+          p4.set_foreground_color(indicators::Color::RED);
           p4.set_prefix_text("{ ERROR }");
           p4.start_bar_with("");
           p4.fill_bar_progress_with("");
@@ -157,7 +157,7 @@ int main() {
       //
       // GOING BACKWARDS
       //
-      indica::ProgressBar p;
+      indicators::ProgressBar p;
       p.set_bar_width(50);
       p.start_bar_with("[");
       p.fill_bar_progress_with("■");
@@ -165,7 +165,7 @@ int main() {
       p.fill_bar_remainder_with("-");
       p.end_bar_with("]");
       p.set_progress(100);
-      p.set_foreground_color(indica::Color::WHITE);
+      p.set_foreground_color(indicators::Color::WHITE);
       p.set_postfix_text("Reverting system restore");
       std::atomic<size_t> progress{100};
       auto job = [&p, &progress]() {
@@ -189,15 +189,15 @@ int main() {
     //
     // PROGRESS BAR 5
     //
-    indica::ProgressSpinner p;
+    indicators::ProgressSpinner p;
     p.set_prefix_text("");
     p.set_postfix_text("Checking credentials");
-    p.set_foreground_color(indica::Color::YELLOW);
+    p.set_foreground_color(indicators::Color::YELLOW);
     p.set_spinner_states({"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"});
     auto job = [&p]() {
       while (true) {
         if (p.is_completed()) {
-          p.set_foreground_color(indica::Color::GREEN);
+          p.set_foreground_color(indicators::Color::GREEN);
           p.set_prefix_text("✔");
           p.hide_spinner();
           p.hide_percentage();
@@ -218,10 +218,10 @@ int main() {
     //
     // PROGRESS BAR 6
     //
-    indica::ProgressSpinner p;
+    indicators::ProgressSpinner p;
     p.set_prefix_text(" - ");
     p.set_postfix_text("Searching for the Moon");
-    p.set_foreground_color(indica::Color::WHITE);
+    p.set_foreground_color(indicators::Color::WHITE);
     p.set_spinner_states({"▖", "▘", "▝", "▗"});
     p.hide_percentage();
     auto job = [&p]() {
@@ -259,7 +259,7 @@ int main() {
           //
           // NESTED PROGRESS BAR
           //
-          indica::ProgressBar p2;
+          indicators::ProgressBar p2;
           p2.set_bar_width(30);
           p2.set_prefix_text(" - ");
           p2.start_bar_with("🌎");
@@ -268,7 +268,7 @@ int main() {
           p2.fill_bar_remainder_with(" ");
           p2.end_bar_with("🌑");
           p2.set_postfix_text("Achieved low-Earth orbit");
-          p2.set_foreground_color(indica::Color::WHITE);
+          p2.set_foreground_color(indicators::Color::WHITE);
           std::vector<std::string> ship_trail{"⠁", "⠂", "⠄", "⡀", "⢀", "⠠", "⠐", "⠈"};
           std::atomic<int> ship_trail_index{0};
           auto job2 = [&p2, &ship_trail_index, &ship_trail]() {

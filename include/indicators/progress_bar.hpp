@@ -1,6 +1,6 @@
 /*
-Activity Indicator for Modern C++
-https://github.com/p-ranav/indica
+Activity Indicators for Modern C++
+https://github.com/p-ranav/indicators
 
 Licensed under the MIT License <http://opensource.org/licenses/MIT>.
 SPDX-License-Identifier: MIT
@@ -26,13 +26,13 @@ SOFTWARE.
 */
 #pragma once
 #include <atomic>
-#include <indica/color.hpp>
+#include <indicators/color.hpp>
 #include <iostream>
 #include <mutex>
 #include <string>
 #include <thread>
 
-namespace indica {
+namespace indicators {
 
 class ProgressBar {
 public:
@@ -187,4 +187,4 @@ private:
   }
 };
 
-} // namespace indica
+} // namespace indicators

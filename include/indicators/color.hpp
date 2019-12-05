@@ -1,5 +1,5 @@
 /*
-Activity Indicator for Modern C++
+Activity Indicators for Modern C++
 https://github.com/p-ranav/indica
 
 Licensed under the MIT License <http://opensource.org/licenses/MIT>.
@@ -25,8 +25,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#include <indica/termcolor.hpp>
+#include <indicators/termcolor.hpp>
 
-namespace indica {
+namespace indicators {
 enum class Color { GREY, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE };
 }
