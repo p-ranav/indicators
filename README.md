@@ -29,11 +29,11 @@ int main() {
 Here's the general structure of a progress bar:
 
 ```
-<prefix_text> <bar_start> <fill> <lead> <remaining> <bar_end>   <progress_percentage> <postfix_text>
+<prefix_text> <bar_start> <fill> <lead> <remaining> <bar_end>   <progress_percentage>? <postfix_text>
               ^^^^^^^^^^^^^^^^^^ Bar Width ^^^^^^^^^^^^^^^^^^   ^^^^^ Show/Hide ^^^^^
 ```
 
-Each of these elements (and more) can be configured using the ProgressBar API:
+Each of these elements (and more) can be configured using the ProgressBar API. Here's an example configuration:
 
 ```cpp
 #include <indica/progress_bar.hpp>
@@ -50,6 +50,8 @@ int main() {
   bar.end_bar_with("]");
   bar.set_postfix_text("Getting started");
   bar.set_foreground_color(indica::Color::GREEN); 
+  
+  // Update bar state
 
   return 0;
 }
@@ -200,3 +202,78 @@ int main() {
 ```
 
 For more examples, checkout the examples in the `samples/` directory.
+
+# Progress Spinner
+
+To introduce a progress spinner in your application, include `indica/progress_spinner.hpp` and create a `ProgressSpinner` object. 
+
+```cpp
+#include <indica/progress_spinner.hpp>
+
+int main() {
+  indica::ProgressSpinner spinner;
+  return 0;
+}
+```
+
+Here's the general structure of a progress spinner:
+
+```
+<prefix_text> <spinner> <progress_percentage>? <postfix_text>
+```
+
+Each of these elements (and more) can be configured using the ProgressSpinner API. Here's an example configuration:
+
+```cpp
+#include <indica/progress_spinner.hpp>
+
+int main() {
+  indica::ProgressSpinner spinner;
+  
+  // Configure the spinner
+  spinner.set_prefix_text("  ");
+  spinner.set_postfix_text("Checking credentials");
+  spinner.set_foreground_color(indica::Color::YELLOW);
+  spinner.set_spinner_states({"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"});
+  
+  // Update spinner state
+
+  return 0;
+}
+```
+
+ProgressSpinner has a vector of strings: `spinner_states`. At each update, the spinner will pick the next string from this sequence to print to the console. Updates to the spinner has similar to ProgressBars: Use either `tick()` or `set_progress(value)`. 
+
+```cpp
+#include <indica/progress_spinner.hpp>
+
+int main() {
+  indica::ProgressSpinner spinner;
+  
+  // Configure the spinner
+  spinner.set_postfix_text("Checking credentials");
+  spinner.set_foreground_color(indica::Color::YELLOW);
+  spinner.set_spinner_states({"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"});
+  
+  // Update spinner state
+  auto job = [&spinner]() {
+    while (true) {
+      if (spinner.is_completed()) {
+        spinner.set_foreground_color(indica::Color::GREEN);
+        spinner.set_prefix_text("✔");
+        spinner.hide_spinner();
+        spinner.hide_percentage();
+        spinner.set_postfix_text("Authenticated!");
+        spinner.mark_as_completed();
+        break;
+      } else
+        spinner.tick();
+      std::this_thread::sleep_for(std::chrono::milliseconds(40));
+    }
+  };
+  std::thread thread(job);
+  thread.join();  
+
+  return 0;
+}
+```
