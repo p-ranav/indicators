@@ -277,3 +277,9 @@ int main() {
   return 0;
 }
 ```
+
+## Contributing
+Contributions are welcome, have a look at the [CONTRIBUTING.md](CONTRIBUTING.md) document for more information.
+
+## License
+The project is available under the [MIT](https://opensource.org/licenses/MIT) license.
