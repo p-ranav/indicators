@@ -55,7 +55,7 @@ int main() {
   p1.fill_bar_progress_with("■");
   p1.lead_bar_progress_with("■");
   p1.fill_bar_remainder_with(" ");
-  p1.end_bar_with("]");
+  p1.end_bar_with(" ]");
   p1.set_foreground_color(indica::Color::YELLOW);
 
   std::atomic<size_t> index1{0};
@@ -289,11 +289,11 @@ int main() {
           indica::ProgressBar p2;
           p2.set_bar_width(30);
           p2.set_prefix_text("   - ");
-          p2.start_bar_with("[🌎");
-          p2.fill_bar_progress_with(" ");
-          p2.lead_bar_progress_with("⠁⠂⠄🚀");
+          p2.start_bar_with("🌎");
+          p2.fill_bar_progress_with("·");
+          p2.lead_bar_progress_with("🚀");
           p2.fill_bar_remainder_with(" ");
-          p2.end_bar_with("🌑]");
+          p2.end_bar_with("🌑");
           p2.set_postfix_text("Achieved low-Earth orbit");
           p2.set_foreground_color(indica::Color::WHITE);
           std::vector<std::string> ship_trail{"⠁", "⠂", "⠄", "⡀", "⢀", "⠠", "⠐", "⠈"};
@@ -304,17 +304,11 @@ int main() {
               if (ticks > 20 && ticks < 50)
                 p2.set_postfix_text("Switching to trans-lunar trajectory");
               else if (ticks > 50 && ticks < 80)
-                p2.set_postfix_text("Transfered to Lunar lander");
+                p2.set_postfix_text("Transferred to Lunar lander");
               else if (ticks > 80 && ticks < 98)
                 p2.set_postfix_text("Almost there");
               else if (ticks >= 98)
                 p2.set_postfix_text("Landed on the Moon");
-              p2.lead_bar_progress_with(
-                ship_trail[(ship_trail_index - 3) % ship_trail.size()] +
-                ship_trail[(ship_trail_index - 2) % ship_trail.size()] +
-                ship_trail[(ship_trail_index - 1) % ship_trail.size()] +
-                ship_trail[ship_trail_index % ship_trail.size()] +
-                "🚀");
               p2.tick();
               ship_trail_index += 1;
               if (p2.is_completed())
