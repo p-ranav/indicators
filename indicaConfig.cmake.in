@@ -1,0 +1,9 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+find_dependency(Threads)
+
+if (NOT TARGET indica::indica)
+  include(${CMAKE_CURRENT_LIST_DIR}/indicaTargets.cmake)
+endif ()
