@@ -217,6 +217,38 @@ int main() {
 }
 ```
 
+# Smooth Block Progress Bar
+
+Are you in need of a smooth block progress bar using [unicode block elements](https://en.wikipedia.org/wiki/Block_Elements)? Use `BlockProgressBar` instead of `ProgressBar`.
+
+`BlockProgressBar` uses unicode block elements that achieve a smooth progress bar experience
+
+<p align="center">
+  <img height="70" src="img/block_progress_bar.gif"/>  
+</p>
+
+`BlockProgressBar` is slighly less configurable compared to `ProgressBar` but you can still set the prefix text, postfix text, color etc.
+
+```cpp
+  indicators::BlockProgressBar bar;
+  
+  // Configure the bar
+  bar.set_bar_width(80);
+  bar.start_bar_with("[");
+  bar.end_bar_with("]");
+  bar.set_foreground_color(indicators::Color::WHITE); 
+  
+  // Update bar state
+  auto progress = 0.0f;
+  while (true) {
+    bar.set_progress(progress);
+    progress += 0.25f;
+    if (bar.is_completed())
+      break;
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+  }
+```
+
 # Progress Spinner
 
 To introduce a progress spinner in your application, include `indicators/progress_spinner.hpp` and create a `ProgressSpinner` object. 
