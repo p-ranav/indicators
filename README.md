@@ -222,7 +222,7 @@ int main() {
 Are you in need of a smooth block progress bar using [unicode block elements](https://en.wikipedia.org/wiki/Block_Elements)? Use `BlockProgressBar` instead of `ProgressBar`. Thanks to [this blog post](https://mike42.me/blog/2018-06-make-better-cli-progress-bars-with-unicode-block-characters) for making `BlockProgressBar` an easy addition to the library. 
 
 <p align="center">
-  <img height="70" src="img/block_progress_bar.gif"/>  
+  <img src="img/block_progress_bar.gif"/>  
 </p>
 
 ```cpp
