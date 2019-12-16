@@ -29,24 +29,6 @@ To introduce a progress bar in your application, include `indicators/progress_ba
 
 int main() {
   indicators::ProgressBar bar;
-  return 0;
-}
-```
-
-Here's the general structure of a progress bar:
-
-```
-<prefix_text> <bar_start> <fill> <lead> <remaining> <bar_end>   <progress_percentage>? <postfix_text>
-              ^^^^^^^^^^^^^^^^^^ Bar Width ^^^^^^^^^^^^^^^^^^   ^^^^^ Show/Hide ^^^^^
-```
-
-Each of these elements (and more) can be configured using the ProgressBar API. Here's an example configuration:
-
-```cpp
-#include <indicators/progress_bar.hpp>
-
-int main() {
-  indicators::ProgressBar bar;
   
   // Configure the bar
   bar.set_bar_width(50);
@@ -64,7 +46,14 @@ int main() {
 }
 ```
 
-Now that the bar is configured, let's update the state of the bar. The amount of progress in ProgressBar is maintained as a float in range `[0, 100]`. When progress reaches 100, the progression is complete. 
+Here's the general structure of a progress bar:
+
+```
+<prefix_text> <bar_start> <fill> <lead> <remaining> <bar_end>   <progress_percentage>? <postfix_text>
+              ^^^^^^^^^^^^^^^^^^ Bar Width ^^^^^^^^^^^^^^^^^^   ^^^^^ Show/Hide ^^^^^
+```
+
+The amount of progress in ProgressBar is maintained as a float in range `[0, 100]`. When progress reaches 100, the progression is complete. 
 
 From application-level code, there are two ways in which you can update this progress:
 
@@ -269,23 +258,6 @@ To introduce a progress spinner in your application, include `indicators/progres
 
 int main() {
   indicators::ProgressSpinner spinner;
-  return 0;
-}
-```
-
-Here's the general structure of a progress spinner:
-
-```
-<prefix_text> <spinner> <progress_percentage>? <postfix_text>
-```
-
-Each of these elements (and more) can be configured using the ProgressSpinner API. Here's an example configuration:
-
-```cpp
-#include <indicators/progress_spinner.hpp>
-
-int main() {
-  indicators::ProgressSpinner spinner;
   
   // Configure the spinner
   spinner.set_prefix_text("  ");
@@ -297,6 +269,12 @@ int main() {
 
   return 0;
 }
+```
+
+Here's the general structure of a progress spinner:
+
+```
+<prefix_text> <spinner> <progress_percentage>? <postfix_text>
 ```
 
 ProgressSpinner has a vector of strings: `spinner_states`. At each update, the spinner will pick the next string from this sequence to print to the console. The spinner state can be updated similarly to ProgressBars: Using either `tick()` or `set_progress(value)`. 
