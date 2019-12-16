@@ -33,6 +33,7 @@ SOFTWARE.
 #include <string>
 #include <thread>
 #include <vector>
+#include <cmath>
 
 namespace indicators {
 
@@ -148,18 +149,21 @@ private:
     }
     std::cout << _prefix_text;
     std::cout << _start;
-    auto pos = static_cast<size_t>(_progress * static_cast<float>(_bar_width) / 100.0);
-    auto remainder = _bar_width - pos;
+
     std::vector<std::string> lead_characters{" ", "▏", "▎", "▍", "▌", "▋", "▊", "▉"};
-    _lead = lead_characters[remainder % lead_characters.size()];
-    for (size_t i = 0; i < _bar_width; ++i) {
-      if (i < pos)
-        std::cout << _fill;
-      else if (i == pos)
-        std::cout << _lead;
-      else
-        std::cout << _remainder;
-    }
+    auto progress = std::min(1.0f, std::max(0.0f, _progress / 100.0f));
+    auto whole_width = std::floor(progress * _bar_width);
+    auto remainder_width = fmod((progress * _bar_width), 1.0f);
+    auto part_width = std::floor(remainder_width * lead_characters.size());
+    _lead = lead_characters[part_width];
+    if ((_bar_width - whole_width - 1) < 0)
+      _lead = "";
+    for (size_t i = 0; i < whole_width; ++i)
+      std::cout << _fill;
+    std::cout << _lead;
+    for (size_t i = 0; i < (_bar_width - whole_width - 1); ++i)
+      std::cout << " ";
+    
     std::cout << _end;
     if (_show_percentage) {
       std::cout << " " << std::min(static_cast<size_t>(_progress), size_t(100)) << "%";
