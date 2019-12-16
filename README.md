@@ -226,6 +226,15 @@ Are you in need of a smooth block progress bar using [unicode block elements](ht
 </p>
 
 ```cpp
+#include <indicators/block_progress_bar.hpp>
+#include <thread>
+#include <chrono>
+
+int main() {
+
+  // Hide cursor
+  std::cout << "\e[?25l";
+  
   indicators::BlockProgressBar bar;
   
   // Configure the bar
@@ -243,6 +252,12 @@ Are you in need of a smooth block progress bar using [unicode block elements](ht
       break;
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
   }
+
+  // Show cursor
+  std::cout << "\e[?25h";  
+
+  return 0;
+}
 ```
 
 # Progress Spinner
