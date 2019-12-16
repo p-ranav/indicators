@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.8)
 project(indica VERSION 1.0.0 LANGUAGES CXX)
 option(INDICA_BUILD_TESTS OFF)
+option(SAMPLES "Build Samples" OFF)
+option(DEMO "Build Demo" OFF)
 
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
@@ -15,6 +17,15 @@ target_include_directories(indica INTERFACE
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>)
 target_link_libraries(indica INTERFACE Threads::Threads)
+
+
+if( DEMO )
+    add_subdirectory(demo)
+endif()
+
+if( SAMPLES )
+    add_subdirectory(samples)
+endif()
 
 configure_package_config_file(indicaConfig.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/indicaConfig.cmake
