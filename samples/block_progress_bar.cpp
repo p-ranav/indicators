@@ -1,20 +1,20 @@
+#include <chrono>
 #include <indicators/block_progress_bar.hpp>
 #include <thread>
-#include <chrono>
 
 int main() {
 
   // Hide cursor
   std::cout << "\e[?25l";
-  
+
   indicators::BlockProgressBar bar;
-  
+
   // Configure the bar
   bar.set_bar_width(80);
   bar.start_bar_with("[");
   bar.end_bar_with("]");
-  bar.set_foreground_color(indicators::Color::WHITE); 
-  
+  bar.set_foreground_color(indicators::Color::WHITE);
+
   // Update bar state
   auto progress = 0.0f;
   while (true) {
@@ -26,7 +26,7 @@ int main() {
   }
 
   // Show cursor
-  std::cout << "\e[?25h";  
+  std::cout << "\e[?25h";
 
   return 0;
 }

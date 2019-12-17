@@ -6,12 +6,12 @@ int main() {
   std::cout << "\e[?25l";
 
   indicators::ProgressSpinner spinner;
-  
+
   // Configure the spinner
   spinner.set_postfix_text("Checking credentials");
   spinner.set_foreground_color(indicators::Color::YELLOW);
   spinner.set_spinner_states({"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"});
-  
+
   // Update spinner state
   auto job = [&spinner]() {
     while (true) {
@@ -32,7 +32,7 @@ int main() {
   thread.join();
 
   // Show cursor
-  std::cout << "\e[?25h";    
+  std::cout << "\e[?25h";
 
   return 0;
 }

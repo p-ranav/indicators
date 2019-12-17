@@ -17,25 +17,22 @@ int main() {
   // [■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■-------------] 70%
   //
   //
-  
+
   std::atomic<size_t> index{0};
-  std::vector<std::string> status_text =
-    {
-     "Rocket.exe is not responding",
-     "Finding a replacement engineer",
-     "Buying more snacks",
-     "Assimilating the modding community",
-     "Crossing fingers",
-     "Porting KSP to a Nokia 3310"
-  };
-  
+  std::vector<std::string> status_text = {"Rocket.exe is not responding",
+                                          "Finding a replacement engineer",
+                                          "Buying more snacks",
+                                          "Assimilating the modding community",
+                                          "Crossing fingers",
+                                          "Porting KSP to a Nokia 3310"};
+
   // Let's say you want to append some status text to the right of the progress bar
   // You can use bar.set_postfix_text(...) to append text to the right
   //
   // [■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■-------------] 70% Finding a replacement engineer
   //                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   //
-  //  
+  //
 
   auto job = [&bar, &index, &status_text]() {
     while (true) {
@@ -58,6 +55,6 @@ int main() {
   second_job.join();
   third_job.join();
   last_job.join();
-  
+
   return 0;
 }

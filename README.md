@@ -38,7 +38,7 @@ int main() {
   bar.fill_bar_remainder_with(" ");
   bar.end_bar_with("]");
   bar.set_postfix_text("Getting started");
-  bar.set_foreground_color(indicators::Color::GREEN); 
+  bar.set_foreground_color(indicators::Color::GREEN);
   
   // Update bar state
 
@@ -49,8 +49,8 @@ int main() {
 Here's the general structure of a progress bar:
 
 ```
-<prefix_text> <bar_start> <fill> <lead> <remaining> <bar_end>   <progress_percentage>? <postfix_text>
-              ^^^^^^^^^^^^^^^^^^ Bar Width ^^^^^^^^^^^^^^^^^^   ^^^^^ Show/Hide ^^^^^
+{prefix} {start} {fill} {lead} {remaining} {end} {percentage} [{elapsed}<{remaining}?] {postfix}
+         ^^^^^^^^^^^^^ Bar Width ^^^^^^^^^^^^^^^   
 ```
 
 The amount of progress in ProgressBar is maintained as a float in range `[0, 100]`. When progress reaches 100, the progression is complete. 
@@ -206,6 +206,57 @@ int main() {
 }
 ```
 
+## Showing Time Elapsed/Remaining
+
+All progress bars and spinners in `indicators` support showing time elapsed and time remaining. Inspired by python's [tqdm](https://github.com/tqdm/tqdm) module, the format of this meter is as follows:
+
+```bash
+[{elapsed}<{remaining}]
+```
+
+Below is an example for configuring this meter:
+
+<p align="center">
+  <img src="img/time_meter.gif"/>  
+</p>
+
+```cpp
+#include <chrono>
+#include <indicators/progress_bar.hpp>
+#include <thread>
+
+int main() {
+  indicators::ProgressBar bar;
+
+  // Configure the bar
+  bar.set_bar_width(50);
+  bar.start_bar_with(" [");
+  bar.fill_bar_progress_with("█");
+  bar.lead_bar_progress_with("█");
+  bar.fill_bar_remainder_with("-");
+  bar.end_bar_with("]");
+  bar.set_prefix_text("Training Gaze Network 👀");
+  bar.set_foreground_color(indicators::Color::YELLOW);
+
+  // Show time elapsed and remaining
+  bar.show_elapsed_time();
+  bar.show_remaining_time();
+
+  // Update bar state
+  while (true) {
+    bar.tick();
+    if (bar.is_completed())
+      break;
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+  }
+
+  // Show cursor
+  std::cout << "\e[?25h";  
+
+  return 0;
+}
+```
+
 # Block Progress Bar
 
 Are you in need of a smooth block progress bar using [unicode block elements](https://en.wikipedia.org/wiki/Block_Elements)? Use `BlockProgressBar` instead of `ProgressBar`. Thanks to [this blog post](https://mike42.me/blog/2018-06-make-better-cli-progress-bars-with-unicode-block-characters) for making `BlockProgressBar` an easy addition to the library. 
@@ -274,7 +325,7 @@ int main() {
 Here's the general structure of a progress spinner:
 
 ```
-<prefix_text> <spinner> <progress_percentage>? <postfix_text>
+{prefix} {spinner} {percentage} [{elapsed}<{remaining}] {postfix}
 ```
 
 ProgressSpinner has a vector of strings: `spinner_states`. At each update, the spinner will pick the next string from this sequence to print to the console. The spinner state can be updated similarly to ProgressBars: Using either `tick()` or `set_progress(value)`. 
@@ -299,7 +350,7 @@ int main() {
         spinner.hide_spinner();
         spinner.hide_percentage();
         spinner.set_postfix_text("Authenticated!");
-        spinner.mark_as_completed();
+        spinner.mark_as_completed();	
         break;
       } else
         spinner.tick();
