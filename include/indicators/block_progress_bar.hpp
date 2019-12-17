@@ -155,7 +155,7 @@ private:
   };
 
   void _save_start_time() {
-    if (_show_elapsed_time && !_saved_start_time) {
+    if ((_show_elapsed_time || _show_remaining_time) && !_saved_start_time) {
       _start_time_point = std::chrono::high_resolution_clock::now();
       _saved_start_time = true;
     }
@@ -223,6 +223,8 @@ private:
     if (_show_remaining_time) {
       if (_show_elapsed_time)
         std::cout << "<";
+      else
+        std::cout << " [";
       auto eta = std::chrono::nanoseconds(
           _progress > 0 ? static_cast<long long>(elapsed.count() * 100 / _progress) : 0);
       auto remaining = eta > elapsed ? (eta - elapsed) : (elapsed - eta);
