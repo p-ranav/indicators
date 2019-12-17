@@ -229,7 +229,8 @@ private:
     }
 
     if (_show_remaining_time) {
-      std::cout << "<";
+      if (_show_elapsed_time)
+        std::cout << "<";
       auto eta = std::chrono::nanoseconds(
           _progress > 0 ? static_cast<long long>(elapsed.count() * 100 / _progress) : 0);
       auto remaining = eta > elapsed ? (eta - elapsed) : (elapsed - eta);
