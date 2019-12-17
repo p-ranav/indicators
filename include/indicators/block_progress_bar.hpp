@@ -27,13 +27,13 @@ SOFTWARE.
 #pragma once
 #include <algorithm>
 #include <atomic>
+#include <cmath>
 #include <indicators/color.hpp>
 #include <iostream>
 #include <mutex>
 #include <string>
 #include <thread>
 #include <vector>
-#include <cmath>
 
 namespace indicators {
 
@@ -91,9 +91,7 @@ public:
     _print_progress();
   }
 
-  size_t current() {
-    return std::min(static_cast<size_t>(_progress), size_t(100));
-  }
+  size_t current() { return std::min(static_cast<size_t>(_progress), size_t(100)); }
 
   bool is_completed() const { return _completed; }
 
@@ -163,7 +161,7 @@ private:
     std::cout << _lead;
     for (size_t i = 0; i < (_bar_width - whole_width - 1); ++i)
       std::cout << " ";
-    
+
     std::cout << _end;
     if (_show_percentage) {
       std::cout << " " << std::min(static_cast<size_t>(_progress), size_t(100)) << "%";

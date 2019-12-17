@@ -79,9 +79,7 @@ public:
     _print_progress();
   }
 
-  size_t current() {
-    return std::min(static_cast<size_t>(_progress), size_t(100));
-  }
+  size_t current() { return std::min(static_cast<size_t>(_progress), size_t(100)); }
 
   bool is_completed() const { return _completed; }
 
