@@ -206,6 +206,20 @@ int main() {
 }
 ```
 
+## Showing Time Elapsed/Remaining
+
+All progress bars and spinners in `indicators` support showing time elapsed and time remaining. Inspired by python's [tqdm](https://github.com/tqdm/tqdm) module, the format of this meter is as follows:
+
+```bash
+[{elapsed}<{remaining}]
+```
+
+Below is an example for configuring this meter:
+
+```cpp
+
+```
+
 # Block Progress Bar
 
 Are you in need of a smooth block progress bar using [unicode block elements](https://en.wikipedia.org/wiki/Block_Elements)? Use `BlockProgressBar` instead of `ProgressBar`. Thanks to [this blog post](https://mike42.me/blog/2018-06-make-better-cli-progress-bars-with-unicode-block-characters) for making `BlockProgressBar` an easy addition to the library. 
