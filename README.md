@@ -49,7 +49,7 @@ int main() {
 Here's the general structure of a progress bar:
 
 ```
-{prefix} {start} {fill} {lead} {remaining} {end} {percentage} [{elapsed}<{remaining}?] {postfix}
+{prefix} {start} {fill} {lead} {remaining} {end} {percentage} [{elapsed}<{remaining}] {postfix}
          ^^^^^^^^^^^^^ Bar Width ^^^^^^^^^^^^^^^   
 ```
 
