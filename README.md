@@ -3,6 +3,9 @@
 </p>
 
 <p align="center">
+  <a href="https://travis-ci.com/p-ranav/indicators">
+    <img src="https://travis-ci.com/p-ranav/indicators.svg?branch=master" alt="ci status"/>
+  </a>
   <a href="https://github.com/p-ranav/indicators/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="license"/>
   </a>
