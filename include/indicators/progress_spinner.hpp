@@ -27,7 +27,10 @@ SOFTWARE.
 #pragma once
 #include <algorithm>
 #include <atomic>
+#include <chrono>
+#include <cmath>
 #include <indicators/color.hpp>
+#include <iomanip>
 #include <iostream>
 #include <mutex>
 #include <string>
@@ -59,6 +62,14 @@ public:
 
   void hide_percentage() { _show_percentage = false; }
 
+  void show_elapsed_time() { _show_elapsed_time = true; }
+
+  void hide_elapsed_time() { _show_elapsed_time = false; }
+
+  void show_remaining_time() { _show_remaining_time = true; }
+
+  void hide_remaining_time() { _show_remaining_time = false; }
+
   void show_spinner() { _show_spinner = true; }
 
   void hide_spinner() { _show_spinner = false; }
@@ -68,6 +79,7 @@ public:
       std::unique_lock<std::mutex> lock{_mutex};
       _progress = value;
     }
+    _save_start_time();
     _print_progress();
   }
 
@@ -76,6 +88,7 @@ public:
       std::unique_lock<std::mutex> lock{_mutex};
       _progress += 1;
     }
+    _save_start_time();
     _print_progress();
   }
 
@@ -102,12 +115,48 @@ private:
   std::atomic<size_t> _max_postfix_text_length{0};
   std::atomic<bool> _completed{false};
   std::atomic<bool> _show_percentage{true};
+  std::atomic<bool> _show_elapsed_time{true};
+  std::atomic<bool> _show_remaining_time{true};
+  std::atomic<bool> _saved_start_time{false};
+  std::chrono::time_point<std::chrono::high_resolution_clock> _start_time_point;
   std::atomic<bool> _show_spinner{true};
   std::mutex _mutex;
   Color _foreground_color;
 
+  std::ostream &_print_duration(std::ostream &os, std::chrono::nanoseconds ns) {
+    using namespace std;
+    using namespace std::chrono;
+    typedef duration<int, ratio<86400>> days;
+    char fill = os.fill();
+    os.fill('0');
+    auto d = duration_cast<days>(ns);
+    ns -= d;
+    auto h = duration_cast<hours>(ns);
+    ns -= h;
+    auto m = duration_cast<minutes>(ns);
+    ns -= m;
+    auto s = duration_cast<seconds>(ns);
+    if (d.count() > 0)
+      os << setw(2) << d.count() << "d:";
+    if (h.count() > 0)
+      os << setw(2) << h.count() << "h:";
+    os << setw(2) << m.count() << "m:" << setw(2) << s.count() << 's';
+    os.fill(fill);
+    return os;
+  };
+
+  void _save_start_time() {
+    if (_show_elapsed_time && !_saved_start_time) {
+      _start_time_point = std::chrono::high_resolution_clock::now();
+      _saved_start_time = true;
+    }
+  }
+
   void _print_progress() {
     std::unique_lock<std::mutex> lock{_mutex};
+    auto now = std::chrono::high_resolution_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - _start_time_point);
+
     std::cout << termcolor::bold;
     switch (_foreground_color) {
     case Color::GREY:
@@ -141,6 +190,22 @@ private:
     if (_show_percentage) {
       std::cout << " " << std::min(static_cast<size_t>(_progress), size_t(100)) << "%";
     }
+
+    if (_show_elapsed_time) {
+      std::cout << " [";
+      _print_duration(std::cout, elapsed);
+    }
+
+    if (_show_remaining_time) {
+      if (_show_elapsed_time)
+        std::cout << "<";
+      auto eta = std::chrono::nanoseconds(
+          _progress > 0 ? static_cast<long long>(elapsed.count() * 100 / _progress) : 0);
+      auto remaining = eta > elapsed ? (eta - elapsed) : (elapsed - eta);
+      _print_duration(std::cout, remaining);
+      std::cout << "]";
+    }
+
     if (_max_postfix_text_length == 0)
       _max_postfix_text_length = 10;
     std::cout << " " << _postfix_text << std::string(_max_postfix_text_length, ' ') << "\r";
