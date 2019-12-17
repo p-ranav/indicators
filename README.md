@@ -208,13 +208,7 @@ int main() {
 
 ## Showing Time Elapsed/Remaining
 
-All progress bars and spinners in `indicators` support showing time elapsed and time remaining. Inspired by python's [tqdm](https://github.com/tqdm/tqdm) module, the format of this meter is as follows:
-
-```bash
-[{elapsed}<{remaining}]
-```
-
-Below is an example for configuring this meter:
+All progress bars and spinners in `indicators` support showing time elapsed and time remaining. Inspired by python's [tqdm](https://github.com/tqdm/tqdm) module, the format of this meter is `[{elapsed}<{remaining}]`:
 
 <p align="center">
   <img src="img/time_meter.gif"/>  
