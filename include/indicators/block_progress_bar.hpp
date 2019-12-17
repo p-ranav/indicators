@@ -202,7 +202,7 @@ private:
     auto whole_width = std::floor(progress * _bar_width);
     auto remainder_width = fmod((progress * _bar_width), 1.0f);
     auto part_width = std::floor(remainder_width * lead_characters.size());
-    _lead = lead_characters[part_width];
+    _lead = lead_characters[size_t(part_width)];
     if ((_bar_width - whole_width - 1) < 0)
       _lead = "";
     for (size_t i = 0; i < whole_width; ++i)
