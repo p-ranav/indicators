@@ -51,8 +51,8 @@ int main() {
 Here's the general structure of a progress bar:
 
 ```
-<prefix_text> <bar_start> <fill> <lead> <remaining> <bar_end>   <progress_percentage>? <postfix_text>
-              ^^^^^^^^^^^^^^^^^^ Bar Width ^^^^^^^^^^^^^^^^^^   ^^^^^ Show/Hide ^^^^^
+{prefix_text} {start} {fill} {lead} {remaining} {end}  {percentage} [{elapsed}<{remaining}?] {postfix_text}
+              ^^^^^^^^^^^^^ Bar Width ^^^^^^^^^^^^^^^   
 ```
 
 The amount of progress in ProgressBar is maintained as a float in range `[0, 100]`. When progress reaches 100, the progression is complete. 
@@ -286,7 +286,7 @@ int main() {
 Here's the general structure of a progress spinner:
 
 ```
-<prefix_text> <spinner> <progress_percentage>? <postfix_text>
+{prefix_text} {spinner} {percentage} [{elapsed}<{remaining}] {postfix_text}
 ```
 
 ProgressSpinner has a vector of strings: `spinner_states`. At each update, the spinner will pick the next string from this sequence to print to the console. The spinner state can be updated similarly to ProgressBars: Using either `tick()` or `set_progress(value)`. 
