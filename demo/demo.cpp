@@ -18,8 +18,6 @@ int main() {
     p.lead_bar_progress_with("■");
     p.fill_bar_remainder_with(" ");
     p.end_bar_with(" ]");
-    p.hide_elapsed_time();
-    p.hide_remaining_time();
     p.set_foreground_color(indicators::Color::YELLOW);
 
     std::atomic<size_t> index{0};
@@ -59,8 +57,6 @@ int main() {
     p.lead_bar_progress_with("");
     p.fill_bar_remainder_with("");
     p.end_bar_with("");
-    p.hide_elapsed_time();
-    p.hide_remaining_time();
     p.set_foreground_color(indicators::Color::WHITE);
     p.hide_percentage();
     auto job = [&p]() {
@@ -91,8 +87,6 @@ int main() {
     p.fill_bar_remainder_with(" ");
     p.end_bar_with("]");
     p.set_postfix_text("Getting started");
-    p.hide_elapsed_time();
-    p.hide_remaining_time();
     p.set_foreground_color(indicators::Color::GREEN);
     auto job = [&p]() {
       while (true) {
@@ -130,8 +124,6 @@ int main() {
     p4.set_foreground_color(indicators::Color::CYAN);
     p4.set_postfix_text("Restoring system state");
     p4.hide_percentage();
-    p4.hide_elapsed_time();
-    p4.hide_remaining_time();
     std::atomic<size_t> index4{0};
     auto job4 = [&p4, &index4, &lead_spinner]() {
       while (true) {
@@ -175,8 +167,6 @@ int main() {
       p.set_progress(100);
       p.set_foreground_color(indicators::Color::WHITE);
       p.set_postfix_text("Reverting system restore");
-      p.hide_elapsed_time();
-      p.hide_remaining_time();
       std::atomic<size_t> progress{100};
       auto job = [&p, &progress]() {
         while (true) {
@@ -204,8 +194,6 @@ int main() {
     p.set_postfix_text("Checking credentials");
     p.set_foreground_color(indicators::Color::YELLOW);
     p.set_spinner_states({"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"});
-    p.hide_elapsed_time();
-    p.hide_remaining_time();
     auto job = [&p]() {
       while (true) {
         if (p.is_completed()) {
@@ -236,8 +224,6 @@ int main() {
     p.set_foreground_color(indicators::Color::WHITE);
     p.set_spinner_states({"▖", "▘", "▝", "▗"});
     p.hide_percentage();
-    p.hide_elapsed_time();
-    p.hide_remaining_time();
     auto job = [&p]() {
       while (true) {
         auto current = p.current();
@@ -283,8 +269,6 @@ int main() {
           p2.end_bar_with("🌑");
           p2.set_postfix_text("Achieved low-Earth orbit");
           p2.set_foreground_color(indicators::Color::WHITE);
-          p2.hide_elapsed_time();
-          p2.hide_remaining_time();
           std::vector<std::string> ship_trail{"⠁", "⠂", "⠄", "⡀", "⢀", "⠠", "⠐", "⠈"};
           std::atomic<int> ship_trail_index{0};
           auto job2 = [&p2, &ship_trail_index, &ship_trail]() {

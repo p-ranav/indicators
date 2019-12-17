@@ -11,8 +11,6 @@ int main() {
   spinner.set_postfix_text("Checking credentials");
   spinner.set_foreground_color(indicators::Color::YELLOW);
   spinner.set_spinner_states({"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"});
-  spinner.hide_elapsed_time();
-  spinner.hide_remaining_time();
 
   // Update spinner state
   auto job = [&spinner]() {

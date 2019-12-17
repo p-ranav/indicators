@@ -125,8 +125,8 @@ private:
   std::atomic<size_t> _max_postfix_text_length{0};
   std::atomic<bool> _completed{false};
   std::atomic<bool> _show_percentage{true};
-  std::atomic<bool> _show_elapsed_time{true};
-  std::atomic<bool> _show_remaining_time{true};
+  std::atomic<bool> _show_elapsed_time{false};
+  std::atomic<bool> _show_remaining_time{false};
   std::atomic<bool> _saved_start_time{false};
   std::chrono::time_point<std::chrono::high_resolution_clock> _start_time_point;
   std::mutex _mutex;

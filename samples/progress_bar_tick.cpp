@@ -14,8 +14,6 @@ int main() {
   bar.end_bar_with("]");
   bar.set_postfix_text("Getting started");
   bar.set_foreground_color(indicators::Color::GREEN);
-  bar.hide_elapsed_time();
-  bar.hide_remaining_time();
 
   // Update bar state
   while (true) {

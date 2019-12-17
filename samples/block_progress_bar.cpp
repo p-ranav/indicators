@@ -14,8 +14,6 @@ int main() {
   bar.start_bar_with("[");
   bar.end_bar_with("]");
   bar.set_foreground_color(indicators::Color::WHITE);
-  bar.hide_elapsed_time();
-  bar.hide_remaining_time();
 
   // Update bar state
   auto progress = 0.0f;

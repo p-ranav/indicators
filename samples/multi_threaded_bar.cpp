@@ -11,8 +11,6 @@ int main() {
   bar.fill_bar_remainder_with("-");
   bar.end_bar_with("]");
   bar.set_foreground_color(indicators::Color::YELLOW);
-  bar.hide_elapsed_time();
-  bar.hide_remaining_time();
 
   // As configured, the bar will look like this:
   //
