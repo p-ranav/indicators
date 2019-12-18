@@ -295,10 +295,7 @@ int main() {
   bar3.set_prefix_text("Progress Bar #3 ");
 
   // Construct MultiProgress object
-  indicators::MultiProgress<indicators::ProgressBar, 3> bars;
-  bars.insert<0>(bar1);
-  bars.insert<1>(bar2);
-  bars.insert<2>(bar3);
+  indicators::MultiProgress<indicators::ProgressBar, 3> bars(bar1, bar2, bar3);
 
   std::cout << "Multiple Progress Bars:\n";
 
