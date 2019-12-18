@@ -36,6 +36,7 @@ SOFTWARE.
 #include <mutex>
 #include <string>
 #include <thread>
+#include <indicators/multi_progress.hpp>
 
 namespace indicators {
 
@@ -147,6 +148,10 @@ private:
   std::mutex _mutex;
   Color _foreground_color;
 
+  template <size_t count>
+  friend class MultiProgress;
+  std::atomic<bool> _multi_progress_mode{false};
+
   std::ostream &_print_duration(std::ostream &os, std::chrono::nanoseconds ns) {
     using namespace std;
     using namespace std::chrono;
@@ -176,7 +181,7 @@ private:
     }
   }
 
-  void _print_progress() {
+  void _print_progress() {    
     std::unique_lock<std::mutex> lock{_mutex};
     auto now = std::chrono::high_resolution_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - _start_time_point);
