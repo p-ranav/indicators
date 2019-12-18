@@ -89,6 +89,10 @@ The above code will print a progress bar that goes from 0 to 100% at the rate of
 
 If you'd rather control progress of the bar in discrete steps, consider using `bar.set_progress(value)`. Example:
 
+<p align="center">
+  <img src="img/progress_bar_set_progress.gif"/>  
+</p>
+
 ```cpp
 #include <indicators/progress_bar.hpp>
 #include <thread>
