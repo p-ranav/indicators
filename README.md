@@ -34,31 +34,7 @@
 
 # Progress bar
 
-To introduce a progress bar in your application, include `indicators/progress_bar.hpp` and create a `ProgressBar` object. 
-
-```cpp
-#include <indicators/progress_bar.hpp>
-
-int main() {
-  indicators::ProgressBar bar;
-  
-  // Configure the bar
-  bar.set_bar_width(50);
-  bar.start_bar_with("[");
-  bar.fill_bar_progress_with("=");
-  bar.lead_bar_progress_with(">");
-  bar.fill_bar_remainder_with(" ");
-  bar.end_bar_with("]");
-  bar.set_postfix_text("Getting started");
-  bar.set_foreground_color(indicators::Color::GREEN);
-  
-  // Update bar state
-
-  return 0;
-}
-```
-
-Here's the general structure of a progress bar:
+To introduce a progress bar in your application, include `indicators/progress_bar.hpp` and create a `ProgressBar` object. Here's the general structure of a progress bar:
 
 ```
 {prefix} {start} {fill} {lead} {remaining} {end} {percentage} [{elapsed}<{remaining}] {postfix}
@@ -72,6 +48,10 @@ From application-level code, there are two ways in which you can update this pro
 ## Update progress using `bar.tick()`
 
 You can update the progress bar using `bar.tick()` which increments progress by exactly `1%`.
+
+<p align="center">
+  <img src="img/progress_bar_tick.gif"/>  
+</p>
 
 ```cpp
 #include <indicators/progress_bar.hpp>
@@ -88,7 +68,7 @@ int main() {
   bar.lead_bar_progress_with(">");
   bar.fill_bar_remainder_with(" ");
   bar.end_bar_with("]");
-  bar.set_postfix_text("Getting started");
+  bar.set_postfix_text("Extracting Archive");
   bar.set_foreground_color(indicators::Color::GREEN); 
   
   // Update bar state
