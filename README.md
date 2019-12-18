@@ -68,7 +68,7 @@ int main() {
   bar.lead_bar_progress_with(">");
   bar.fill_bar_remainder_with(" ");
   bar.end_bar_with("]");
-  bar.set_postfix_text("Getting started");
+  bar.set_postfix_text("Extracting Archive");
   bar.set_foreground_color(indicators::Color::GREEN); 
   
   // Update bar state
