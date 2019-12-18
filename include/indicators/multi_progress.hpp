@@ -36,32 +36,31 @@ namespace indicators {
 
 template <typename Indicator, size_t count> class MultiProgress {
 public:
-
   template <typename... Indicators,
-	    typename = typename std::enable_if<(sizeof...(Indicators) == count)>::type
-	    >
-  explicit MultiProgress(Indicators&... bars) {
+            typename = typename std::enable_if<(sizeof...(Indicators) == count)>::type>
+  explicit MultiProgress(Indicators &... bars) {
     _bars = {bars...};
-    for (auto& bar: _bars) {
+    for (auto &bar : _bars) {
       bar.get()._multi_progress_mode = true;
     }
   }
 
   template <size_t index>
-  typename std::enable_if<(index >=0 && index < count), void>::type set_progress(float value) {
+  typename std::enable_if<(index >= 0 && index < count), void>::type set_progress(float value) {
     if (!_bars[index].get().is_completed())
       _bars[index].get().set_progress(value);
     _print_progress();
   }
 
-  template <size_t index> typename std::enable_if<(index >=0 && index < count), void>::type tick() {
+  template <size_t index>
+  typename std::enable_if<(index >= 0 && index < count), void>::type tick() {
     if (!_bars[index].get().is_completed())
       _bars[index].get().tick();
     _print_progress();
   }
 
   template <size_t index>
-  typename std::enable_if<(index >=0 && index < count), bool>::type is_completed() const {
+  typename std::enable_if<(index >= 0 && index < count), bool>::type is_completed() const {
     return _bars[index].get().is_completed();
   }
 

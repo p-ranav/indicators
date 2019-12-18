@@ -107,7 +107,7 @@ public:
   size_t current() {
     std::unique_lock<std::mutex> lock{_mutex};
     return std::min(static_cast<size_t>(_progress), size_t(100));
-  }  
+  }
 
   bool is_completed() const { return _completed; }
 
