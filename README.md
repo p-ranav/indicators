@@ -412,33 +412,17 @@ int main() {
 
 # Progress Spinner
 
-To introduce a progress spinner in your application, include `indicators/progress_spinner.hpp` and create a `ProgressSpinner` object. 
-
-```cpp
-#include <indicators/progress_spinner.hpp>
-
-int main() {
-  indicators::ProgressSpinner spinner;
-  
-  // Configure the spinner
-  spinner.set_prefix_text("  ");
-  spinner.set_postfix_text("Checking credentials");
-  spinner.set_foreground_color(indicators::Color::YELLOW);
-  spinner.set_spinner_states({"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"});
-  
-  // Update spinner state
-
-  return 0;
-}
-```
-
-Here's the general structure of a progress spinner:
+To introduce a progress spinner in your application, include `indicators/progress_spinner.hpp` and create a `ProgressSpinner` object. Here's the general structure of a progress spinner:
 
 ```
 {prefix} {spinner} {percentage} [{elapsed}<{remaining}] {postfix}
 ```
 
 ProgressSpinner has a vector of strings: `spinner_states`. At each update, the spinner will pick the next string from this sequence to print to the console. The spinner state can be updated similarly to ProgressBars: Using either `tick()` or `set_progress(value)`. 
+
+<p align="center">
+  <img src="img/progress_spinner.gif"/>  
+</p>
 
 ```cpp
 #include <indicators/progress_spinner.hpp>
