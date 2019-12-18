@@ -150,7 +150,7 @@ int main() {
 }
 ```
 
-## Multi-threaded Update
+## Multi-threaded Example
 
 ```cpp
 #include <indicators/progress_bar.hpp>
