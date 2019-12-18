@@ -40,9 +40,9 @@ int main() {
   bar3.set_prefix_text("Progress Bar #3 ");
 
   indicators::MultiProgress<indicators::ProgressBar, 3> bars;
-  bars.add_progress_bar(bar1);
-  bars.add_progress_bar(bar2);
-  bars.add_progress_bar(bar3);
+  bars.insert<0>(bar1);
+  bars.insert<1>(bar2);
+  bars.insert<1>(bar3);
 
   std::cout << "Multiple Progress Bars:\n";
 

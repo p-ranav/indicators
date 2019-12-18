@@ -25,7 +25,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#define NOMINMAX
 #include <atomic>
 #include <functional>
 #include <indicators/color.hpp>
@@ -39,8 +38,9 @@ template <typename Indicator, size_t count> class MultiProgress {
 public:
   MultiProgress() { _bars.reserve(count); }
 
-  void add_progress_bar(Indicator &bar) {
-    _bars.push_back(bar);
+  template <size_t index>
+  typename std::enable_if<(index < count), void>::type insert(Indicator &bar) {
+    _bars.insert(_bars.begin() + index, 1, bar);
     bar._multi_progress_mode = true;
   }
 
