@@ -1,3 +1,4 @@
+#include <indicators/progress_bar.hpp>
 #include <indicators/multi_progress.hpp>
 
 int main() {
@@ -38,7 +39,7 @@ int main() {
   bar3.show_remaining_time();
   bar3.set_prefix_text("Progress Bar #3 ");
 
-  indicators::MultiProgress<3> bars;
+  indicators::MultiProgress<indicators::ProgressBar, 3> bars;
   bars.add_progress_bar(bar1);
   bars.add_progress_bar(bar2);
   bars.add_progress_bar(bar3);

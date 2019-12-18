@@ -147,7 +147,7 @@ private:
   std::mutex _mutex;
   Color _foreground_color{indicators::Color::WHITE};
 
-  template <size_t count> friend class MultiProgress;
+  template <typename Indicator, size_t count> friend class MultiProgress;
   std::atomic<bool> _multi_progress_mode{false};
 
   std::ostream &_print_duration(std::ostream &os, std::chrono::nanoseconds ns) {

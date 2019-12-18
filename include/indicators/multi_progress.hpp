@@ -27,14 +27,13 @@ SOFTWARE.
 #pragma once
 #define NOMINMAX
 #include <functional>
-#include <indicators/progress_bar.hpp>
 #include <vector>
 
 namespace indicators {
 
-template <size_t count> class MultiProgress {
+  template <typename Indicator, size_t count> class MultiProgress {
 public:
-  void add_progress_bar(ProgressBar &bar) {
+  void add_progress_bar(Indicator &bar) {
     _bars.push_back(bar);
     bar._multi_progress_mode = true;
   }
@@ -60,7 +59,7 @@ public:
 private:
   std::atomic<bool> _started{false};
   std::mutex _mutex;
-  std::vector<std::reference_wrapper<ProgressBar>> _bars;
+  std::vector<std::reference_wrapper<Indicator>> _bars;
 
   bool _all_completed() {
     bool result{true};
