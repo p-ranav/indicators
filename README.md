@@ -356,9 +356,9 @@ int main() {
 
   // Construct MultiProgress object
   indicators::MultiProgress<indicators::ProgressBar, 3> bars;
-  bars.add_progress_bar(bar1);
-  bars.add_progress_bar(bar2);
-  bars.add_progress_bar(bar3);
+  bars.insert<0>(bar1);
+  bars.insert<1>(bar2);
+  bars.insert<2>(bar3);
 
   std::cout << "Multiple Progress Bars:\n";
 
