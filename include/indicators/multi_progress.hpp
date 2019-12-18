@@ -26,51 +26,62 @@ SOFTWARE.
 */
 #pragma once
 #define NOMINMAX
+#include <functional>
 #include <indicators/progress_bar.hpp>
 #include <vector>
-#include <functional>
 
 namespace indicators {
 
-template <size_t count>
-class MultiProgress {
+template <size_t count> class MultiProgress {
 public:
-  void add_progress_bar(ProgressBar& bar) {
+  void add_progress_bar(ProgressBar &bar) {
     _bars.push_back(bar);
     bar._multi_progress_mode = true;
   }
 
   template <size_t index>
-  typename std::enable_if<(index < count), void>::type
-  set_progress(float value) {
-    _bars[index].get().set_progress(value);
-    _print_progress();    
+  typename std::enable_if<(index < count), void>::type set_progress(float value) {
+    if (!_bars[index].get().is_completed())
+      _bars[index].get().set_progress(value);
+    _print_progress();
   }
 
-  template <size_t index>
-  typename std::enable_if<(index < count), void>::type    
-  tick() {
-    _bars[index].get().tick();
+  template <size_t index> typename std::enable_if<(index < count), void>::type tick() {
+    if (!_bars[index].get().is_completed())
+      _bars[index].get().tick();
     _print_progress();
   }
 
   template <size_t index>
-  typename std::enable_if<(index < count), bool>::type    
-  is_completed() const { return _bars[index].get().is_completed(); }
+  typename std::enable_if<(index < count), bool>::type is_completed() const {
+    return _bars[index].get().is_completed();
+  }
 
 private:
+  std::atomic<bool> _started{false};
+  std::mutex _mutex;
   std::vector<std::reference_wrapper<ProgressBar>> _bars;
 
-  void _print_progress() {
+  bool _all_completed() {
+    bool result{true};
     for (size_t i = 0; i < count; ++i)
-      std::cout << "\x1b[A";
-    for (auto& bar: _bars) {
-      bar.get()._print_progress();
+      result &= _bars[i].get().is_completed();
+    return result;
+  }
+
+  void _print_progress() {
+    std::unique_lock<std::mutex> lock{_mutex};
+    if (_started)
+      for (size_t i = 0; i < count; ++i)
+        std::cout << "\x1b[A";
+    for (auto &bar : _bars) {
+      bar.get()._print_progress(true);
       std::cout << "\n";
     }
+    std::cout << termcolor::reset;
+    if (!_started)
+      _started = true;
   }
-  
 };
 
-}
-
+} // namespace indicators

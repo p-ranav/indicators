@@ -231,6 +231,9 @@ private:
       auto remaining = eta > elapsed ? (eta - elapsed) : (elapsed - eta);
       _print_duration(std::cout, remaining);
       std::cout << "]";
+    } else {
+      if (_show_elapsed_time)
+        std::cout << "]";
     }
 
     if (_max_postfix_text_length == 0)

@@ -36,7 +36,6 @@ SOFTWARE.
 #include <mutex>
 #include <string>
 #include <thread>
-#include <indicators/multi_progress.hpp>
 
 namespace indicators {
 
@@ -146,10 +145,9 @@ private:
   std::atomic<bool> _saved_start_time{false};
   std::chrono::time_point<std::chrono::high_resolution_clock> _start_time_point;
   std::mutex _mutex;
-  Color _foreground_color;
+  Color _foreground_color{indicators::Color::WHITE};
 
-  template <size_t count>
-  friend class MultiProgress;
+  template <size_t count> friend class MultiProgress;
   std::atomic<bool> _multi_progress_mode{false};
 
   std::ostream &_print_duration(std::ostream &os, std::chrono::nanoseconds ns) {
@@ -181,7 +179,13 @@ private:
     }
   }
 
-  void _print_progress() {    
+  void _print_progress(bool force = false) {
+    if (_multi_progress_mode && !force) {
+      if (_progress > 100.0) {
+        _completed = true;
+      }
+      return;
+    }
     std::unique_lock<std::mutex> lock{_mutex};
     auto now = std::chrono::high_resolution_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - _start_time_point);
@@ -244,6 +248,9 @@ private:
       auto remaining = eta > elapsed ? (eta - elapsed) : (elapsed - eta);
       _print_duration(std::cout, remaining);
       std::cout << "]";
+    } else {
+      if (_show_elapsed_time)
+        std::cout << "]";
     }
 
     if (_max_postfix_text_length == 0)
@@ -253,7 +260,7 @@ private:
     if (_progress > 100.0) {
       _completed = true;
     }
-    if (_completed)
+    if (_completed && !force)
       std::cout << termcolor::reset << std::endl;
   }
 };
