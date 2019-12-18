@@ -239,7 +239,7 @@ int main() {
 
 # MultiProgress
 
-`indicators` supports management of multiple progress bars with the `MultiProgress` class. 
+`indicators` supports management of multiple progress bars with the `MultiProgress` class template. 
 
 `template <typename Indicator, size_t count> class MultiProgress` is a class template that holds references to multiple progress bars and provides a safe interface to update the state of each bar. `MultiProgress` works with both `ProgressBar` and `BlockProgressBar` classes.
 
