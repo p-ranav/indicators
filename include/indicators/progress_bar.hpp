@@ -179,8 +179,8 @@ private:
     }
   }
 
-  void _print_progress(bool force = false) {
-    if (_multi_progress_mode && !force) {
+  void _print_progress(bool from_multi_progress = false) {
+    if (_multi_progress_mode && !from_multi_progress) {
       if (_progress > 100.0) {
         _completed = true;
       }
@@ -260,7 +260,7 @@ private:
     if (_progress > 100.0) {
       _completed = true;
     }
-    if (_completed && !force)
+    if (_completed && !from_multi_progress) // Don't std::endl if calling from MultiProgress
       std::cout << termcolor::reset << std::endl;
   }
 };

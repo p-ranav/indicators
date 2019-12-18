@@ -131,7 +131,10 @@ private:
   std::atomic<bool> _saved_start_time{false};
   std::chrono::time_point<std::chrono::high_resolution_clock> _start_time_point;
   std::mutex _mutex;
-  Color _foreground_color;
+  Color _foreground_color{indicators::Color::WHITE};
+
+  template <typename Indicator, size_t count> friend class MultiProgress;
+  std::atomic<bool> _multi_progress_mode{false};
 
   std::ostream &_print_duration(std::ostream &os, std::chrono::nanoseconds ns) {
     using namespace std;
@@ -162,7 +165,13 @@ private:
     }
   }
 
-  void _print_progress() {
+  void _print_progress(bool from_multi_progress = false) {
+    if (_multi_progress_mode && !from_multi_progress) {
+      if (_progress > 100.0) {
+        _completed = true;
+      }
+      return;
+    }
     std::unique_lock<std::mutex> lock{_mutex};
     auto now = std::chrono::high_resolution_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - _start_time_point);
@@ -243,7 +252,7 @@ private:
     if (_progress > 100.0) {
       _completed = true;
     }
-    if (_completed)
+    if (_completed && !from_multi_progress) // Don't std::endl if calling from MultiProgress
       std::cout << termcolor::reset << std::endl;
   }
 };

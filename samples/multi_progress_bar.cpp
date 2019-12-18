@@ -1,5 +1,5 @@
-#include <indicators/progress_bar.hpp>
 #include <indicators/multi_progress.hpp>
+#include <indicators/progress_bar.hpp>
 
 int main() {
 

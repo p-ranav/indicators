@@ -31,7 +31,7 @@ SOFTWARE.
 
 namespace indicators {
 
-  template <typename Indicator, size_t count> class MultiProgress {
+template <typename Indicator, size_t count> class MultiProgress {
 public:
   void add_progress_bar(Indicator &bar) {
     _bars.push_back(bar);
