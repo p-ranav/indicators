@@ -42,7 +42,7 @@ int main() {
   indicators::MultiProgress<indicators::ProgressBar, 3> bars;
   bars.insert<0>(bar1);
   bars.insert<1>(bar2);
-  bars.insert<1>(bar3);
+  bars.insert<2>(bar3);
 
   std::cout << "Multiple Progress Bars:\n";
 
