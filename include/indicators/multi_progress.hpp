@@ -49,26 +49,19 @@ public:
 
   template <size_t index>
   typename std::enable_if<(index >=0 && index < count), void>::type set_progress(float value) {
-    {
-      std::unique_lock<std::mutex> lock{_mutex};
-      if (!_bars[index].get().is_completed())
-	_bars[index].get().set_progress(value);
-    }
+    if (!_bars[index].get().is_completed())
+      _bars[index].get().set_progress(value);
     _print_progress();
   }
 
   template <size_t index> typename std::enable_if<(index >=0 && index < count), void>::type tick() {
-    {
-      std::unique_lock<std::mutex> lock{_mutex};
-      if (!_bars[index].get().is_completed())
-	_bars[index].get().tick();
-    }
+    if (!_bars[index].get().is_completed())
+      _bars[index].get().tick();
     _print_progress();
   }
 
   template <size_t index>
-  typename std::enable_if<(index >=0 && index < count), bool>::type is_completed() {
-    std::unique_lock<std::mutex> lock{_mutex};
+  typename std::enable_if<(index >=0 && index < count), bool>::type is_completed() const {
     return _bars[index].get().is_completed();
   }
 
