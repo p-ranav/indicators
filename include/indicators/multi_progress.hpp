@@ -42,6 +42,9 @@ public:
 	    >
   explicit MultiProgress(Indicators&... bars) {
     _bars = {bars...};
+    for (auto& bar: _bars) {
+      bar.get()._multi_progress_mode = true;
+    }
   }
 
   template <size_t index>
