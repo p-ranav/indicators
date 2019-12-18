@@ -9,7 +9,7 @@
   <a href="https://github.com/p-ranav/indicators/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="license"/>
   </a>
-  <img src="https://img.shields.io/badge/version-1.4-blue.svg?cacheSeconds=2592000" alt="version"/>
+  <img src="https://img.shields.io/badge/version-1.5-blue.svg?cacheSeconds=2592000" alt="version"/>
 </p>
 
 <p align="center">
@@ -295,10 +295,7 @@ int main() {
   bar3.set_prefix_text("Progress Bar #3 ");
 
   // Construct MultiProgress object
-  indicators::MultiProgress<indicators::ProgressBar, 3> bars;
-  bars.insert<0>(bar1);
-  bars.insert<1>(bar2);
-  bars.insert<2>(bar3);
+  indicators::MultiProgress<indicators::ProgressBar, 3> bars(bar1, bar2, bar3);
 
   std::cout << "Multiple Progress Bars:\n";
 
