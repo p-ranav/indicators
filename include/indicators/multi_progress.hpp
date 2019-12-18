@@ -26,13 +26,19 @@ SOFTWARE.
 */
 #pragma once
 #define NOMINMAX
+#include <atomic>
 #include <functional>
+#include <indicators/color.hpp>
+#include <iostream>
+#include <mutex>
 #include <vector>
 
 namespace indicators {
 
 template <typename Indicator, size_t count> class MultiProgress {
 public:
+  MultiProgress() { _bars.reserve(count); }
+
   void add_progress_bar(Indicator &bar) {
     _bars.push_back(bar);
     bar._multi_progress_mode = true;
