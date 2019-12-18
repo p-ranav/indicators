@@ -141,7 +141,7 @@ int main() {
 }
 ```
 
-## Multi-threaded Example
+## Multi-threaded Update
 
 ```cpp
 #include <indicators/progress_bar.hpp>
@@ -299,13 +299,15 @@ int main() {
 
 # MultiProgress
 
-`indicators` supports management of multiple progress bars using the `MultiProgress` class. 
+`indicators` supports management of multiple progress bars with the `MultiProgress` class. 
+
+`template <typename Indicator, size_t count> class MultiProgress` is a class template that holds references to multiple progress bars and provides a safe interface to update the state of each bar. `MultiProgress` works with both `ProgressBar` and `BlockProgressBar` classes.
+
+Below is an example `MultiProgress` object that manages three `ProgressBar` objects.
 
 <p align="center">
   <img src="img/multi_progress.gif"/>  
 </p>
-
-`MultiProgress<typename Indicator, size_t count>` is a template class that holds references to progress bars and provides a safe interface to update the state of multiple bars. `MultiProgress` works with both `ProgressBar` and `BlockProgressBar`.
 
 ```cpp
 #include <indicators/multi_progress.hpp>
@@ -313,6 +315,7 @@ int main() {
 
 int main() {
 
+  // Configure first progress bar
   indicators::ProgressBar bar1;
   bar1.set_bar_width(50);
   bar1.start_bar_with("[");
@@ -325,6 +328,7 @@ int main() {
   bar1.show_remaining_time();
   bar1.set_prefix_text("Progress Bar #1 ");
 
+  // Configure second progress bar
   indicators::ProgressBar bar2;
   bar2.set_bar_width(50);
   bar2.start_bar_with("[");
@@ -337,6 +341,7 @@ int main() {
   bar2.show_remaining_time();
   bar2.set_prefix_text("Progress Bar #2 ");
 
+  // Configure third progress bar
   indicators::ProgressBar bar3;
   bar3.set_bar_width(50);
   bar3.start_bar_with("[");
@@ -349,6 +354,7 @@ int main() {
   bar3.show_remaining_time();
   bar3.set_prefix_text("Progress Bar #3 ");
 
+  // Construct MultiProgress object
   indicators::MultiProgress<indicators::ProgressBar, 3> bars;
   bars.add_progress_bar(bar1);
   bars.add_progress_bar(bar2);
