@@ -23,6 +23,15 @@
 * Source for the above GIF can be found [here](demo/demo.cpp)
 * MIT License
 
+# Table of Contents
+
+* [Progress Bar](#progress-bar)
+* [Block Progress Bar](#block-progress-bar)
+* [Multi Progress](#multiprogress)
+* [Progress Spinner](#progress-spinner)
+* [Contributing](#contributing)
+* [License](#license)
+
 # Progress bar
 
 To introduce a progress bar in your application, include `indicators/progress_bar.hpp` and create a `ProgressBar` object. 
