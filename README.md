@@ -6,6 +6,9 @@
   <a href="https://travis-ci.com/p-ranav/indicators">
     <img src="https://travis-ci.com/p-ranav/indicators.svg?branch=master" alt="ci status"/>
   </a>
+  <a href="https://www.codacy.com/manual/p-ranav/indicators?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=p-ranav/indicators&amp;utm_campaign=Badge_Grade">
+    <img src="https://api.codacy.com/project/badge/Grade/93401e73f250407cb32445afec4e3e99" alt="codacy"/>
+  </a>
   <a href="https://github.com/p-ranav/indicators/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="license"/>
   </a>
