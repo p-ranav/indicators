@@ -77,7 +77,7 @@ private:
   }
 
   void _print_progress() {
-    std::unique_lock<std::mutex> lock{_mutex};
+    std::lock_guard<std::mutex> lock{_mutex};
     if (_started)
       for (size_t i = 0; i < count; ++i)
         std::cout << "\x1b[A";

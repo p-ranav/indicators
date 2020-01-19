@@ -42,47 +42,47 @@ namespace indicators {
 class ProgressBar {
 public:
   void set_foreground_color(Color color) {
-    std::unique_lock<std::mutex> lock{_mutex};
+    std::lock_guard<std::mutex> lock{_mutex};
     _foreground_color = color;
   }
 
   void set_bar_width(size_t bar_width) {
-    std::unique_lock<std::mutex> lock{_mutex};
+    std::lock_guard<std::mutex> lock{_mutex};
     _bar_width = bar_width;
   }
 
   void start_bar_with(const std::string &start) {
-    std::unique_lock<std::mutex> lock{_mutex};
+    std::lock_guard<std::mutex> lock{_mutex};
     _start = start;
   }
 
   void fill_bar_progress_with(const std::string &fill) {
-    std::unique_lock<std::mutex> lock{_mutex};
+    std::lock_guard<std::mutex> lock{_mutex};
     _fill = fill;
   }
 
   void lead_bar_progress_with(const std::string &lead) {
-    std::unique_lock<std::mutex> lock{_mutex};
+    std::lock_guard<std::mutex> lock{_mutex};
     _lead = lead;
   }
 
   void fill_bar_remainder_with(const std::string &remainder) {
-    std::unique_lock<std::mutex> lock{_mutex};
+    std::lock_guard<std::mutex> lock{_mutex};
     _remainder = remainder;
   }
 
   void end_bar_with(const std::string &end) {
-    std::unique_lock<std::mutex> lock{_mutex};
+    std::lock_guard<std::mutex> lock{_mutex};
     _end = end;
   }
 
   void set_prefix_text(const std::string &text) {
-    std::unique_lock<std::mutex> lock{_mutex};
+    std::lock_guard<std::mutex> lock{_mutex};
     _prefix_text = text;
   }
 
   void set_postfix_text(const std::string &text) {
-    std::unique_lock<std::mutex> lock{_mutex};
+    std::lock_guard<std::mutex> lock{_mutex};
     _postfix_text = text;
     if (_postfix_text.length() > _max_postfix_text_length)
       _max_postfix_text_length = _postfix_text.length();
@@ -102,7 +102,7 @@ public:
 
   void set_progress(float value) {
     {
-      std::unique_lock<std::mutex> lock{_mutex};
+      std::lock_guard<std::mutex> lock{_mutex};
       _progress = value;
     }
     _save_start_time();
@@ -111,7 +111,7 @@ public:
 
   void tick() {
     {
-      std::unique_lock<std::mutex> lock{_mutex};
+      std::lock_guard<std::mutex> lock{_mutex};
       _progress += 1;
     }
     _save_start_time();
@@ -119,7 +119,7 @@ public:
   }
 
   size_t current() {
-    std::unique_lock<std::mutex> lock{_mutex};
+    std::lock_guard<std::mutex> lock{_mutex};
     return std::min(static_cast<size_t>(_progress), size_t(100));
   }
 
@@ -189,7 +189,7 @@ private:
       }
       return;
     }
-    std::unique_lock<std::mutex> lock{_mutex};
+    std::lock_guard<std::mutex> lock{_mutex};
     auto now = std::chrono::high_resolution_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - _start_time_point);
 
