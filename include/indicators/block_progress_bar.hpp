@@ -25,6 +25,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
+
+#include <indicators/details/stream_helper.hpp>
+
 #define NOMINMAX
 #include <algorithm>
 #include <atomic>
@@ -180,32 +183,7 @@ private:
     auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - _start_time_point);
 
     std::cout << termcolor::bold;
-    switch (_foreground_color) {
-    case Color::GREY:
-      std::cout << termcolor::grey;
-      break;
-    case Color::RED:
-      std::cout << termcolor::red;
-      break;
-    case Color::GREEN:
-      std::cout << termcolor::green;
-      break;
-    case Color::YELLOW:
-      std::cout << termcolor::yellow;
-      break;
-    case Color::BLUE:
-      std::cout << termcolor::blue;
-      break;
-    case Color::MAGENTA:
-      std::cout << termcolor::magenta;
-      break;
-    case Color::CYAN:
-      std::cout << termcolor::cyan;
-      break;
-    case Color::WHITE:
-      std::cout << termcolor::white;
-      break;
-    }
+    details::set_stream_color(std::cout, _foreground_color);
     std::cout << _prefix_text;
     std::cout << _start;
 
