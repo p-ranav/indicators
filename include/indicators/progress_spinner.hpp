@@ -130,28 +130,6 @@ private:
   std::mutex _mutex;
   Color _foreground_color;
 
-  std::ostream &_print_duration(std::ostream &os, std::chrono::nanoseconds ns) {
-    using namespace std;
-    using namespace std::chrono;
-    typedef duration<int, ratio<86400>> days;
-    char fill = os.fill();
-    os.fill('0');
-    auto d = duration_cast<days>(ns);
-    ns -= d;
-    auto h = duration_cast<hours>(ns);
-    ns -= h;
-    auto m = duration_cast<minutes>(ns);
-    ns -= m;
-    auto s = duration_cast<seconds>(ns);
-    if (d.count() > 0)
-      os << setw(2) << d.count() << "d:";
-    if (h.count() > 0)
-      os << setw(2) << h.count() << "h:";
-    os << setw(2) << m.count() << "m:" << setw(2) << s.count() << 's';
-    os.fill(fill);
-    return os;
-  };
-
   void _save_start_time() {
     if ((_show_elapsed_time || _show_remaining_time) && !_saved_start_time) {
       _start_time_point = std::chrono::high_resolution_clock::now();
@@ -175,7 +153,7 @@ private:
 
     if (_show_elapsed_time) {
       std::cout << " [";
-      _print_duration(std::cout, elapsed);
+      details::print_duration(std::cout, elapsed);
     }
 
     if (_show_remaining_time) {
@@ -186,7 +164,7 @@ private:
       auto eta = std::chrono::nanoseconds(
           _progress > 0 ? static_cast<long long>(elapsed.count() * 100 / _progress) : 0);
       auto remaining = eta > elapsed ? (eta - elapsed) : (elapsed - eta);
-      _print_duration(std::cout, remaining);
+      details::print_duration(std::cout, remaining);
       std::cout << "]";
     } else {
       if (_show_elapsed_time)
