@@ -177,24 +177,21 @@ private:
     std::cout << termcolor::bold;
     details::set_stream_color(std::cout, _foreground_color);
     std::cout << _prefix_text;
+
     std::cout << _start;
-    auto pos = static_cast<size_t>(_progress * static_cast<float>(_bar_width) / 100.0);
-    for (size_t i = 0; i < _bar_width; ++i) {
-      if (i < pos)
-        std::cout << _fill;
-      else if (i == pos)
-        std::cout << _lead;
-      else
-        std::cout << _remainder;
-    }
+
+    details::ProgressScaleWriter writer{std::cout, _bar_width, _fill, _lead, _remainder};
+    writer.write(_progress);
+
     std::cout << _end;
+
     if (_show_percentage) {
       std::cout << " " << std::min(static_cast<size_t>(_progress), size_t(100)) << "%";
     }
 
     if (_show_elapsed_time) {
       std::cout << " [";
-      details::print_duration(std::cout, elapsed);
+      details::write_duration(std::cout, elapsed);
     }
 
     if (_show_remaining_time) {
@@ -205,7 +202,7 @@ private:
       auto eta = std::chrono::nanoseconds(
           _progress > 0 ? static_cast<long long>(elapsed.count() * 100 / _progress) : 0);
       auto remaining = eta > elapsed ? (eta - elapsed) : (elapsed - eta);
-      details::print_duration(std::cout, remaining);
+      details::write_duration(std::cout, remaining);
       std::cout << "]";
     } else {
       if (_show_elapsed_time)

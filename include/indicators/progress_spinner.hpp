@@ -153,7 +153,7 @@ private:
 
     if (_show_elapsed_time) {
       std::cout << " [";
-      details::print_duration(std::cout, elapsed);
+      details::write_duration(std::cout, elapsed);
     }
 
     if (_show_remaining_time) {
@@ -164,7 +164,7 @@ private:
       auto eta = std::chrono::nanoseconds(
           _progress > 0 ? static_cast<long long>(elapsed.count() * 100 / _progress) : 0);
       auto remaining = eta > elapsed ? (eta - elapsed) : (elapsed - eta);
-      details::print_duration(std::cout, remaining);
+      details::write_duration(std::cout, remaining);
       std::cout << "]";
     } else {
       if (_show_elapsed_time)
