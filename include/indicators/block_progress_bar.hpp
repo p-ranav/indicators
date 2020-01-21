@@ -26,20 +26,18 @@ SOFTWARE.
 */
 #pragma once
 
+#include <indicators/color.hpp>
 #include <indicators/details/stream_helper.hpp>
 
 #define NOMINMAX
 #include <algorithm>
 #include <atomic>
 #include <chrono>
-#include <cmath>
-#include <indicators/color.hpp>
 #include <iomanip>
 #include <iostream>
 #include <mutex>
 #include <string>
 #include <thread>
-#include <vector>
 
 namespace indicators {
 
@@ -124,9 +122,6 @@ private:
   size_t _bar_width{100};
   std::string _prefix_text{""};
   std::string _start{"["};
-  std::string _fill{"█"};
-  std::string _lead{" "};
-  std::string _remainder{" "};
   std::string _end{"]"};
   std::string _postfix_text{""};
   std::atomic<size_t> _max_postfix_text_length{0};
@@ -165,19 +160,8 @@ private:
     std::cout << _prefix_text;
     std::cout << _start;
 
-    std::vector<std::string> lead_characters{" ", "▏", "▎", "▍", "▌", "▋", "▊", "▉"};
-    auto progress = std::min(1.0f, std::max(0.0f, _progress / 100.0f));
-    auto whole_width = std::floor(progress * _bar_width);
-    auto remainder_width = fmod((progress * _bar_width), 1.0f);
-    auto part_width = std::floor(remainder_width * lead_characters.size());
-    _lead = lead_characters[size_t(part_width)];
-    if ((_bar_width - whole_width - 1) < 0)
-      _lead = "";
-    for (size_t i = 0; i < whole_width; ++i)
-      std::cout << _fill;
-    std::cout << _lead;
-    for (size_t i = 0; i < (_bar_width - whole_width - 1); ++i)
-      std::cout << " ";
+    details::BlockProgressScaleWriter writer{std::cout, _bar_width};
+    writer.write(_progress);
 
     std::cout << _end;
     if (_show_percentage) {
@@ -186,7 +170,7 @@ private:
 
     if (_show_elapsed_time) {
       std::cout << " [";
-      details::print_duration(std::cout, elapsed);
+      details::write_duration(std::cout, elapsed);
     }
 
     if (_show_remaining_time) {
@@ -197,7 +181,7 @@ private:
       auto eta = std::chrono::nanoseconds(
           _progress > 0 ? static_cast<long long>(elapsed.count() * 100 / _progress) : 0);
       auto remaining = eta > elapsed ? (eta - elapsed) : (elapsed - eta);
-      details::print_duration(std::cout, remaining);
+      details::write_duration(std::cout, remaining);
       std::cout << "]";
     } else {
       if (_show_elapsed_time)

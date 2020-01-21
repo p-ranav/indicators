@@ -3,11 +3,15 @@
 #include <indicators/color.hpp>
 #include <indicators/termcolor.hpp>
 
+#include <algorithm>
 #include <chrono>
 #include <iomanip>
 #include <ostream>
+#include <string>
+#include <vector>
 
 #include <cassert>
+#include <cmath>
 
 namespace indicators {
 namespace details {
@@ -43,7 +47,7 @@ inline void set_stream_color(std::ostream &os, Color color) {
     }
 }
 
-std::ostream &print_duration(std::ostream &os, std::chrono::nanoseconds ns) {
+inline std::ostream &write_duration(std::ostream &os, std::chrono::nanoseconds ns) {
     using namespace std;
     using namespace std::chrono;
     using days = duration<int, ratio<86400>>;
@@ -63,6 +67,72 @@ std::ostream &print_duration(std::ostream &os, std::chrono::nanoseconds ns) {
     os << setw(2) << m.count() << "m:" << setw(2) << s.count() << 's';
     os.fill(fill);
     return os;
+};
+
+class BlockProgressScaleWriter
+{
+public:
+    BlockProgressScaleWriter(std::ostream& os, size_t bar_width)
+        : os(os)
+        , bar_width(bar_width)
+    {}
+
+    std::ostream &write(float progress) {
+        std::string fill_text{"█"};
+        std::vector<std::string> lead_characters{" ", "▏", "▎", "▍", "▌", "▋", "▊", "▉"};
+        auto value = std::min(1.0f, std::max(0.0f, progress / 100.0f));
+        auto whole_width = std::floor(value * bar_width);
+        auto remainder_width = fmod((value * bar_width), 1.0f);
+        auto part_width = std::floor(remainder_width * lead_characters.size());
+        std::string lead_text = lead_characters[size_t(part_width)];
+        if ((bar_width - whole_width - 1) < 0)
+        lead_text = "";
+        for (size_t i = 0; i < whole_width; ++i)
+        os << fill_text;
+        os << lead_text;
+        for (size_t i = 0; i < (bar_width - whole_width - 1); ++i)
+        os << " ";
+        return os;
+    }
+private:
+    std::ostream& os;
+    size_t bar_width = 0;
+};
+
+class ProgressScaleWriter
+{
+public:
+    ProgressScaleWriter(std::ostream& os,
+                        size_t bar_width,
+                        const std::string& fill,
+                        const std::string& lead,
+                        const std::string& remainder)
+        : os(os)
+        , bar_width(bar_width)
+        , fill(fill)
+        , lead(lead)
+        , remainder(remainder)
+        {}
+
+    std::ostream &write(float progress) {
+        auto pos = static_cast<size_t>(progress * static_cast<float>(bar_width) / 100.0);
+        for (size_t i = 0; i < bar_width; ++i) {
+        if (i < pos)
+            os << fill;
+        else if (i == pos)
+            os << lead;
+        else
+            os << remainder;
+        }
+        return os;
+    }
+
+private:
+    std::ostream& os;
+    size_t bar_width = 0;
+    std::string fill;
+    std::string lead;
+    std::string remainder;
 };
 
 }
