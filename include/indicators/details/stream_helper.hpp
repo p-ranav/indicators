@@ -92,6 +92,7 @@ public:
         os << lead_text;
         for (size_t i = 0; i < (bar_width - whole_width - 1); ++i)
         os << " ";
+        return os;
     }
 private:
     std::ostream& os;
@@ -117,12 +118,13 @@ public:
         auto pos = static_cast<size_t>(progress * static_cast<float>(bar_width) / 100.0);
         for (size_t i = 0; i < bar_width; ++i) {
         if (i < pos)
-            std::cout << fill;
+            os << fill;
         else if (i == pos)
-            std::cout << lead;
+            os << lead;
         else
-            std::cout << remainder;
+            os << remainder;
         }
+        return os;
     }
 
 private:
