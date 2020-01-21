@@ -103,9 +103,9 @@ class ProgressScaleWriter
 public:
     ProgressScaleWriter(std::ostream& os,
                         size_t bar_width,
-                        std::string fill,
-                        std::string lead,
-                        std::string remainder)
+                        const std::string& fill,
+                        const std::string& lead,
+                        const std::string& remainder)
         : os(os)
         , bar_width(bar_width)
         , fill(fill)
