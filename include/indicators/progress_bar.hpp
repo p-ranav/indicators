@@ -149,6 +149,7 @@ private:
   std::atomic<bool> _show_elapsed_time{false};
   std::atomic<bool> _show_remaining_time{false};
   std::atomic<bool> _saved_start_time{false};
+  std::chrono::nanoseconds _elapsed;
   std::chrono::time_point<std::chrono::high_resolution_clock> _start_time_point;
   std::mutex _mutex;
   Color _foreground_color{indicators::Color::WHITE};
@@ -172,7 +173,8 @@ private:
     }
     std::lock_guard<std::mutex> lock{_mutex};
     auto now = std::chrono::high_resolution_clock::now();
-    auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - _start_time_point);
+    if (!_completed)
+      _elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - _start_time_point);
 
     std::cout << termcolor::bold;
     details::set_stream_color(std::cout, _foreground_color);
@@ -191,7 +193,7 @@ private:
 
     if (_show_elapsed_time) {
       std::cout << " [";
-      details::write_duration(std::cout, elapsed);
+      details::write_duration(std::cout, _elapsed);
     }
 
     if (_show_remaining_time) {
@@ -200,8 +202,8 @@ private:
       else
         std::cout << " [";
       auto eta = std::chrono::nanoseconds(
-          _progress > 0 ? static_cast<long long>(elapsed.count() * 100 / _progress) : 0);
-      auto remaining = eta > elapsed ? (eta - elapsed) : (elapsed - eta);
+          _progress > 0 ? static_cast<long long>(_elapsed.count() * 100 / _progress) : 0);
+      auto remaining = eta > _elapsed ? (eta - _elapsed) : (_elapsed - eta);
       details::write_duration(std::cout, remaining);
       std::cout << "]";
     } else {
