@@ -6,19 +6,18 @@ int main() {
 
   // Hide cursor
   std::cout << "\e[?25l";
-
+  using namespace indicators;
   {
     //
     // PROGRESS BAR 1
     //
-    indicators::ProgressBar p;
-    p.set_bar_width(50);
-    p.start_bar_with("[");
-    p.fill_bar_progress_with("■");
-    p.lead_bar_progress_with("■");
-    p.fill_bar_remainder_with(" ");
-    p.end_bar_with(" ]");
-    p.set_foreground_color(indicators::Color::YELLOW);
+    indicators::ProgressBar p{option::BarWidth{50},
+                              option::Start{"{"},
+                              option::Fill{"■"},
+                              option::Lead{"■"},
+                              option::Remainder{" "},
+                              option::End{" ]"},
+                              option::ForegroundColor{indicators::Color::YELLOW}};
 
     std::atomic<size_t> index{0};
     std::vector<std::string> status_text = {"Rocket.exe is not responding",
@@ -35,7 +34,7 @@ int main() {
       while (true) {
         if (p.is_completed())
           break;
-        p.set_postfix_text(status_text[index % status_text.size()]);
+        p.set_option(option::PostfixText{status_text[index % status_text.size()]});
         p.set_progress(index * 10);
         index += 1;
         std::this_thread::sleep_for(std::chrono::milliseconds(600));
@@ -50,20 +49,20 @@ int main() {
     // PROGRESS BAR 2
     //
     indicators::ProgressBar p;
-    p.set_bar_width(40);
-    p.set_prefix_text("Reading package list... ");
-    p.start_bar_with("");
-    p.fill_bar_progress_with("");
-    p.lead_bar_progress_with("");
-    p.fill_bar_remainder_with("");
-    p.end_bar_with("");
-    p.set_foreground_color(indicators::Color::WHITE);
-    p.hide_percentage();
+    p.set_option(option::BarWidth{40});
+    p.set_option(option::PrefixText{"Reading package list... "});
+    p.set_option(option::Start{""});
+    p.set_option(option::Fill{""});
+    p.set_option(option::Lead{""});
+    p.set_option(option::Remainder{""});
+    p.set_option(option::End{""});
+    p.set_option(option::ForegroundColor{indicators::Color::WHITE});
+    p.set_option(option::ShowPercentage{false});
     auto job = [&p]() {
       while (true) {
-        p.set_prefix_text("Reading package list... " + std::to_string(p.current()) + "% ");
+        p.set_option(option::PrefixText{"Reading package list... " + std::to_string(p.current()) + "% "});
         if (p.current() + 2 >= 100)
-          p.set_prefix_text("Reading package list... Done");
+          p.set_option(option::PrefixText{"Reading package list... Done"});
         p.tick();
         if (p.is_completed()) {
           break;
@@ -80,25 +79,25 @@ int main() {
     // PROGRESS BAR 3
     //
     indicators::ProgressBar p;
-    p.set_bar_width(50);
-    p.start_bar_with("[");
-    p.fill_bar_progress_with("=");
-    p.lead_bar_progress_with(">");
-    p.fill_bar_remainder_with(" ");
-    p.end_bar_with("]");
-    p.set_postfix_text("Getting started");
-    p.set_foreground_color(indicators::Color::GREEN);
+    p.set_option(option::BarWidth{50});
+    p.set_option(option::Start{"["});
+    p.set_option(option::Fill{"="});
+    p.set_option(option::Lead{">"});
+    p.set_option(option::Remainder{" "});
+    p.set_option(option::End{"]"});
+    p.set_option(option::PostfixText{"Getting started"});
+    p.set_option(option::ForegroundColor{indicators::Color::GREEN});
     auto job = [&p]() {
       while (true) {
         auto ticks = p.current();
         if (ticks > 20 && ticks < 50)
-          p.set_postfix_text("Delaying the inevitable");
+          p.set_option(option::PostfixText{"Delaying the inevitable"});
         else if (ticks > 50 && ticks < 80)
-          p.set_postfix_text("Crying quietly");
+          p.set_option(option::PostfixText{"Crying quietly"});
         else if (ticks > 80 && ticks < 98)
-          p.set_postfix_text("Almost there");
+          p.set_option(option::PostfixText{"Almost there"});
         else if (ticks >= 98)
-          p.set_postfix_text("Done");
+          p.set_option(option::PostfixText{"Done"});
         p.tick();
         if (p.is_completed())
           break;
@@ -115,32 +114,31 @@ int main() {
     //
     std::vector<std::string> lead_spinner{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"};
     indicators::ProgressBar p4;
-    p4.set_bar_width(40);
-    p4.start_bar_with("");
-    p4.fill_bar_progress_with("⠸");
-    p4.lead_bar_progress_with("");
-    p4.fill_bar_remainder_with(" ");
-    p4.end_bar_with("");
-    p4.set_foreground_color(indicators::Color::CYAN);
-    p4.set_postfix_text("Restoring system state");
-    p4.hide_percentage();
+    p4.set_option(option::BarWidth{40});
+    p4.set_option(option::Start{""});
+    p4.set_option(option::Fill{"⠸"});
+    p4.set_option(option::Lead{""});
+    p4.set_option(option::Remainder{" "});
+    p4.set_option(option::End{""});
+    p4.set_option(option::ForegroundColor{indicators::Color::CYAN});
+    p4.set_option(option::PostfixText{"Restoring system state"});
+    p4.set_option(option::ShowPercentage{false});
     std::atomic<size_t> index4{0};
     auto job4 = [&p4, &index4, &lead_spinner]() {
       while (true) {
-        p4.set_prefix_text("{ " + std::to_string(p4.current()) + "% } ");
-        p4.lead_bar_progress_with(lead_spinner[index4 % lead_spinner.size()]);
+        p4.set_option(option::PrefixText{"{ " + std::to_string(p4.current()) + "% } "});
+        p4.set_option(option::Lead{lead_spinner[index4 % lead_spinner.size()]});
         index4 += 1;
         if (p4.current() + 2 >= 100) {
           std::cout << std::endl;
-          p4.set_foreground_color(indicators::Color::RED);
-          p4.set_prefix_text("{ ERROR }");
-          p4.start_bar_with("");
-          p4.fill_bar_progress_with("");
-          p4.lead_bar_progress_with("");
-          p4.fill_bar_remainder_with("");
-          p4.end_bar_with("");
-          p4.show_percentage();
-          p4.set_postfix_text("Failed to restore system");
+          p4.set_option(option::ForegroundColor{indicators::Color::RED});
+          p4.set_option(option::PrefixText{"{ ERROR }"});
+          p4.set_option(option::Start{});
+          p4.set_option(option::Fill{});
+          p4.set_option(option::Lead{});
+          p4.set_option(option::Remainder{});
+          p4.set_option(option::ShowPercentage{true});
+          p4.set_option(option::PostfixText{"Failed to restore system"});
           p4.mark_as_completed();
           break;
         }
@@ -157,23 +155,24 @@ int main() {
       //
       // GOING BACKWARDS
       //
-      indicators::ProgressBar p;
-      p.set_bar_width(50);
-      p.start_bar_with("[");
-      p.fill_bar_progress_with("■");
-      p.lead_bar_progress_with("■");
-      p.fill_bar_remainder_with("-");
-      p.end_bar_with("]");
-      p.set_progress(100);
-      p.set_foreground_color(indicators::Color::WHITE);
-      p.set_postfix_text("Reverting system restore");
+      indicators::ProgressBar p{
+          option::BarWidth {50},
+          option::Start{"["},
+          option::Fill{"■"},
+          option::Lead{"■"},
+          option::Remainder{"-"},
+          option::End{"]"},
+          option::ForegroundColor{indicators::Color::WHITE},
+          option::PostfixText{"Reverting system restore"}
+      };
+      p.set_progress(100); // TODO backwards as an option?
       std::atomic<size_t> progress{100};
       auto job = [&p, &progress]() {
         while (true) {
           progress -= 1;
           p.set_progress(progress);
           if (progress == 0) {
-            p.set_postfix_text("Revert complete!");
+            p.set_option(option::PostfixText{"Revert complete!"});
             p.mark_as_completed();
             break;
           }
@@ -259,29 +258,30 @@ int main() {
           //
           // NESTED PROGRESS BAR
           //
-          indicators::ProgressBar p2;
-          p2.set_bar_width(30);
-          p2.set_prefix_text(" - ");
-          p2.start_bar_with("🌎");
-          p2.fill_bar_progress_with("·");
-          p2.lead_bar_progress_with("🚀");
-          p2.fill_bar_remainder_with(" ");
-          p2.end_bar_with("🌑");
-          p2.set_postfix_text("Achieved low-Earth orbit");
-          p2.set_foreground_color(indicators::Color::WHITE);
+          indicators::ProgressBar p2{
+              option::BarWidth{30},
+              option::PrefixText{" - "},
+              option::Start{"🌎"},
+              option::Fill{"·"},
+              option::Lead{"🚀"},
+              option::Remainder{" "},
+              option::End{"🌑"},
+              option::PostfixText{"Achieved low-Earth orbit"},
+              option::ForegroundColor{indicators::Color::WHITE}
+          };
           std::vector<std::string> ship_trail{"⠁", "⠂", "⠄", "⡀", "⢀", "⠠", "⠐", "⠈"};
           std::atomic<int> ship_trail_index{0};
           auto job2 = [&p2, &ship_trail_index, &ship_trail]() {
             while (true) {
               auto ticks = p2.current();
               if (ticks > 20 && ticks < 50)
-                p2.set_postfix_text("Switching to trans-lunar trajectory");
+                p2.set_option(option::PostfixText{"Switching to trans-lunar trajectory"});
               else if (ticks > 50 && ticks < 80)
-                p2.set_postfix_text("Transferred to Lunar lander");
+                p2.set_option(option::PostfixText{"Transferred to Lunar lander"});
               else if (ticks > 80 && ticks < 98)
-                p2.set_postfix_text("Almost there");
+                p2.set_option(option::PostfixText{"Almost there"});
               else if (ticks >= 98)
-                p2.set_postfix_text("Landed on the Moon");
+                p2.set_option(option::PostfixText{"Landed on the Moon"});
               p2.tick();
               ship_trail_index += 1;
               if (p2.is_completed())
