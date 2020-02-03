@@ -64,19 +64,19 @@ public:
         indicators::get<ProgressBarOption::SHOW_REMAINING_TIME>(std::forward<Args>(args)...),
         indicators::get<ProgressBarOption::SAVED_START_TIME>(std::forward<Args>(args)...),
         indicators::get<ProgressBarOption::FOREGROUND_COLOR>(std::forward<Args>(args)...)
-        )
+    )
   {}
 
   template <typename T, ProgressBarOption id>
   void set_option(Setting<T, id>&& setting){
-    static_assert(std::is_same<T, typename std::decay<decltype(detail::get<id>())>::type>::value, "Setting has wrong type!");
+    static_assert(!std::is_same<T, typename std::decay<decltype(detail::get<id>())>::type>::value, "Setting has wrong type!");
     std::lock_guard<std::mutex> lock(_mutex);
     get_value<id>() = std::move(setting).value;
   }
 
   template <typename T, ProgressBarOption id>
   void set_option(const Setting<T, id>& setting){
-    static_assert(std::is_same<T, typename std::decay<decltype(detail::get<id>())>::type>::value, "Setting has wrong type!");
+    static_assert(!std::is_same<T, typename std::decay<decltype(detail::get<id>())>::type>::value, "Setting has wrong type!");
     std::lock_guard<std::mutex> lock(_mutex);
     get_value<id>() = setting.value;
   }

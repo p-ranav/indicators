@@ -57,6 +57,9 @@ template <typename T, ProgressBarOption Id>
 struct Setting{
   template <typename... Args, typename = typename std::enable_if<std::is_constructible<T, Args...>::value>::type>
   explicit Setting(Args&&... args) : value(std::forward<Args>(args)...){}
+  Setting(const Setting&) = default;
+  Setting(Setting&&) = default;
+
   static constexpr auto id = Id;
   using type = T;
 
@@ -107,9 +110,9 @@ typename get_ret_type<Id>::type get(){
 template <ProgressBarOption Id, typename T, typename... Args>
 auto get(T&& first, Args&&... tail) -> typename std::enable_if<
                                                 (std::decay<T>::type::id == Id),
-                                                decltype(std::forward<T>(first).value)>
+                                                decltype(std::forward<T>(first))>
                                                 ::type{
-    return std::forward<T>(first).value;
+    return std::forward<T>(first);
 }
 
 template <ProgressBarOption Id, typename T, typename... Args>
@@ -156,152 +159,152 @@ namespace option{
 namespace detail{
   template<>
   struct get_ret_type<ProgressBarOption::BAR_WIDTH>{
-    using type = std::size_t;
+    using type = ::indicators::option::BarWidth;
   };
 
   template<> get_ret_type<ProgressBarOption::BAR_WIDTH>::type
   get<ProgressBarOption::BAR_WIDTH>(){
-    return std::size_t{100};
+    return indicators::option::BarWidth{100};
   }
 
   template<>
   struct get_ret_type<ProgressBarOption::PREFIX_TEXT>{
-    using type = std::string;
+    using type = ::indicators::option::PrefixText;
   };
 
   template<> get_ret_type<ProgressBarOption::PREFIX_TEXT>::type
   get<ProgressBarOption::PREFIX_TEXT>(){
-    return std::string{};
+    return indicators::option::PrefixText{};
   }
 
   template<>
   struct get_ret_type<ProgressBarOption::POSTFIX_TEXT>{
-    using type = std::string;
+    using type = ::indicators::option::PostfixText;
   };
 
   template<> get_ret_type<ProgressBarOption::POSTFIX_TEXT>::type
   get<ProgressBarOption::POSTFIX_TEXT>(){
-    return std::string{};
+    return indicators::option::PostfixText{};
   }
 
   template<>
   struct get_ret_type<ProgressBarOption::START>{
-    using type = std::string;
+    using type = ::indicators::option::Start;
   };
 
   template<> get_ret_type<ProgressBarOption::START>::type
   get<ProgressBarOption::START>(){
-    return std::string{"["};
+    return indicators::option::Start{"["};
   }
 
   template<>
   struct get_ret_type<ProgressBarOption::FILL>{
-    using type = std::string;
+    using type = ::indicators::option::Fill;
   };
 
   template<> get_ret_type<ProgressBarOption::FILL>::type
   get<ProgressBarOption::FILL>(){
-    return std::string{"="};
+    return indicators::option::Fill{"="};
   }
 
   template<>
   struct get_ret_type<ProgressBarOption::LEAD>{
-    using type = std::string;
+    using type = ::indicators::option::Lead;
   };
 
   template<> get_ret_type<ProgressBarOption::LEAD>::type
   get<ProgressBarOption::LEAD>(){
-    return std::string{">"};
+    return indicators::option::Lead{">"};
   }
 
   template<>
   struct get_ret_type<ProgressBarOption::REMAINDER>{
-    using type = std::string;
+    using type = ::indicators::option::Remainder;
   };
 
   template<> get_ret_type<ProgressBarOption::REMAINDER>::type
   get<ProgressBarOption::REMAINDER>(){
-    return std::string{" "};
+    return indicators::option::Remainder{" "};
   }
 
   template<>
   struct get_ret_type<ProgressBarOption::END>{
-    using type = std::string;
+    using type = ::indicators::option::End;
   };
 
   template<> get_ret_type<ProgressBarOption::END>::type
   get<ProgressBarOption::END>(){
-    return std::string{"]"};
+    return indicators::option::End{"]"};
   }
 
   template<>
   struct get_ret_type<ProgressBarOption::MAX_POSTFIX_TEXT_LEN>{
-    using type = std::size_t;
+    using type = ::indicators::option::MaxPostfixTextLen;
   };
 
   template<> get_ret_type<ProgressBarOption::MAX_POSTFIX_TEXT_LEN>::type
   get<ProgressBarOption::MAX_POSTFIX_TEXT_LEN>(){
-    return std::size_t{0};
+    return indicators::option::MaxPostfixTextLen{0};
   }
 
   template<>
   struct get_ret_type<ProgressBarOption::COMPLETED>{
-    using type = bool;
+    using type = ::indicators::option::Completed;
   };
 
   template<> get_ret_type<ProgressBarOption::COMPLETED>::type
   get<ProgressBarOption::COMPLETED>(){
-    return false;
+    return indicators::option::Completed{false};
   }
 
   template<>
   struct get_ret_type<ProgressBarOption::SHOW_PERCENTAGE>{
-    using type = bool;
+    using type = ::indicators::option::ShowPercentage;
   };
 
   template<> get_ret_type<ProgressBarOption::SHOW_PERCENTAGE>::type
   get<ProgressBarOption::SHOW_PERCENTAGE>(){
-    return true;
+    return indicators::option::ShowPercentage{false};
   }
 
   template<>
   struct get_ret_type<ProgressBarOption::SHOW_ELAPSED_TIME>{
-    using type = bool;
+    using type = ::indicators::option::ShowElapsedTime;
   };
 
   template<> get_ret_type<ProgressBarOption::SHOW_ELAPSED_TIME>::type
   get<ProgressBarOption::SHOW_ELAPSED_TIME>(){
-    return false;
+    return indicators::option::ShowElapsedTime{false};
   }
 
   template<>
   struct get_ret_type<ProgressBarOption::SHOW_REMAINING_TIME>{
-    using type = bool;
+    using type = ::indicators::option::ShowRemainingTime;
   };
 
   template<> get_ret_type<ProgressBarOption::SHOW_REMAINING_TIME>::type
   get<ProgressBarOption::SHOW_REMAINING_TIME>(){
-    return false;
+    return indicators::option::ShowRemainingTime{false};
   }
 
   template<>
   struct get_ret_type<ProgressBarOption::SAVED_START_TIME>{
-    using type = bool;
+    using type = ::indicators::option::SavedStartTime;
   };
 
   template<> get_ret_type<ProgressBarOption::SAVED_START_TIME>::type
   get<ProgressBarOption::SAVED_START_TIME>(){
-    return false;
+    return indicators::option::SavedStartTime{false};
   }
 
   template<>
   struct get_ret_type<ProgressBarOption::FOREGROUND_COLOR>{
-    using type = ::indicators::Color;
+    using type = ::indicators::option::ForegroundColor;
   };
 
   template<> get_ret_type<ProgressBarOption::FOREGROUND_COLOR>::type
   get<ProgressBarOption::FOREGROUND_COLOR>(){
-    return ::indicators::Color::WHITE;
+    return indicators::option::ForegroundColor{::indicators::Color::WHITE};
   }
 
 }
