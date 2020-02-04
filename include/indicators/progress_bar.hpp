@@ -41,60 +41,79 @@ SOFTWARE.
 #include <mutex>
 #include <string>
 #include <thread>
+#include <tuple>
+#include <type_traits>
 
 namespace indicators {
 
 class ProgressBar {
+  using Settings = std::tuple<
+      option::BarWidth,
+      option::PrefixText,
+      option::PostfixText,
+      option::Start,
+      option::End,
+      option::Fill,
+      option::Lead,
+      option::Remainder,
+      option::MaxPostfixTextLen,
+      option::Completed,
+      option::ShowPercentage,
+      option::ShowElapsedTime,
+      option::ShowRemainingTime,
+      option::SavedStartTime,
+      option::ForegroundColor
+  >;
 public:
-  template <typename... Args>
+  template <typename... Args, typename std::enable_if<details::are_settings_from_tuple<Settings, typename std::decay<Args>::type...>::value, void*>::type = nullptr>
   explicit ProgressBar(Args&&... args) :
     settings_(
-        indicators::get<ProgressBarOption::BAR_WIDTH>(std::forward<Args>(args)...),
-        indicators::get<ProgressBarOption::PREFIX_TEXT>(std::forward<Args>(args)...),
-        indicators::get<ProgressBarOption::POSTFIX_TEXT>(std::forward<Args>(args)...),
-        indicators::get<ProgressBarOption::START>(std::forward<Args>(args)...),
-        indicators::get<ProgressBarOption::END>(std::forward<Args>(args)...),
-        indicators::get<ProgressBarOption::FILL>(std::forward<Args>(args)...),
-        indicators::get<ProgressBarOption::LEAD>(std::forward<Args>(args)...),
-        indicators::get<ProgressBarOption::REMAINDER>(std::forward<Args>(args)...),
-        indicators::get<ProgressBarOption::MAX_POSTFIX_TEXT_LEN>(std::forward<Args>(args)...),
-        indicators::get<ProgressBarOption::COMPLETED>(std::forward<Args>(args)...),
-        indicators::get<ProgressBarOption::SHOW_PERCENTAGE>(std::forward<Args>(args)...),
-        indicators::get<ProgressBarOption::SHOW_ELAPSED_TIME>(std::forward<Args>(args)...),
-        indicators::get<ProgressBarOption::SHOW_REMAINING_TIME>(std::forward<Args>(args)...),
-        indicators::get<ProgressBarOption::SAVED_START_TIME>(std::forward<Args>(args)...),
-        indicators::get<ProgressBarOption::FOREGROUND_COLOR>(std::forward<Args>(args)...)
+        details::get<details::ProgressBarOption::bar_width>(option::BarWidth{100}, std::forward<Args>(args)...),
+        details::get<details::ProgressBarOption::prefix_text>(option::PrefixText{}, std::forward<Args>(args)...),
+        details::get<details::ProgressBarOption::postfix_text>(option::PostfixText{}, std::forward<Args>(args)...),
+        details::get<details::ProgressBarOption::start>(option::Start{"["}, std::forward<Args>(args)...),
+        details::get<details::ProgressBarOption::end>(option::End{"]"}, std::forward<Args>(args)...),
+        details::get<details::ProgressBarOption::fill>(option::Fill{"="}, std::forward<Args>(args)...),
+        details::get<details::ProgressBarOption::lead>(option::Lead{">"}, std::forward<Args>(args)...),
+        details::get<details::ProgressBarOption::remainder>(option::Remainder{" "}, std::forward<Args>(args)...),
+        details::get<details::ProgressBarOption::max_postfix_text_len>(option::MaxPostfixTextLen{0}, std::forward<Args>(args)...),
+        details::get<details::ProgressBarOption::completed>(option::Completed{false}, std::forward<Args>(args)...),
+        details::get<details::ProgressBarOption::show_percentage>(option::ShowPercentage{false} ,std::forward<Args>(args)...),
+        details::get<details::ProgressBarOption::show_elapsed_time>(option::ShowElapsedTime{false}, std::forward<Args>(args)...),
+        details::get<details::ProgressBarOption::show_remaining_time>(option::ShowRemainingTime{false}, std::forward<Args>(args)...),
+        details::get<details::ProgressBarOption::saved_start_time>(option::SavedStartTime{false}, std::forward<Args>(args)...),
+        details::get<details::ProgressBarOption::foreground_color>(option::ForegroundColor{Color::WHITE}, std::forward<Args>(args)...)
     )
   {}
 
-  template <typename T, ProgressBarOption id>
-  void set_option(Setting<T, id>&& setting){
-    static_assert(!std::is_same<T, typename std::decay<decltype(detail::get<id>())>::type>::value, "Setting has wrong type!");
+  template <typename T, details::ProgressBarOption id>
+  void set_option(details::Setting<T, id>&& setting){
+    static_assert(!std::is_same<T, typename std::decay<decltype(details::get_value<id>(std::declval<Settings>()))>::type>::value, "Setting has wrong type!");
     std::lock_guard<std::mutex> lock(_mutex);
     get_value<id>() = std::move(setting).value;
   }
 
-  template <typename T, ProgressBarOption id>
-  void set_option(const Setting<T, id>& setting){
-    static_assert(!std::is_same<T, typename std::decay<decltype(detail::get<id>())>::type>::value, "Setting has wrong type!");
+  template <typename T, details::ProgressBarOption id>
+  void set_option(const details::Setting<T, id>& setting){
+    static_assert(!std::is_same<T, typename std::decay<decltype(details::get_value<id>(std::declval<Settings>()))>::type>::value, "Setting has wrong type!");
     std::lock_guard<std::mutex> lock(_mutex);
     get_value<id>() = setting.value;
   }
 
-  void set_option(const Setting<std::string, ProgressBarOption::POSTFIX_TEXT>& setting){
+  void set_option(const details::Setting<std::string, details::ProgressBarOption::postfix_text>& setting){
     std::lock_guard<std::mutex> lock(_mutex);
-    get_value<ProgressBarOption::POSTFIX_TEXT>() = setting.value;
-    if(setting.value.length() > get_value<ProgressBarOption::MAX_POSTFIX_TEXT_LEN>()){
-      get_value<ProgressBarOption::MAX_POSTFIX_TEXT_LEN>() = setting.value.length();
+    get_value<details::ProgressBarOption::postfix_text>() = setting.value;
+    if(setting.value.length() > get_value<details::ProgressBarOption::max_postfix_text_len>()){
+      get_value<details::ProgressBarOption::max_postfix_text_len>() = setting.value.length();
     }
   }
 
-  void set_option(Setting<std::string, ProgressBarOption::POSTFIX_TEXT>&& setting){
+  void set_option(details::Setting<std::string, details::ProgressBarOption::postfix_text>&& setting){
     std::lock_guard<std::mutex> lock(_mutex);
-    get_value<ProgressBarOption::POSTFIX_TEXT>() = std::move(setting).value;
-    auto& new_value = get_value<ProgressBarOption::POSTFIX_TEXT>();
-    if(new_value.length() > get_value<ProgressBarOption::MAX_POSTFIX_TEXT_LEN>()){
-      get_value<ProgressBarOption::MAX_POSTFIX_TEXT_LEN>() = new_value.length();
+    get_value<details::ProgressBarOption::postfix_text>() = std::move(setting).value;
+    auto& new_value = get_value<details::ProgressBarOption::postfix_text>();
+    if(new_value.length() > get_value<details::ProgressBarOption::max_postfix_text_len>()){
+      get_value<details::ProgressBarOption::max_postfix_text_len>() = new_value.length();
     }
   }
 
@@ -122,40 +141,23 @@ public:
     return std::min(static_cast<size_t>(_progress), size_t(100));
   }
 
-  bool is_completed() const { return get_value<ProgressBarOption::COMPLETED>(); }
+  bool is_completed() const { return get_value<details::ProgressBarOption::completed>(); }
 
   void mark_as_completed() {
-    get_value<ProgressBarOption::COMPLETED>() = true;
+    get_value<details::ProgressBarOption::completed>() = true;
     _print_progress();
   }
 
 private:
-  using Settings = std::tuple<
-      option::BarWidth,
-      option::PrefixText,
-      option::PostfixText,
-      option::Start,
-      option::End,
-      option::Fill,
-      option::Lead,
-      option::Remainder,
-      option::MaxPostfixTextLen,
-      option::Completed,
-      option::ShowPercentage,
-      option::ShowElapsedTime,
-      option::ShowRemainingTime,
-      option::SavedStartTime,
-      option::ForegroundColor
-      >;
 
-  template <ProgressBarOption id>
-  auto get_value() -> decltype((std::get<static_cast<int>(id)>(std::declval<Settings&>()).value)) {
-    return std::get<static_cast<int>(id)>(settings_).value;
+  template <details::ProgressBarOption id>
+  auto get_value() -> decltype((details::get_value<id>(std::declval<Settings&>()).value)) {
+    return details::get_value<id>(settings_).value;
   }
 
-  template <ProgressBarOption id>
-  auto get_value() const -> decltype((std::get<static_cast<int>(id)>(std::declval<const Settings&>()).value)) {
-    return std::get<static_cast<int>(id)>(settings_).value;
+  template <details::ProgressBarOption id>
+  auto get_value() const -> decltype((details::get_value<id>(std::declval<const Settings&>()).value)) {
+    return details::get_value<id>(settings_).value;
   }
 
   float _progress{0};
@@ -168,9 +170,9 @@ private:
   std::atomic<bool> _multi_progress_mode{false};
 
   void _save_start_time() {
-    auto& show_elapsed_time = get_value<ProgressBarOption::SHOW_ELAPSED_TIME>();
-    auto& saved_start_time = get_value<ProgressBarOption::SAVED_START_TIME>();
-    auto& show_remaining_time = get_value<ProgressBarOption::SHOW_REMAINING_TIME>();
+    auto& show_elapsed_time = get_value<details::ProgressBarOption::show_elapsed_time>();
+    auto& saved_start_time = get_value<details::ProgressBarOption::saved_start_time>();
+    auto& show_remaining_time = get_value<details::ProgressBarOption::show_remaining_time>();
     if ((show_elapsed_time || show_remaining_time) && !saved_start_time) {
       _start_time_point = std::chrono::high_resolution_clock::now();
       saved_start_time = true;
@@ -180,40 +182,40 @@ private:
   void _print_progress(bool from_multi_progress = false) {
     if (_multi_progress_mode && !from_multi_progress) {
       if (_progress > 100.0) {
-        get_value<ProgressBarOption::COMPLETED>() = true;
+        get_value<details::ProgressBarOption::completed>() = true;
       }
       return;
     }
     std::lock_guard<std::mutex> lock{_mutex};
     auto now = std::chrono::high_resolution_clock::now();
-    if (!get_value<ProgressBarOption::COMPLETED>())
+    if (!get_value<details::ProgressBarOption::completed>())
       _elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - _start_time_point);
 
     std::cout << termcolor::bold;
-    details::set_stream_color(std::cout, get_value<ProgressBarOption::FOREGROUND_COLOR>());
-    std::cout << get_value<ProgressBarOption::PREFIX_TEXT>();
+    details::set_stream_color(std::cout, get_value<details::ProgressBarOption::foreground_color>());
+    std::cout << get_value<details::ProgressBarOption::prefix_text>();
 
-    std::cout << get_value<ProgressBarOption::START>();
+    std::cout << get_value<details::ProgressBarOption::start>();
 
-    details::ProgressScaleWriter writer{std::cout, get_value<ProgressBarOption::BAR_WIDTH>(),
-                                        get_value<ProgressBarOption::FILL>(),
-                                        get_value<ProgressBarOption::LEAD>(),
-                                        get_value<ProgressBarOption::REMAINDER>()};
+    details::ProgressScaleWriter writer{std::cout, get_value<details::ProgressBarOption::bar_width>(),
+                                        get_value<details::ProgressBarOption::fill>(),
+                                        get_value<details::ProgressBarOption::lead>(),
+                                        get_value<details::ProgressBarOption::remainder>()};
     writer.write(_progress);
 
-    std::cout << get_value<ProgressBarOption::END>();
+    std::cout << get_value<details::ProgressBarOption::end>();
 
-    if (get_value<ProgressBarOption::SHOW_PERCENTAGE>()) {
+    if (get_value<details::ProgressBarOption::show_percentage>()) {
       std::cout << " " << std::min(static_cast<size_t>(_progress), size_t(100)) << "%";
     }
 
-    if (get_value<ProgressBarOption::SHOW_ELAPSED_TIME>()) {
+    if (get_value<details::ProgressBarOption::show_elapsed_time>()) {
       std::cout << " [";
       details::write_duration(std::cout, _elapsed);
     }
 
-    if (get_value<ProgressBarOption::SHOW_REMAINING_TIME>()) {
-      if (get_value<ProgressBarOption::SHOW_ELAPSED_TIME>())
+    if (get_value<details::ProgressBarOption::show_remaining_time>()) {
+      if (get_value<details::ProgressBarOption::show_elapsed_time>())
         std::cout << "<";
       else
         std::cout << " [";
@@ -223,18 +225,18 @@ private:
       details::write_duration(std::cout, remaining);
       std::cout << "]";
     } else {
-      if (get_value<ProgressBarOption::SHOW_ELAPSED_TIME>())
+      if (get_value<details::ProgressBarOption::show_elapsed_time>())
         std::cout << "]";
     }
 
-    if (get_value<ProgressBarOption::MAX_POSTFIX_TEXT_LEN>() == 0)
-      get_value<ProgressBarOption::MAX_POSTFIX_TEXT_LEN>() = 10;
-    std::cout << " " << get_value<ProgressBarOption::POSTFIX_TEXT>() << std::string(get_value<ProgressBarOption::MAX_POSTFIX_TEXT_LEN>(), ' ') << "\r";
+    if (get_value<details::ProgressBarOption::max_postfix_text_len>() == 0)
+      get_value<details::ProgressBarOption::max_postfix_text_len>() = 10;
+    std::cout << " " << get_value<details::ProgressBarOption::postfix_text>() << std::string(get_value<details::ProgressBarOption::max_postfix_text_len>(), ' ') << "\r";
     std::cout.flush();
     if (_progress > 100.0) {
-      get_value<ProgressBarOption::COMPLETED>() = true;
+      get_value<details::ProgressBarOption::completed>() = true;
     }
-    if (get_value<ProgressBarOption::COMPLETED>() && !from_multi_progress) // Don't std::endl if calling from MultiProgress
+    if (get_value<details::ProgressBarOption::completed>() && !from_multi_progress) // Don't std::endl if calling from MultiProgress
       std::cout << termcolor::reset << std::endl;
   }
 };

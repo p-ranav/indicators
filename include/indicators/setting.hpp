@@ -35,22 +35,70 @@ SOFTWARE.
 
 namespace indicators{
 
+namespace details{
+
+template <bool condition>
+struct if_else;
+
+template<>
+struct if_else<true>{
+  using type = std::true_type;
+};
+
+template<>
+struct if_else<false>{
+  using type = std::false_type ;
+};
+
+template <bool condition, typename True, typename False>
+struct if_else_type;
+
+template <typename True, typename False>
+struct if_else_type<true, True, False>{
+  using type = True;
+};
+
+template <typename True, typename False>
+struct if_else_type<false, True, False>{
+  using type = False;
+};
+
+template <typename... Ops>
+struct conjuction;
+
+template <>
+struct conjuction<> : std::true_type {};
+
+template <typename Op, typename... TailOps>
+struct conjuction<Op, TailOps...> : if_else_type<!Op::value, std::false_type, conjuction<TailOps...>>::type {};
+
+template <typename... Ops>
+struct disjunction;
+
+template <>
+struct disjunction<> : std::false_type {};
+
+template <typename Op, typename... TailOps>
+struct disjunction<Op, TailOps...> : if_else_type<Op::value, std::true_type, disjunction<TailOps...>>::type {};
+
 enum class ProgressBarOption{
-  BAR_WIDTH=0,
-  PREFIX_TEXT,
-  POSTFIX_TEXT,
-  START,
-  END,
-  FILL,
-  LEAD,
-  REMAINDER,
-  MAX_POSTFIX_TEXT_LEN,
-  COMPLETED,
-  SHOW_PERCENTAGE,
-  SHOW_ELAPSED_TIME,
-  SHOW_REMAINING_TIME,
-  SAVED_START_TIME,
-  FOREGROUND_COLOR,
+  bar_width=0,
+  prefix_text,
+  postfix_text,
+  start,
+  end,
+  fill,
+  lead,
+  remainder,
+  max_postfix_text_len,
+  completed,
+  show_percentage,
+  show_elapsed_time,
+  show_remaining_time,
+  saved_start_time,
+  foreground_color,
+  spinner_show,
+  spinner_states
 };
 
 template <typename T, ProgressBarOption Id>
@@ -63,7 +111,7 @@ struct Setting{
   static constexpr auto id = Id;
   using type = T;
 
-  T value;
+  T value{};
 };
 
 template <typename T>
@@ -72,61 +120,54 @@ struct is_setting : std::false_type{};
 template <ProgressBarOption Id, typename T>
 struct is_setting<Setting<T, Id>> : std::true_type{};
 
-
-template <typename T, typename... Args>
-struct are_settings_impl{
-  static constexpr bool value = is_setting<T>::value && are_settings_impl<Args...>::value;
-};
-
-template <typename T>
-struct are_settings_impl<T> : is_setting<T>{};
-
-
 template <typename... Args>
-struct are_settings{
-  static constexpr bool value = are_settings_impl<Args...>::value;
-};
+struct are_settings : if_else<conjuction<is_setting<Args>...>::value>::type {};
 
 template <>
-struct are_settings<>{
-  static constexpr bool value = true;
-};
+struct are_settings<> : std::true_type{};
 
-namespace detail{
+template<typename Setting, typename Tuple>
+struct is_setting_from_tuple;
+
+template<typename Setting>
+struct is_setting_from_tuple<Setting, std::tuple<>> : std::true_type {};
+
+template <typename Setting, typename... TupleTypes>
+struct is_setting_from_tuple<Setting, std::tuple<TupleTypes...>> :
+    if_else<disjunction<std::is_same<Setting, TupleTypes>...>::value>::type {};
+
+template <typename Tuple, typename... Settings>
+struct are_settings_from_tuple : if_else<conjuction<is_setting_from_tuple<Settings, Tuple>...>::value>::type {};
+
 
 template <ProgressBarOption Id>
 struct always_true{
   static constexpr auto value = true;
 };
 
-template <ProgressBarOption Id>
-struct get_ret_type;
+template<ProgressBarOption Id, typename Default>
+Default&& get_impl(Default&& def){
+  return std::forward<Default>(def);
+}
 
-template<ProgressBarOption Id>
-typename get_ret_type<Id>::type get(){
-  static_assert(!always_true<Id>::value, "No default value for option specified!");
-} // customization point, should never be called
-
-template <ProgressBarOption Id, typename T, typename... Args>
-auto get(T&& first, Args&&... tail) -> typename std::enable_if<
+template <ProgressBarOption Id, typename Default, typename T, typename... Args>
+auto get_impl(Default&& def, T&& first, Args&&... tail) -> typename std::enable_if<
                                                 (std::decay<T>::type::id == Id),
                                                 decltype(std::forward<T>(first))>
                                                 ::type{
     return std::forward<T>(first);
 }
 
-template <ProgressBarOption Id, typename T, typename... Args>
-auto get(T&& first, Args&&... tail) -> typename std::enable_if<
+template <ProgressBarOption Id, typename Default, typename T, typename... Args>
+auto get_impl(Default&& def, T&& first, Args&&... tail) -> typename std::enable_if<
     (std::decay<T>::type::id != Id),
-    decltype(get<Id>(std::forward<Args>(tail)...))>::type{
-  return get<Id>(std::forward<Args>(tail)...);
+    decltype(get_impl<Id>(std::forward<Default>(def), std::forward<Args>(tail)...))>::type{
+  return get_impl<Id>(std::forward<Default>(def), std::forward<Args>(tail)...);
 }
 
-}
-
-template <ProgressBarOption Id, typename... Args, typename = typename std::enable_if<are_settings<Args...>::value, void>::type>
-auto get(Args&&... args) -> decltype(detail::get<Id>(std::forward<Args>(args)...)){
-  return detail::get<Id>(std::forward<Args>(args)...);
+template <ProgressBarOption Id, typename Default,  typename... Args, typename = typename std::enable_if<are_settings<Args...>::value, void>::type>
+auto get(Default&& def, Args&&... args) -> decltype(details::get_impl<Id>(std::forward<Default>(def), std::forward<Args>(args)...)){
+  return details::get_impl<Id>(std::forward<Default>(def), std::forward<Args>(args)...);
 }
 
 template <ProgressBarOption Id>
@@ -138,174 +179,44 @@ using IntegerSetting = Setting<std::size_t, Id>;
 template <ProgressBarOption Id>
 using BooleanSetting = Setting<bool, Id>;
 
-namespace option{
-  using BarWidth = IntegerSetting<ProgressBarOption::BAR_WIDTH>;
-  using PrefixText = StringSetting<ProgressBarOption::PREFIX_TEXT>;
-  using PostfixText = StringSetting<ProgressBarOption::POSTFIX_TEXT>;
-  using Start = StringSetting<ProgressBarOption::START>;
-  using End = StringSetting<ProgressBarOption::END>;
-  using Fill = StringSetting<ProgressBarOption::FILL>;
-  using Lead = StringSetting<ProgressBarOption::LEAD>;
-  using Remainder = StringSetting<ProgressBarOption::REMAINDER>;
-  using MaxPostfixTextLen = IntegerSetting<ProgressBarOption::MAX_POSTFIX_TEXT_LEN>;
-  using Completed = BooleanSetting<ProgressBarOption::COMPLETED>;
-  using ShowPercentage = BooleanSetting<ProgressBarOption::SHOW_PERCENTAGE>;
-  using ShowElapsedTime = BooleanSetting<ProgressBarOption::SHOW_ELAPSED_TIME>;
-  using ShowRemainingTime = BooleanSetting<ProgressBarOption::SHOW_REMAINING_TIME>;
-  using SavedStartTime = BooleanSetting<ProgressBarOption::SAVED_START_TIME>;
-  using ForegroundColor = Setting<Color, ProgressBarOption::FOREGROUND_COLOR>;
+template <ProgressBarOption Id, typename Tuple, std::size_t counter =0>
+struct option_idx;
+
+template <ProgressBarOption Id, typename T, typename... Settings, std::size_t counter>
+struct option_idx<Id, std::tuple<T, Settings...>, counter> : if_else_type<(Id == T::id),
+    std::integral_constant<std::size_t, counter>,
+    option_idx<Id, std::tuple<Settings...>, counter+1>>::type{};
+
+template <ProgressBarOption Id, std::size_t counter>
+struct option_idx<Id, std::tuple<>, counter>{
+  static_assert(always_true<(ProgressBarOption)Id>::value, "No such option was found");
+};
+
+template <ProgressBarOption Id, typename Settings>
+auto get_value(Settings&& settings) -> decltype((std::get<option_idx<Id, typename std::decay<Settings>::type>::value>(std::declval<Settings&&>()))){
+  return std::get<option_idx<Id, typename std::decay<Settings>::type>::value>(std::forward<Settings>(settings));
 }
 
-namespace detail{
-  template<>
-  struct get_ret_type<ProgressBarOption::BAR_WIDTH>{
-    using type = ::indicators::option::BarWidth;
-  };
+}
 
-  template<> get_ret_type<ProgressBarOption::BAR_WIDTH>::type
-  get<ProgressBarOption::BAR_WIDTH>(){
-    return indicators::option::BarWidth{100};
-  }
 
-  template<>
-  struct get_ret_type<ProgressBarOption::PREFIX_TEXT>{
-    using type = ::indicators::option::PrefixText;
-  };
-
-  template<> get_ret_type<ProgressBarOption::PREFIX_TEXT>::type
-  get<ProgressBarOption::PREFIX_TEXT>(){
-    return indicators::option::PrefixText{};
-  }
-
-  template<>
-  struct get_ret_type<ProgressBarOption::POSTFIX_TEXT>{
-    using type = ::indicators::option::PostfixText;
-  };
-
-  template<> get_ret_type<ProgressBarOption::POSTFIX_TEXT>::type
-  get<ProgressBarOption::POSTFIX_TEXT>(){
-    return indicators::option::PostfixText{};
-  }
-
-  template<>
-  struct get_ret_type<ProgressBarOption::START>{
-    using type = ::indicators::option::Start;
-  };
-
-  template<> get_ret_type<ProgressBarOption::START>::type
-  get<ProgressBarOption::START>(){
-    return indicators::option::Start{"["};
-  }
-
-  template<>
-  struct get_ret_type<ProgressBarOption::FILL>{
-    using type = ::indicators::option::Fill;
-  };
-
-  template<> get_ret_type<ProgressBarOption::FILL>::type
-  get<ProgressBarOption::FILL>(){
-    return indicators::option::Fill{"="};
-  }
-
-  template<>
-  struct get_ret_type<ProgressBarOption::LEAD>{
-    using type = ::indicators::option::Lead;
-  };
-
-  template<> get_ret_type<ProgressBarOption::LEAD>::type
-  get<ProgressBarOption::LEAD>(){
-    return indicators::option::Lead{">"};
-  }
-
-  template<>
-  struct get_ret_type<ProgressBarOption::REMAINDER>{
-    using type = ::indicators::option::Remainder;
-  };
-
-  template<> get_ret_type<ProgressBarOption::REMAINDER>::type
-  get<ProgressBarOption::REMAINDER>(){
-    return indicators::option::Remainder{" "};
-  }
-
-  template<>
-  struct get_ret_type<ProgressBarOption::END>{
-    using type = ::indicators::option::End;
-  };
-
-  template<> get_ret_type<ProgressBarOption::END>::type
-  get<ProgressBarOption::END>(){
-    return indicators::option::End{"]"};
-  }
-
-  template<>
-  struct get_ret_type<ProgressBarOption::MAX_POSTFIX_TEXT_LEN>{
-    using type = ::indicators::option::MaxPostfixTextLen;
-  };
-
-  template<> get_ret_type<ProgressBarOption::MAX_POSTFIX_TEXT_LEN>::type
-  get<ProgressBarOption::MAX_POSTFIX_TEXT_LEN>(){
-    return indicators::option::MaxPostfixTextLen{0};
-  }
-
-  template<>
-  struct get_ret_type<ProgressBarOption::COMPLETED>{
-    using type = ::indicators::option::Completed;
-  };
-
-  template<> get_ret_type<ProgressBarOption::COMPLETED>::type
-  get<ProgressBarOption::COMPLETED>(){
-    return indicators::option::Completed{false};
-  }
-
-  template<>
-  struct get_ret_type<ProgressBarOption::SHOW_PERCENTAGE>{
-    using type = ::indicators::option::ShowPercentage;
-  };
-
-  template<> get_ret_type<ProgressBarOption::SHOW_PERCENTAGE>::type
-  get<ProgressBarOption::SHOW_PERCENTAGE>(){
-    return indicators::option::ShowPercentage{false};
-  }
-
-  template<>
-  struct get_ret_type<ProgressBarOption::SHOW_ELAPSED_TIME>{
-    using type = ::indicators::option::ShowElapsedTime;
-  };
-
-  template<> get_ret_type<ProgressBarOption::SHOW_ELAPSED_TIME>::type
-  get<ProgressBarOption::SHOW_ELAPSED_TIME>(){
-    return indicators::option::ShowElapsedTime{false};
-  }
-
-  template<>
-  struct get_ret_type<ProgressBarOption::SHOW_REMAINING_TIME>{
-    using type = ::indicators::option::ShowRemainingTime;
-  };
-
-  template<> get_ret_type<ProgressBarOption::SHOW_REMAINING_TIME>::type
-  get<ProgressBarOption::SHOW_REMAINING_TIME>(){
-    return indicators::option::ShowRemainingTime{false};
-  }
-
-  template<>
-  struct get_ret_type<ProgressBarOption::SAVED_START_TIME>{
-    using type = ::indicators::option::SavedStartTime;
-  };
-
-  template<> get_ret_type<ProgressBarOption::SAVED_START_TIME>::type
-  get<ProgressBarOption::SAVED_START_TIME>(){
-    return indicators::option::SavedStartTime{false};
-  }
-
-  template<>
-  struct get_ret_type<ProgressBarOption::FOREGROUND_COLOR>{
-    using type = ::indicators::option::ForegroundColor;
-  };
-
-  template<> get_ret_type<ProgressBarOption::FOREGROUND_COLOR>::type
-  get<ProgressBarOption::FOREGROUND_COLOR>(){
-    return indicators::option::ForegroundColor{::indicators::Color::WHITE};
-  }
-
+namespace option{
+  using BarWidth = details::IntegerSetting<details::ProgressBarOption::bar_width>;
+  using PrefixText = details::StringSetting<details::ProgressBarOption::prefix_text>;
+  using PostfixText = details::StringSetting<details::ProgressBarOption::postfix_text>;
+  using Start = details::StringSetting<details::ProgressBarOption::start>;
+  using End = details::StringSetting<details::ProgressBarOption::end>;
+  using Fill = details::StringSetting<details::ProgressBarOption::fill>;
+  using Lead = details::StringSetting<details::ProgressBarOption::lead>;
+  using Remainder = details::StringSetting<details::ProgressBarOption::remainder>;
+  using MaxPostfixTextLen = details::IntegerSetting<details::ProgressBarOption::max_postfix_text_len>;
+  using Completed = details::BooleanSetting<details::ProgressBarOption::completed>;
+  using ShowPercentage = details::BooleanSetting<details::ProgressBarOption::show_percentage>;
+  using ShowElapsedTime = details::BooleanSetting<details::ProgressBarOption::show_elapsed_time>;
+  using ShowRemainingTime = details::BooleanSetting<details::ProgressBarOption::show_remaining_time>;
+  using SavedStartTime = details::BooleanSetting<details::ProgressBarOption::saved_start_time>;
+  using ForegroundColor = details::Setting<Color, details::ProgressBarOption::foreground_color>;
+  using SpinnerShow = details::BooleanSetting<details::ProgressBarOption::spinner_show>;
+  using SpinnerStates = details::Setting<std::vector<std::string>, details::ProgressBarOption::spinner_states>;
 }
 }

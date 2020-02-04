@@ -5,22 +5,21 @@ int main() {
   // Hide cursor
   std::cout << "\e[?25l";
 
-  indicators::ProgressSpinner spinner;
-
-  // Configure the spinner
-  spinner.set_postfix_text("Checking credentials");
-  spinner.set_foreground_color(indicators::Color::YELLOW);
-  spinner.set_spinner_states({"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"});
+  indicators::ProgressSpinner spinner{
+    indicators::option::PostfixText{"Checking credentials"},
+    indicators::option::ForegroundColor{indicators::Color::YELLOW},
+    indicators::option::SpinnerStates{std::vector<std::string>{"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"}},
+  };
 
   // Update spinner state
   auto job = [&spinner]() {
     while (true) {
       if (spinner.is_completed()) {
-        spinner.set_foreground_color(indicators::Color::GREEN);
-        spinner.set_prefix_text("✔");
-        spinner.hide_spinner();
-        spinner.hide_percentage();
-        spinner.set_postfix_text("Authenticated!");
+        spinner.set_option(indicators::option::ForegroundColor{indicators::Color::GREEN});
+        spinner.set_option(indicators::option::PrefixText{"✔"});
+        spinner.set_option(indicators::option::SpinnerShow{false});
+        spinner.set_option(indicators::option::ShowPercentage{false});
+        spinner.set_option(indicators::option::PostfixText{"Authenticated!"});
         spinner.mark_as_completed();
         break;
       } else

@@ -188,19 +188,21 @@ int main() {
     //
     // PROGRESS BAR 5
     //
-    indicators::ProgressSpinner p;
-    p.set_prefix_text("");
-    p.set_postfix_text("Checking credentials");
-    p.set_foreground_color(indicators::Color::YELLOW);
-    p.set_spinner_states({"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"});
+    indicators::ProgressSpinner p{
+      option::PrefixText{""},
+      option::PostfixText{"Checking credentials"},
+      option::ForegroundColor{indicators::Color::YELLOW},
+      option::SpinnerStates{std::vector<std::string>{"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"}}
+    };
+
     auto job = [&p]() {
       while (true) {
         if (p.is_completed()) {
-          p.set_foreground_color(indicators::Color::GREEN);
-          p.set_prefix_text("✔");
-          p.hide_spinner();
-          p.hide_percentage();
-          p.set_postfix_text("Authenticated!");
+          p.set_option(option::ForegroundColor{indicators::Color::GREEN});
+          p.set_option(option::PrefixText{"✔"});
+          p.set_option(option::SpinnerShow{false});
+          p.set_option(option::ShowPercentage{false});
+          p.set_option(option::PostfixText{"Authenticated!"});
           p.mark_as_completed();
           break;
         } else
@@ -217,42 +219,43 @@ int main() {
     //
     // PROGRESS BAR 6
     //
-    indicators::ProgressSpinner p;
-    p.set_prefix_text(" - ");
-    p.set_postfix_text("Searching for the Moon");
-    p.set_foreground_color(indicators::Color::WHITE);
-    p.set_spinner_states({"▖", "▘", "▝", "▗"});
-    p.hide_percentage();
+    indicators::ProgressSpinner p{
+      option::PrefixText{" - "},
+      option::PostfixText{"Searching for the Moon"},
+      option::ForegroundColor{indicators::Color::WHITE},
+      option::ShowPercentage{false},
+      option::SpinnerStates{std::vector<std::string>{"▖", "▘", "▝", "▗"}}
+    };
     auto job = [&p]() {
       while (true) {
         auto current = p.current();
         if (current == 24) {
-          p.set_prefix_text(" - ✔");
-          p.hide_spinner();
+          p.set_option(option::PrefixText{" - ✔"});
+          p.set_option(option::SpinnerShow{false});
         } else if (current == 25) {
           std::cout << std::endl;
-          p.show_spinner();
-          p.set_prefix_text(" - ");
-          p.set_postfix_text("Contacting Kerbal headquarters");
+          p.set_option(option::SpinnerShow{true});
+          p.set_option(option::PrefixText{" - "});
+          p.set_option(option::PostfixText{"Contacting Kerbal headquarters"});
         } else if (current == 49) {
-          p.set_prefix_text(" - ✔");
-          p.hide_spinner();
+          p.set_option(option::PrefixText{" - ✔"});
+          p.set_option(option::SpinnerShow{false});
         } else if (current == 50) {
           std::cout << std::endl;
-          p.show_spinner();
-          p.set_prefix_text(" - ");
-          p.set_postfix_text("Designing spaceship");
+          p.set_option(option::SpinnerShow{true});
+          p.set_option(option::PrefixText{" - "});
+          p.set_option(option::PostfixText{"Designing spaceship"});
         } else if (current == 74) {
-          p.set_prefix_text(" - ✔");
-          p.hide_spinner();
+          p.set_option(option::PrefixText{" - ✔"});
+          p.set_option(option::SpinnerShow{false});
         } else if (current == 75) {
           std::cout << std::endl;
-          p.show_spinner();
-          p.set_prefix_text(" - ");
-          p.set_postfix_text("Launching rocket");
+          p.set_option(option::SpinnerShow{true});
+          p.set_option(option::PrefixText{" - "});
+          p.set_option(option::PostfixText{"Launching rocket"});
         } else if (current == 95) {
-          p.set_prefix_text(" - ✔");
-          p.hide_spinner();
+          p.set_option(option::PrefixText{" - ✔"});
+          p.set_option(option::SpinnerShow{false});
         } else if (current == 99) {
           std::cout << std::endl;
           //
@@ -291,7 +294,7 @@ int main() {
           };
           std::thread thread2(job2);
           thread2.join();
-          p.set_postfix_text("Mission successful!");
+          p.set_option(indicators::option::PostfixText{"Mission successful!"});
           p.mark_as_completed();
           break;
         }
