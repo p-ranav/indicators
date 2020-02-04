@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(indicators VERSION 1.5.0 LANGUAGES CXX)
+project(indicators VERSION 1.5.0 LANGUAGES CXX DESCRIPTION "Activity Indicators for Modern C++")
 option(INDICATORS_BUILD_TESTS OFF)
 option(SAMPLES "Build Samples" OFF)
 option(DEMO "Build Demo" OFF)
@@ -31,6 +31,10 @@ configure_package_config_file(indicatorsConfig.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/indicatorsConfig.cmake
   INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/indicators)
 
+configure_file(indicators.pc.in
+  "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/indicators.pc"
+  @ONLY)
+
 install(TARGETS indicators EXPORT indicatorsTargets)
 install(EXPORT indicatorsTargets
         FILE indicatorsTargets.cmake
@@ -38,6 +42,8 @@ install(EXPORT indicatorsTargets
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/indicators)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/indicatorsConfig.cmake
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/indicators)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/indicators.pc
+	DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig/)
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/include/indicators
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         USE_SOURCE_PERMISSIONS
