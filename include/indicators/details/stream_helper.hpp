@@ -67,7 +67,7 @@ inline std::ostream &write_duration(std::ostream &os, std::chrono::nanoseconds n
     os << setw(2) << m.count() << "m:" << setw(2) << s.count() << 's';
     os.fill(fill);
     return os;
-};
+}
 
 class BlockProgressScaleWriter
 {
