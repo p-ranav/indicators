@@ -4,7 +4,7 @@ https://github.com/p-ranav/indicators
 
 Licensed under the MIT License <http://opensource.org/licenses/MIT>.
 SPDX-License-Identifier: MIT
-Copyright (c) 2019 Pranav Srinivas Kumar <pranav.srinivas.kumar@gmail.com>.
+Copyright (c) 2019 Dawid Pilarski <dawid.pilarski@panicsoftware.com>.
 
 Permission is hereby  granted, free of charge, to any  person obtaining a copy
 of this software and associated  documentation files (the "Software"), to deal
