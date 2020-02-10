@@ -59,7 +59,7 @@ class BlockProgressBar {
       option::MaxPostfixTextLen>;
 public:
   template <typename... Args, typename std::enable_if<details::are_settings_from_tuple<Settings, typename std::decay<Args>::type...>::value, void*>::type = nullptr>
-  BlockProgressBar(Args&&... args) : settings_(
+  explicit BlockProgressBar(Args&&... args) : settings_(
       details::get<details::ProgressBarOption::foreground_color>(option::ForegroundColor{Color::WHITE}, std::forward<Args>(args)...),
       details::get<details::ProgressBarOption::bar_width>(option::BarWidth{100}, std::forward<Args>(args)...),
       details::get<details::ProgressBarOption::start>(option::Start{"["}, std::forward<Args>(args)...),
