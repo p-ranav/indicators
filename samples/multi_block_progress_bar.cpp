@@ -2,27 +2,30 @@
 #include <indicators/multi_progress.hpp>
 
 int main() {
+  using namespace indicators;
+  BlockProgressBar bar1{
+    option::BarWidth{50},
+    option::ForegroundColor{Color::YELLOW},
+    option::ShowElapsedTime{true},
+    option::ShowRemainingTime{true},
+    option::PrefixText{"Progress Bar #1 "}
+  };
 
-  indicators::BlockProgressBar bar1;
-  bar1.set_bar_width(50);
-  bar1.set_foreground_color(indicators::Color::YELLOW);
-  bar1.show_elapsed_time();
-  bar1.show_remaining_time();
-  bar1.set_prefix_text("Progress Bar #1 ");
+  BlockProgressBar bar2{
+    option::BarWidth{50},
+    option::ForegroundColor{Color::CYAN},
+    option::ShowElapsedTime{true},
+    option::ShowRemainingTime{true},
+    option::PrefixText{"Progress Bar #2 "}
+  };
 
-  indicators::BlockProgressBar bar2;
-  bar2.set_bar_width(50);
-  bar2.set_foreground_color(indicators::Color::CYAN);
-  bar2.show_elapsed_time();
-  bar2.show_remaining_time();
-  bar2.set_prefix_text("Progress Bar #2 ");
-
-  indicators::BlockProgressBar bar3;
-  bar3.set_bar_width(50);
-  bar3.set_foreground_color(indicators::Color::RED);
-  bar3.show_elapsed_time();
-  bar3.show_remaining_time();
-  bar3.set_prefix_text("Progress Bar #3 ");
+  BlockProgressBar bar3{
+    option::BarWidth{50},
+    option::ForegroundColor{Color::RED},
+    option::ShowElapsedTime{true},
+    option::ShowRemainingTime{true},
+    option::PrefixText{"Progress Bar #3 "}
+  };
 
   indicators::MultiProgress<indicators::BlockProgressBar, 3> bars(bar1, bar2, bar3);
 
