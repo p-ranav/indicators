@@ -216,7 +216,7 @@ namespace option{
   using ShowRemainingTime = details::BooleanSetting<details::ProgressBarOption::show_remaining_time>;
   using SavedStartTime = details::BooleanSetting<details::ProgressBarOption::saved_start_time>;
   using ForegroundColor = details::Setting<Color, details::ProgressBarOption::foreground_color>;
-  using SpinnerShow = details::BooleanSetting<details::ProgressBarOption::spinner_show>;
+  using ShowSpinner = details::BooleanSetting<details::ProgressBarOption::spinner_show>;
   using SpinnerStates = details::Setting<std::vector<std::string>, details::ProgressBarOption::spinner_states>;
 }
 }

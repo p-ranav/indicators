@@ -12,7 +12,7 @@ int main() {
     // PROGRESS BAR 1
     //
     indicators::ProgressBar p{option::BarWidth{50},
-                              option::Start{"{"},
+                              option::Start{"["},
                               option::Fill{"■"},
                               option::Lead{"■"},
                               option::Remainder{" "},
@@ -200,7 +200,7 @@ int main() {
         if (p.is_completed()) {
           p.set_option(option::ForegroundColor{indicators::Color::GREEN});
           p.set_option(option::PrefixText{"✔"});
-          p.set_option(option::SpinnerShow{false});
+          p.set_option(option::ShowSpinner{false});
           p.set_option(option::ShowPercentage{false});
           p.set_option(option::PostfixText{"Authenticated!"});
           p.mark_as_completed();
@@ -231,31 +231,31 @@ int main() {
         auto current = p.current();
         if (current == 24) {
           p.set_option(option::PrefixText{" - ✔"});
-          p.set_option(option::SpinnerShow{false});
+          p.set_option(option::ShowSpinner{false});
         } else if (current == 25) {
           std::cout << std::endl;
-          p.set_option(option::SpinnerShow{true});
+          p.set_option(option::ShowSpinner{true});
           p.set_option(option::PrefixText{" - "});
           p.set_option(option::PostfixText{"Contacting Kerbal headquarters"});
         } else if (current == 49) {
           p.set_option(option::PrefixText{" - ✔"});
-          p.set_option(option::SpinnerShow{false});
+          p.set_option(option::ShowSpinner{false});
         } else if (current == 50) {
           std::cout << std::endl;
-          p.set_option(option::SpinnerShow{true});
+          p.set_option(option::ShowSpinner{true});
           p.set_option(option::PrefixText{" - "});
           p.set_option(option::PostfixText{"Designing spaceship"});
         } else if (current == 74) {
           p.set_option(option::PrefixText{" - ✔"});
-          p.set_option(option::SpinnerShow{false});
+          p.set_option(option::ShowSpinner{false});
         } else if (current == 75) {
           std::cout << std::endl;
-          p.set_option(option::SpinnerShow{true});
+          p.set_option(option::ShowSpinner{true});
           p.set_option(option::PrefixText{" - "});
           p.set_option(option::PostfixText{"Launching rocket"});
         } else if (current == 95) {
           p.set_option(option::PrefixText{" - ✔"});
-          p.set_option(option::SpinnerShow{false});
+          p.set_option(option::ShowSpinner{false});
         } else if (current == 99) {
           std::cout << std::endl;
           //

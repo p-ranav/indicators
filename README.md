@@ -173,7 +173,7 @@ int main() {
     option::Lead{"█"},
     option::Remainder{"-"},
     option::End{"]"},
-    option::PrefixText{"Training Gaze Network "👀},
+    option::PrefixText{"Training Gaze Network "},
     option::ForegroundColor{Color::YELLOW}
     option::ShowElapsedTime{true};
     option::ShowRemainingTime{true};
@@ -364,7 +364,7 @@ int main() {
   indicators::ProgressSpinner spinner{
     option::PostfixText{"Checking credentials"},
     option::ForegroundColor{Color::YELLOW},
-    option::SpinnerStates{std::vector<std::string>{"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"};}
+    option::SpinnerStates{std::vector<std::string>{"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"}}
   };
  
   // Update spinner state
@@ -373,7 +373,7 @@ int main() {
       if (spinner.is_completed()) {
         spinner.set_option(option::ForegroundColor{Color::GREEN});
         spinner.set_option(option::PrefixText{"✔"});
-        spinner.set_option(option::SpinnerShow{false});
+        spinner.set_option(option::ShowSpinner{false});
         spinner.set_option(option::ShowPercentage{false});
         spinner.set_option(option::PostfixText{"Authenticated!"});
         spinner.mark_as_completed();	

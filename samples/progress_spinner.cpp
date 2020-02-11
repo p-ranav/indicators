@@ -17,7 +17,7 @@ int main() {
       if (spinner.is_completed()) {
         spinner.set_option(indicators::option::ForegroundColor{indicators::Color::GREEN});
         spinner.set_option(indicators::option::PrefixText{"✔"});
-        spinner.set_option(indicators::option::SpinnerShow{false});
+        spinner.set_option(indicators::option::ShowSpinner{false});
         spinner.set_option(indicators::option::ShowPercentage{false});
         spinner.set_option(indicators::option::PostfixText{"Authenticated!"});
         spinner.mark_as_completed();
