@@ -173,7 +173,7 @@ int main() {
     option::Lead{"█"},
     option::Remainder{"-"},
     option::End{"]"},
-    option::PrefixText{"Training Gaze Network "},
+    option::PrefixText{"Training Gaze Network 👀"},
     option::ForegroundColor{Color::YELLOW}
     option::ShowElapsedTime{true};
     option::ShowRemainingTime{true};
