@@ -36,7 +36,7 @@ int main() {
     indicators::option::Lead{"#"},
     indicators::option::Remainder{" "},
     indicators::option::End{" ]"},
-    indicators::option::ForegroundColor{indicators::Color::CYAN},
+    indicators::option::ForegroundColor{indicators::Color::RED},
     indicators::option::ShowElapsedTime{true},
     indicators::option::ShowRemainingTime{true},
     indicators::option::PrefixText{"Progress Bar #3 "}
