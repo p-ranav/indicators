@@ -89,19 +89,19 @@ public:
   template <typename T, details::ProgressBarOption id>
   void set_option(details::Setting<T, id>&& setting){
     static_assert(!std::is_same<T, typename std::decay<decltype(details::get_value<id>(std::declval<Settings>()))>::type>::value, "Setting has wrong type!");
-    std::lock_guard<std::mutex> lock(_mutex);
+    std::lock_guard<std::mutex> lock(mutex_);
     get_value<id>() = std::move(setting).value;
   }
 
   template <typename T, details::ProgressBarOption id>
   void set_option(const details::Setting<T, id>& setting){
     static_assert(!std::is_same<T, typename std::decay<decltype(details::get_value<id>(std::declval<Settings>()))>::type>::value, "Setting has wrong type!");
-    std::lock_guard<std::mutex> lock(_mutex);
+    std::lock_guard<std::mutex> lock(mutex_);
     get_value<id>() = setting.value;
   }
 
   void set_option(const details::Setting<std::string, details::ProgressBarOption::postfix_text>& setting){
-    std::lock_guard<std::mutex> lock(_mutex);
+    std::lock_guard<std::mutex> lock(mutex_);
     get_value<details::ProgressBarOption::postfix_text>() = setting.value;
     if(setting.value.length() > get_value<details::ProgressBarOption::max_postfix_text_len>()){
       get_value<details::ProgressBarOption::max_postfix_text_len>() = setting.value.length();
@@ -109,7 +109,7 @@ public:
   }
 
   void set_option(details::Setting<std::string, details::ProgressBarOption::postfix_text>&& setting){
-    std::lock_guard<std::mutex> lock(_mutex);
+    std::lock_guard<std::mutex> lock(mutex_);
     get_value<details::ProgressBarOption::postfix_text>() = std::move(setting).value;
     auto& new_value = get_value<details::ProgressBarOption::postfix_text>();
     if(new_value.length() > get_value<details::ProgressBarOption::max_postfix_text_len>()){
@@ -117,35 +117,35 @@ public:
     }
   }
 
-  void set_progress(float newProgress){
+  void set_progress(float new_progress){
     {
-      std::lock_guard<std::mutex> lck(_mutex);
-      _progress = newProgress;
+      std::lock_guard<std::mutex> lck(mutex_);
+      progress_ = new_progress;
     }
 
-    _save_start_time();
-    _print_progress();
+    save_start_time();
+    print_progress();
   }
 
   void tick() {
     {
-      std::lock_guard<std::mutex> lock{_mutex};
-      _progress += 1;
+      std::lock_guard<std::mutex> lock{mutex_};
+      progress_ += 1;
     }
-    _save_start_time();
-    _print_progress();
+    save_start_time();
+    print_progress();
   }
 
   size_t current() {
-    std::lock_guard<std::mutex> lock{_mutex};
-    return std::min(static_cast<size_t>(_progress), size_t(100));
+    std::lock_guard<std::mutex> lock{mutex_};
+    return std::min(static_cast<size_t>(progress_), size_t(100));
   }
 
   bool is_completed() const { return get_value<details::ProgressBarOption::completed>(); }
 
   void mark_as_completed() {
     get_value<details::ProgressBarOption::completed>() = true;
-    _print_progress();
+    print_progress();
   }
 
 private:
@@ -160,36 +160,36 @@ private:
     return details::get_value<id>(settings_).value;
   }
 
-  float _progress{0};
+  float progress_{0};
   Settings settings_;
-  std::chrono::nanoseconds _elapsed;
-  std::chrono::time_point<std::chrono::high_resolution_clock> _start_time_point;
-  std::mutex _mutex;
+  std::chrono::nanoseconds elapsed_;
+  std::chrono::time_point<std::chrono::high_resolution_clock> start_time_point_;
+  std::mutex mutex_;
 
   template <typename Indicator, size_t count> friend class MultiProgress;
-  std::atomic<bool> _multi_progress_mode{false};
+  std::atomic<bool> multi_progress_mode_{false};
 
-  void _save_start_time() {
+  void save_start_time() {
     auto& show_elapsed_time = get_value<details::ProgressBarOption::show_elapsed_time>();
     auto& saved_start_time = get_value<details::ProgressBarOption::saved_start_time>();
     auto& show_remaining_time = get_value<details::ProgressBarOption::show_remaining_time>();
     if ((show_elapsed_time || show_remaining_time) && !saved_start_time) {
-      _start_time_point = std::chrono::high_resolution_clock::now();
+      start_time_point_ = std::chrono::high_resolution_clock::now();
       saved_start_time = true;
     }
   }
 
-  void _print_progress(bool from_multi_progress = false) {
-    if (_multi_progress_mode && !from_multi_progress) {
-      if (_progress > 100.0) {
+  void print_progress(bool from_multi_progress = false) {
+    if (multi_progress_mode_ && !from_multi_progress) {
+      if (progress_ > 100.0) {
         get_value<details::ProgressBarOption::completed>() = true;
       }
       return;
     }
-    std::lock_guard<std::mutex> lock{_mutex};
+    std::lock_guard<std::mutex> lock{mutex_};
     auto now = std::chrono::high_resolution_clock::now();
     if (!get_value<details::ProgressBarOption::completed>())
-      _elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - _start_time_point);
+      elapsed_ = std::chrono::duration_cast<std::chrono::nanoseconds>(now - start_time_point_);
 
     std::cout << termcolor::bold;
     details::set_stream_color(std::cout, get_value<details::ProgressBarOption::foreground_color>());
@@ -201,17 +201,17 @@ private:
                                         get_value<details::ProgressBarOption::fill>(),
                                         get_value<details::ProgressBarOption::lead>(),
                                         get_value<details::ProgressBarOption::remainder>()};
-    writer.write(_progress);
+    writer.write(progress_);
 
     std::cout << get_value<details::ProgressBarOption::end>();
 
     if (get_value<details::ProgressBarOption::show_percentage>()) {
-      std::cout << " " << std::min(static_cast<size_t>(_progress), size_t(100)) << "%";
+      std::cout << " " << std::min(static_cast<size_t>(progress_), size_t(100)) << "%";
     }
 
     if (get_value<details::ProgressBarOption::show_elapsed_time>()) {
       std::cout << " [";
-      details::write_duration(std::cout, _elapsed);
+      details::write_duration(std::cout, elapsed_);
     }
 
     if (get_value<details::ProgressBarOption::show_remaining_time>()) {
@@ -220,8 +220,8 @@ private:
       else
         std::cout << " [";
       auto eta = std::chrono::nanoseconds(
-          _progress > 0 ? static_cast<long long>(_elapsed.count() * 100 / _progress) : 0);
-      auto remaining = eta > _elapsed ? (eta - _elapsed) : (_elapsed - eta);
+          progress_ > 0 ? static_cast<long long>(elapsed_.count() * 100 / progress_) : 0);
+      auto remaining = eta > elapsed_ ? (eta - elapsed_) : (elapsed_ - eta);
       details::write_duration(std::cout, remaining);
       std::cout << "]";
     } else {
@@ -233,7 +233,7 @@ private:
       get_value<details::ProgressBarOption::max_postfix_text_len>() = 10;
     std::cout << " " << get_value<details::ProgressBarOption::postfix_text>() << std::string(get_value<details::ProgressBarOption::max_postfix_text_len>(), ' ') << "\r";
     std::cout.flush();
-    if (_progress > 100.0) {
+    if (progress_ > 100.0) {
       get_value<details::ProgressBarOption::completed>() = true;
     }
     if (get_value<details::ProgressBarOption::completed>() && !from_multi_progress) // Don't std::endl if calling from MultiProgress

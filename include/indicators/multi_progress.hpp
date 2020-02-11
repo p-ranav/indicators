@@ -39,55 +39,55 @@ public:
   template <typename... Indicators,
             typename = typename std::enable_if<(sizeof...(Indicators) == count)>::type>
   explicit MultiProgress(Indicators &... bars) {
-    _bars = {bars...};
-    for (auto &bar : _bars) {
-      bar.get()._multi_progress_mode = true;
+    bars_ = {bars...};
+    for (auto &bar : bars_) {
+      bar.get().multi_progress_mode_ = true;
     }
   }
 
   template <size_t index>
   typename std::enable_if<(index >= 0 && index < count), void>::type set_progress(float value) {
-    if (!_bars[index].get().is_completed())
-      _bars[index].get().set_progress(value);
-    _print_progress();
+    if (!bars_[index].get().is_completed())
+      bars_[index].get().set_progress(value);
+    print_progress();
   }
 
   template <size_t index>
   typename std::enable_if<(index >= 0 && index < count), void>::type tick() {
-    if (!_bars[index].get().is_completed())
-      _bars[index].get().tick();
-    _print_progress();
+    if (!bars_[index].get().is_completed())
+      bars_[index].get().tick();
+    print_progress();
   }
 
   template <size_t index>
   typename std::enable_if<(index >= 0 && index < count), bool>::type is_completed() const {
-    return _bars[index].get().is_completed();
+    return bars_[index].get().is_completed();
   }
 
 private:
-  std::atomic<bool> _started{false};
-  std::mutex _mutex;
-  std::vector<std::reference_wrapper<Indicator>> _bars;
+  std::atomic<bool> started_{false};
+  std::mutex mutex_;
+  std::vector<std::reference_wrapper<Indicator>> bars_;
 
   bool _all_completed() {
     bool result{true};
     for (size_t i = 0; i < count; ++i)
-      result &= _bars[i].get().is_completed();
+      result &= bars_[i].get().is_completed();
     return result;
   }
 
-  void _print_progress() {
-    std::lock_guard<std::mutex> lock{_mutex};
-    if (_started)
+  void print_progress() {
+    std::lock_guard<std::mutex> lock{mutex_};
+    if (started_)
       for (size_t i = 0; i < count; ++i)
         std::cout << "\x1b[A";
-    for (auto &bar : _bars) {
-      bar.get()._print_progress(true);
+    for (auto &bar : bars_) {
+      bar.get().print_progress(true);
       std::cout << "\n";
     }
     std::cout << termcolor::reset;
-    if (!_started)
-      _started = true;
+    if (!started_)
+      started_ = true;
   }
 };
 
