@@ -62,17 +62,17 @@ You can update the progress bar using `bar.tick()` which increments progress by 
 #include <chrono>
 
 int main() {
-  indicators::ProgressBar bar;
-  
-  // Configure the bar
-  bar.set_bar_width(50);
-  bar.start_bar_with("[");
-  bar.fill_bar_progress_with("=");
-  bar.lead_bar_progress_with(">");
-  bar.fill_bar_remainder_with(" ");
-  bar.end_bar_with("]");
-  bar.set_postfix_text("Extracting Archive");
-  bar.set_foreground_color(indicators::Color::GREEN); 
+  using namespace indicators;
+  ProgressBar bar{
+    option::BarWidth{50},
+    option::Start{"["},
+    option::Fill{"="},
+    option::Lead{">"},
+    option::Remainder{" "},
+    option::End{"]"},
+    option::PostfixText{"Extracting Archive"};
+    option::ForegroundColor{Color::GREEN};
+  };
   
   // Update bar state
   while (true) {
@@ -106,18 +106,17 @@ int main() {
 
   // Hide cursor
   std::cout << "\e[?25l";
-
-  indicators::ProgressBar bar;
-
-  // Configure the bar
-  bar.set_bar_width(50);
-  bar.start_bar_with("[");
-  bar.fill_bar_progress_with("■");
-  bar.lead_bar_progress_with("■");  
-  bar.fill_bar_remainder_with("-");
-  bar.end_bar_with(" ]");
-  bar.set_postfix_text("Loading dependency 1/4");  
-  bar.set_foreground_color(indicators::Color::CYAN);
+  using namespace indicators;
+  ProgressBar bar{
+    option::BarWidth{50},
+    option::Start{"["},
+    option::Fill{"■"},
+    option::Lead{"■"},
+    option::Remainder{"-"},
+    option::End{" ]"},
+    option::PostfixText{"Loading dependency 1/4"},
+    option::ForegroundColor{Color::CYAN}  
+  };
 
   // Update bar state
   bar.set_progress(10); // 10% done
@@ -125,21 +124,21 @@ int main() {
   // do some work
   std::this_thread::sleep_for(std::chrono::milliseconds(800));
 
-  bar.set_postfix_text("Loading dependency 2/4");  
+  bar.set_option(option::PostfixText{"Loading dependency 2/4"});  
 
   bar.set_progress(30); // 30% done
 
   // do some more work
   std::this_thread::sleep_for(std::chrono::milliseconds(700));
 
-  bar.set_postfix_text("Loading dependency 3/4");  
+  bar.set_option(option::PostfixText{"Loading dependency 3/4"});  
 
   bar.set_progress(65); // 65% done
 
   // do final bit of work
   std::this_thread::sleep_for(std::chrono::milliseconds(900));
 
-  bar.set_postfix_text("Loaded dependencies!");
+  bar.set_option(option::PostfixText{"Loaded dependencies!"});
 
   bar.set_progress(100); // all done
 
@@ -166,21 +165,19 @@ All progress bars and spinners in `indicators` support showing time elapsed and 
 #include <thread>
 
 int main() {
-  indicators::ProgressBar bar;
-
-  // Configure the bar
-  bar.set_bar_width(50);
-  bar.start_bar_with(" [");
-  bar.fill_bar_progress_with("█");
-  bar.lead_bar_progress_with("█");
-  bar.fill_bar_remainder_with("-");
-  bar.end_bar_with("]");
-  bar.set_prefix_text("Training Gaze Network 👀");
-  bar.set_foreground_color(indicators::Color::YELLOW);
-
-  // Show time elapsed and remaining
-  bar.show_elapsed_time();
-  bar.show_remaining_time();
+  using namespace indicators;
+  indicators::ProgressBar bar{
+    option::BarWidth{50},
+    option::Start{" ["},
+    option::Fill{"█"},
+    option::Lead{"█"},
+    option::Remainder{"-"},
+    option::End{"]"},
+    option::PrefixText{"Training Gaze Network "},
+    option::ForegroundColor{Color::YELLOW}
+    option::ShowElapsedTime{true};
+    option::ShowRemainingTime{true};
+  };
 
   // Update bar state
   while (true) {
@@ -214,14 +211,14 @@ int main() {
 
   // Hide cursor
   std::cout << "\e[?25l";
-  
-  indicators::BlockProgressBar bar;
-  
-  // Configure the bar
-  bar.set_bar_width(80);
-  bar.start_bar_with("[");
-  bar.end_bar_with("]");
-  bar.set_foreground_color(indicators::Color::WHITE); 
+  using namespace indicators;
+
+  BlockProgressBar bar{
+    option::BarWidth{80},
+    option::Start{"["},
+    option::End{"]"},
+    option::ForegroundColor{Color::WHITE}  
+  };
   
   // Update bar state
   auto progress = 0.0f;
@@ -257,45 +254,49 @@ Below is an example `MultiProgress` object that manages three `ProgressBar` obje
 #include <indicators/progress_bar.hpp>
 
 int main() {
-
+  using namespace indicators;
   // Configure first progress bar
-  indicators::ProgressBar bar1;
-  bar1.set_bar_width(50);
-  bar1.start_bar_with("[");
-  bar1.fill_bar_progress_with("■");
-  bar1.lead_bar_progress_with("■");
-  bar1.fill_bar_remainder_with(" ");
-  bar1.end_bar_with(" ]");
-  bar1.set_foreground_color(indicators::Color::YELLOW);
-  bar1.show_elapsed_time();
-  bar1.show_remaining_time();
-  bar1.set_prefix_text("Progress Bar #1 ");
+  ProgressBar bar1{
+    option::BarWidth{50},
+    option::Start{"["},
+    option::Fill{"■"},
+    option::Lead{"■"},
+    option::Remainder{" "},
+    option::End{" ]"},
+    option::ForegroundColor{Color::YELLOW},
+    option::ShowElapsedTime{true},
+    option::ShowRemainingTime{true},
+    option::PrefixText{"Progress Bar #1 "}
+  };
 
   // Configure second progress bar
-  indicators::ProgressBar bar2;
-  bar2.set_bar_width(50);
-  bar2.start_bar_with("[");
-  bar2.fill_bar_progress_with("=");
-  bar2.lead_bar_progress_with(">");
-  bar2.fill_bar_remainder_with(" ");
-  bar2.end_bar_with(" ]");
-  bar2.set_foreground_color(indicators::Color::CYAN);
-  bar2.show_elapsed_time();
-  bar2.show_remaining_time();
-  bar2.set_prefix_text("Progress Bar #2 ");
 
+  ProgressBar bar1{
+    option::BarWidth{50},
+    option::Start{"["},
+    option::Fill{"="},
+    option::Lead{">"},
+    option::Remainder{" "},
+    option::End{" ]"},
+    option::ForegroundColor{Color::CYAN},
+    option::ShowElapsedTime{true},
+    option::ShowRemainingTime{true},
+    option::PrefixText{"Progress Bar #2 "}
+  };
+  
   // Configure third progress bar
-  indicators::ProgressBar bar3;
-  bar3.set_bar_width(50);
-  bar3.start_bar_with("[");
-  bar3.fill_bar_progress_with("#");
-  bar3.lead_bar_progress_with("#");
-  bar3.fill_bar_remainder_with(" ");
-  bar3.end_bar_with(" ]");
-  bar3.set_foreground_color(indicators::Color::RED);
-  bar3.show_elapsed_time();
-  bar3.show_remaining_time();
-  bar3.set_prefix_text("Progress Bar #3 ");
+  indicators::ProgressBar bar3{
+    option::BarWidth{50},
+    option::Start{"["},
+    option::Fill{"#"},
+    option::Lead{"#"},
+    option::Remainder{" "},
+    option::End{" ]"},
+    option::ForegroundColor{Color::RED},
+    option::ShowElapsedTime{true},
+    option::ShowRemainingTime{true},
+    option::PrefixText{"Progress Bar #3 "}
+  };
 
   // Construct MultiProgress object
   indicators::MultiProgress<indicators::ProgressBar, 3> bars(bar1, bar2, bar3);
@@ -359,22 +360,22 @@ ProgressSpinner has a vector of strings: `spinner_states`. At each update, the s
 #include <indicators/progress_spinner.hpp>
 
 int main() {
-  indicators::ProgressSpinner spinner;
-  
-  // Configure the spinner
-  spinner.set_postfix_text("Checking credentials");
-  spinner.set_foreground_color(indicators::Color::YELLOW);
-  spinner.set_spinner_states({"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"});
-  
+  using namespace indicators;
+  indicators::ProgressSpinner spinner{
+    option::PostfixText{"Checking credentials"},
+    option::ForegroundColor{Color::YELLOW},
+    option::SpinnerStates{std::vector<std::string>{"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"}}
+  };
+ 
   // Update spinner state
   auto job = [&spinner]() {
     while (true) {
       if (spinner.is_completed()) {
-        spinner.set_foreground_color(indicators::Color::GREEN);
-        spinner.set_prefix_text("✔");
-        spinner.hide_spinner();
-        spinner.hide_percentage();
-        spinner.set_postfix_text("Authenticated!");
+        spinner.set_option(option::ForegroundColor{Color::GREEN});
+        spinner.set_option(option::PrefixText{"✔"});
+        spinner.set_option(option::ShowSpinner{false});
+        spinner.set_option(option::ShowPercentage{false});
+        spinner.set_option(option::PostfixText{"Authenticated!"});
         spinner.mark_as_completed();	
         break;
       } else

@@ -3,14 +3,15 @@
 
 int main() {
 
-  indicators::ProgressBar bar;
-  bar.set_bar_width(50);
-  bar.start_bar_with("[");
-  bar.fill_bar_progress_with("■");
-  bar.lead_bar_progress_with("■");
-  bar.fill_bar_remainder_with("-");
-  bar.end_bar_with("]");
-  bar.set_foreground_color(indicators::Color::YELLOW);
+  indicators::ProgressBar bar{
+    indicators::option::BarWidth{50},
+    indicators::option::Start{"["},
+    indicators::option::Fill{"■"},
+    indicators::option::Lead{"■"},
+    indicators::option::Remainder{"-"},
+    indicators::option::End{" ]"},
+    indicators::option::ForegroundColor{indicators::Color::YELLOW},
+  };
 
   // As configured, the bar will look like this:
   //
@@ -39,7 +40,7 @@ int main() {
       if (bar.is_completed()) {
         break;
       }
-      bar.set_postfix_text(status_text[index % status_text.size()]);
+      bar.set_option(indicators::option::PostfixText{status_text[index % status_text.size()]});
       bar.tick();
       index += 1;
       std::this_thread::sleep_for(std::chrono::milliseconds(200));

@@ -3,41 +3,44 @@
 
 int main() {
 
-  indicators::ProgressBar bar1;
-  bar1.set_bar_width(50);
-  bar1.start_bar_with("[");
-  bar1.fill_bar_progress_with("■");
-  bar1.lead_bar_progress_with("■");
-  bar1.fill_bar_remainder_with(" ");
-  bar1.end_bar_with(" ]");
-  bar1.set_foreground_color(indicators::Color::YELLOW);
-  bar1.show_elapsed_time();
-  bar1.show_remaining_time();
-  bar1.set_prefix_text("Progress Bar #1 ");
+  indicators::ProgressBar bar1{
+    indicators::option::BarWidth{50},
+    indicators::option::Start{"["},
+    indicators::option::Fill{"■"},
+    indicators::option::Lead{"■"},
+    indicators::option::Remainder{" "},
+    indicators::option::End{" ]"},
+    indicators::option::ForegroundColor{indicators::Color::YELLOW},
+    indicators::option::ShowElapsedTime{true},
+    indicators::option::ShowRemainingTime{true},
+    indicators::option::PrefixText{"Progress Bar #1 "}
+  };
 
-  indicators::ProgressBar bar2;
-  bar2.set_bar_width(50);
-  bar2.start_bar_with("[");
-  bar2.fill_bar_progress_with("=");
-  bar2.lead_bar_progress_with(">");
-  bar2.fill_bar_remainder_with(" ");
-  bar2.end_bar_with(" ]");
-  bar2.set_foreground_color(indicators::Color::CYAN);
-  bar2.show_elapsed_time();
-  bar2.show_remaining_time();
-  bar2.set_prefix_text("Progress Bar #2 ");
+  indicators::ProgressBar bar2{
+    indicators::option::BarWidth{50},
+    indicators::option::Start{"["},
+    indicators::option::Fill{"="},
+    indicators::option::Lead{">"},
+    indicators::option::Remainder{" "},
+    indicators::option::End{" ]"},
+    indicators::option::ForegroundColor{indicators::Color::CYAN},
+    indicators::option::ShowElapsedTime{true},
+    indicators::option::ShowRemainingTime{true},
+    indicators::option::PrefixText{"Progress Bar #2 "}
+  };
 
-  indicators::ProgressBar bar3;
-  bar3.set_bar_width(50);
-  bar3.start_bar_with("[");
-  bar3.fill_bar_progress_with("#");
-  bar3.lead_bar_progress_with("#");
-  bar3.fill_bar_remainder_with(" ");
-  bar3.end_bar_with(" ]");
-  bar3.set_foreground_color(indicators::Color::RED);
-  bar3.show_elapsed_time();
-  bar3.show_remaining_time();
-  bar3.set_prefix_text("Progress Bar #3 ");
+  indicators::ProgressBar bar3{
+    indicators::option::BarWidth{50},
+    indicators::option::Start{"["},
+    indicators::option::Fill{"#"},
+    indicators::option::Lead{"#"},
+    indicators::option::Remainder{" "},
+    indicators::option::End{" ]"},
+    indicators::option::ForegroundColor{indicators::Color::CYAN},
+    indicators::option::ShowElapsedTime{true},
+    indicators::option::ShowRemainingTime{true},
+    indicators::option::PrefixText{"Progress Bar #3 "}
+  };
 
   indicators::MultiProgress<indicators::ProgressBar, 3> bars(bar1, bar2, bar3);
 

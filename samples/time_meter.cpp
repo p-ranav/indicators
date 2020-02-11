@@ -3,21 +3,18 @@
 #include <thread>
 
 int main() {
-  indicators::ProgressBar bar;
-
-  // Configure the bar
-  bar.set_bar_width(50);
-  bar.start_bar_with(" [");
-  bar.fill_bar_progress_with("█");
-  bar.lead_bar_progress_with("█");
-  bar.fill_bar_remainder_with("-");
-  bar.end_bar_with("]");
-  bar.set_prefix_text("Training Gaze Network 👀");
-  bar.set_foreground_color(indicators::Color::YELLOW);
-
-  // Show time elapsed and remaining
-  bar.show_elapsed_time();
-  bar.show_remaining_time();
+  indicators::ProgressBar bar{
+    indicators::option::BarWidth{50},
+    indicators::option::Start{" ["},
+    indicators::option::Fill{"█"},
+    indicators::option::Lead{"█"},
+    indicators::option::Remainder{"-"},
+    indicators::option::End{"]"},
+    indicators::option::PostfixText{"Training Gaze Network "},
+    indicators::option::ForegroundColor{indicators::Color::YELLOW},
+    indicators::option::ShowElapsedTime{true},
+    indicators::option::ShowRemainingTime{true},
+  };
 
   // Update bar state
   while (true) {
