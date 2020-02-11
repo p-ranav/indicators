@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(indicators VERSION 1.6.0 LANGUAGES CXX DESCRIPTION "Activity Indicators for Modern C++")
+project(indicators VERSION 1.7.0 LANGUAGES CXX DESCRIPTION "Activity Indicators for Modern C++")
 option(INDICATORS_BUILD_TESTS OFF)
 option(SAMPLES "Build Samples" OFF)
 option(DEMO "Build Demo" OFF)

@@ -12,7 +12,7 @@
   <a href="https://github.com/p-ranav/indicators/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="license"/>
   </a>
-  <img src="https://img.shields.io/badge/version-1.6-blue.svg?cacheSeconds=2592000" alt="version"/>
+  <img src="https://img.shields.io/badge/version-1.7-blue.svg?cacheSeconds=2592000" alt="version"/>
 </p>
 
 <p align="center">
@@ -71,7 +71,7 @@ int main() {
     option::Remainder{" "},
     option::End{"]"},
     option::PostfixText{"Extracting Archive"};
-    option::ForegroundColor{Color::GREEN};
+    option::ForegroundColor{Color::green};
   };
   
   // Update bar state
@@ -115,7 +115,7 @@ int main() {
     option::Remainder{"-"},
     option::End{" ]"},
     option::PostfixText{"Loading dependency 1/4"},
-    option::ForegroundColor{Color::CYAN}  
+    option::ForegroundColor{Color::cyan}  
   };
 
   // Update bar state
@@ -173,8 +173,8 @@ int main() {
     option::Lead{"█"},
     option::Remainder{"-"},
     option::End{"]"},
-    option::PrefixText{"Training Gaze Network "},
-    option::ForegroundColor{Color::YELLOW}
+    option::PrefixText{"Training Gaze Network 👀"},
+    option::ForegroundColor{Color::yellow}
     option::ShowElapsedTime{true};
     option::ShowRemainingTime{true};
   };
@@ -217,7 +217,7 @@ int main() {
     option::BarWidth{80},
     option::Start{"["},
     option::End{"]"},
-    option::ForegroundColor{Color::WHITE}  
+    option::ForegroundColor{Color::white}  
   };
   
   // Update bar state
@@ -263,7 +263,7 @@ int main() {
     option::Lead{"■"},
     option::Remainder{" "},
     option::End{" ]"},
-    option::ForegroundColor{Color::YELLOW},
+    option::ForegroundColor{Color::yellow},
     option::ShowElapsedTime{true},
     option::ShowRemainingTime{true},
     option::PrefixText{"Progress Bar #1 "}
@@ -278,7 +278,7 @@ int main() {
     option::Lead{">"},
     option::Remainder{" "},
     option::End{" ]"},
-    option::ForegroundColor{Color::CYAN},
+    option::ForegroundColor{Color::cyan},
     option::ShowElapsedTime{true},
     option::ShowRemainingTime{true},
     option::PrefixText{"Progress Bar #2 "}
@@ -292,7 +292,7 @@ int main() {
     option::Lead{"#"},
     option::Remainder{" "},
     option::End{" ]"},
-    option::ForegroundColor{Color::RED},
+    option::ForegroundColor{Color::red},
     option::ShowElapsedTime{true},
     option::ShowRemainingTime{true},
     option::PrefixText{"Progress Bar #3 "}
@@ -363,7 +363,7 @@ int main() {
   using namespace indicators;
   indicators::ProgressSpinner spinner{
     option::PostfixText{"Checking credentials"},
-    option::ForegroundColor{Color::YELLOW},
+    option::ForegroundColor{Color::yellow},
     option::SpinnerStates{std::vector<std::string>{"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"}}
   };
  
@@ -371,7 +371,7 @@ int main() {
   auto job = [&spinner]() {
     while (true) {
       if (spinner.is_completed()) {
-        spinner.set_option(option::ForegroundColor{Color::GREEN});
+        spinner.set_option(option::ForegroundColor{Color::green});
         spinner.set_option(option::PrefixText{"✔"});
         spinner.set_option(option::ShowSpinner{false});
         spinner.set_option(option::ShowPercentage{false});

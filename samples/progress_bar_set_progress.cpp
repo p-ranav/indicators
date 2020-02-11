@@ -15,7 +15,7 @@ int main() {
     indicators::option::Remainder{"-"},
     indicators::option::End{" ]"},
     indicators::option::PostfixText{"Loading dependency 1/4"},
-    indicators::option::ForegroundColor{indicators::Color::CYAN},
+    indicators::option::ForegroundColor{indicators::Color::cyan},
   };
 
   // Update bar state

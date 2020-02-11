@@ -11,7 +11,7 @@ int main() {
     indicators::option::Remainder{" "},
     indicators::option::End{" ]"},
     indicators::option::PostfixText{"Getting started"},
-    indicators::option::ForegroundColor{indicators::Color::GREEN},
+    indicators::option::ForegroundColor{indicators::Color::green},
   };
 
   // Update bar state

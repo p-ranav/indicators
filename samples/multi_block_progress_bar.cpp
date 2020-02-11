@@ -5,7 +5,7 @@ int main() {
   using namespace indicators;
   BlockProgressBar bar1{
     option::BarWidth{50},
-    option::ForegroundColor{Color::YELLOW},
+    option::ForegroundColor{Color::yellow},
     option::ShowElapsedTime{true},
     option::ShowRemainingTime{true},
     option::PrefixText{"Progress Bar #1 "}
@@ -13,7 +13,7 @@ int main() {
 
   BlockProgressBar bar2{
     option::BarWidth{50},
-    option::ForegroundColor{Color::CYAN},
+    option::ForegroundColor{Color::cyan},
     option::ShowElapsedTime{true},
     option::ShowRemainingTime{true},
     option::PrefixText{"Progress Bar #2 "}
@@ -21,7 +21,7 @@ int main() {
 
   BlockProgressBar bar3{
     option::BarWidth{50},
-    option::ForegroundColor{Color::RED},
+    option::ForegroundColor{Color::red},
     option::ShowElapsedTime{true},
     option::ShowRemainingTime{true},
     option::PrefixText{"Progress Bar #3 "}

@@ -17,7 +17,7 @@ int main() {
                               option::Lead{"■"},
                               option::Remainder{" "},
                               option::End{" ]"},
-                              option::ForegroundColor{indicators::Color::YELLOW}};
+                              option::ForegroundColor{indicators::Color::yellow}};
 
     std::atomic<size_t> index{0};
     std::vector<std::string> status_text = {"Rocket.exe is not responding",
@@ -56,7 +56,7 @@ int main() {
     p.set_option(option::Lead{""});
     p.set_option(option::Remainder{""});
     p.set_option(option::End{""});
-    p.set_option(option::ForegroundColor{indicators::Color::WHITE});
+    p.set_option(option::ForegroundColor{indicators::Color::white});
     p.set_option(option::ShowPercentage{false});
     auto job = [&p]() {
       while (true) {
@@ -86,7 +86,7 @@ int main() {
     p.set_option(option::Remainder{" "});
     p.set_option(option::End{"]"});
     p.set_option(option::PostfixText{"Getting started"});
-    p.set_option(option::ForegroundColor{indicators::Color::GREEN});
+    p.set_option(option::ForegroundColor{indicators::Color::green});
     auto job = [&p]() {
       while (true) {
         auto ticks = p.current();
@@ -120,7 +120,7 @@ int main() {
     p4.set_option(option::Lead{""});
     p4.set_option(option::Remainder{" "});
     p4.set_option(option::End{""});
-    p4.set_option(option::ForegroundColor{indicators::Color::CYAN});
+    p4.set_option(option::ForegroundColor{indicators::Color::cyan});
     p4.set_option(option::PostfixText{"Restoring system state"});
     p4.set_option(option::ShowPercentage{false});
     std::atomic<size_t> index4{0};
@@ -131,7 +131,7 @@ int main() {
         index4 += 1;
         if (p4.current() + 2 >= 100) {
           std::cout << std::endl;
-          p4.set_option(option::ForegroundColor{indicators::Color::RED});
+          p4.set_option(option::ForegroundColor{indicators::Color::red});
           p4.set_option(option::PrefixText{"{ ERROR }"});
           p4.set_option(option::Start{});
           p4.set_option(option::Fill{});
@@ -162,7 +162,7 @@ int main() {
           option::Lead{"■"},
           option::Remainder{"-"},
           option::End{"]"},
-          option::ForegroundColor{indicators::Color::WHITE},
+          option::ForegroundColor{indicators::Color::white},
           option::PostfixText{"Reverting system restore"}
       };
       p.set_progress(100); // TODO backwards as an option?
@@ -191,14 +191,14 @@ int main() {
     indicators::ProgressSpinner p{
       option::PrefixText{""},
       option::PostfixText{"Checking credentials"},
-      option::ForegroundColor{indicators::Color::YELLOW},
+      option::ForegroundColor{indicators::Color::yellow},
       option::SpinnerStates{std::vector<std::string>{"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"}}
     };
 
     auto job = [&p]() {
       while (true) {
         if (p.is_completed()) {
-          p.set_option(option::ForegroundColor{indicators::Color::GREEN});
+          p.set_option(option::ForegroundColor{indicators::Color::green});
           p.set_option(option::PrefixText{"✔"});
           p.set_option(option::ShowSpinner{false});
           p.set_option(option::ShowPercentage{false});
@@ -222,7 +222,7 @@ int main() {
     indicators::ProgressSpinner p{
       option::PrefixText{" - "},
       option::PostfixText{"Searching for the Moon"},
-      option::ForegroundColor{indicators::Color::WHITE},
+      option::ForegroundColor{indicators::Color::white},
       option::ShowPercentage{false},
       option::SpinnerStates{std::vector<std::string>{"▖", "▘", "▝", "▗"}}
     };
@@ -270,7 +270,7 @@ int main() {
               option::Remainder{" "},
               option::End{"🌑"},
               option::PostfixText{"Achieved low-Earth orbit"},
-              option::ForegroundColor{indicators::Color::WHITE}
+              option::ForegroundColor{indicators::Color::white}
           };
           std::vector<std::string> ship_trail{"⠁", "⠂", "⠄", "⡀", "⢀", "⠠", "⠐", "⠈"};
           std::atomic<int> ship_trail_index{0};

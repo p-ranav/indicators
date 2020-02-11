@@ -7,7 +7,7 @@ int main() {
 
   indicators::ProgressSpinner spinner{
     indicators::option::PostfixText{"Checking credentials"},
-    indicators::option::ForegroundColor{indicators::Color::YELLOW},
+    indicators::option::ForegroundColor{indicators::Color::yellow},
     indicators::option::SpinnerStates{std::vector<std::string>{"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"}},
   };
 
@@ -15,7 +15,7 @@ int main() {
   auto job = [&spinner]() {
     while (true) {
       if (spinner.is_completed()) {
-        spinner.set_option(indicators::option::ForegroundColor{indicators::Color::GREEN});
+        spinner.set_option(indicators::option::ForegroundColor{indicators::Color::green});
         spinner.set_option(indicators::option::PrefixText{"✔"});
         spinner.set_option(indicators::option::ShowSpinner{false});
         spinner.set_option(indicators::option::ShowPercentage{false});

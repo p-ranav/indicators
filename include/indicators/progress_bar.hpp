@@ -82,7 +82,7 @@ public:
         details::get<details::ProgressBarOption::show_elapsed_time>(option::ShowElapsedTime{false}, std::forward<Args>(args)...),
         details::get<details::ProgressBarOption::show_remaining_time>(option::ShowRemainingTime{false}, std::forward<Args>(args)...),
         details::get<details::ProgressBarOption::saved_start_time>(option::SavedStartTime{false}, std::forward<Args>(args)...),
-        details::get<details::ProgressBarOption::foreground_color>(option::ForegroundColor{Color::WHITE}, std::forward<Args>(args)...)
+        details::get<details::ProgressBarOption::foreground_color>(option::ForegroundColor{Color::white}, std::forward<Args>(args)...)
     )
   {}
 

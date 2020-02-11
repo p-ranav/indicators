@@ -62,7 +62,7 @@ class ProgressSpinner {
 public:
   template <typename... Args, typename std::enable_if<details::are_settings_from_tuple<Settings, typename std::decay<Args>::type...>::value, void*>::type = nullptr>
   explicit ProgressSpinner(Args&&... args) : settings_(
-      details::get<details::ProgressBarOption::foreground_color>(option::ForegroundColor{Color::WHITE}, std::forward<Args>(args)...),
+      details::get<details::ProgressBarOption::foreground_color>(option::ForegroundColor{Color::white}, std::forward<Args>(args)...),
       details::get<details::ProgressBarOption::prefix_text>(option::PrefixText{}, std::forward<Args>(args)...),
       details::get<details::ProgressBarOption::postfix_text>(option::PostfixText{}, std::forward<Args>(args)...),
       details::get<details::ProgressBarOption::show_percentage>(option::ShowPercentage{true}, std::forward<Args>(args)...),

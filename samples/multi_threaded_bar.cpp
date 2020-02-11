@@ -10,7 +10,7 @@ int main() {
     indicators::option::Lead{"■"},
     indicators::option::Remainder{"-"},
     indicators::option::End{" ]"},
-    indicators::option::ForegroundColor{indicators::Color::YELLOW},
+    indicators::option::ForegroundColor{indicators::Color::yellow},
   };
 
   // As configured, the bar will look like this:

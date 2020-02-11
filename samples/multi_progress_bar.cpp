@@ -10,7 +10,7 @@ int main() {
     indicators::option::Lead{"■"},
     indicators::option::Remainder{" "},
     indicators::option::End{" ]"},
-    indicators::option::ForegroundColor{indicators::Color::YELLOW},
+    indicators::option::ForegroundColor{indicators::Color::yellow},
     indicators::option::ShowElapsedTime{true},
     indicators::option::ShowRemainingTime{true},
     indicators::option::PrefixText{"Progress Bar #1 "}
@@ -23,7 +23,7 @@ int main() {
     indicators::option::Lead{">"},
     indicators::option::Remainder{" "},
     indicators::option::End{" ]"},
-    indicators::option::ForegroundColor{indicators::Color::CYAN},
+    indicators::option::ForegroundColor{indicators::Color::cyan},
     indicators::option::ShowElapsedTime{true},
     indicators::option::ShowRemainingTime{true},
     indicators::option::PrefixText{"Progress Bar #2 "}
@@ -36,7 +36,7 @@ int main() {
     indicators::option::Lead{"#"},
     indicators::option::Remainder{" "},
     indicators::option::End{" ]"},
-    indicators::option::ForegroundColor{indicators::Color::RED},
+    indicators::option::ForegroundColor{indicators::Color::red},
     indicators::option::ShowElapsedTime{true},
     indicators::option::ShowRemainingTime{true},
     indicators::option::PrefixText{"Progress Bar #3 "}

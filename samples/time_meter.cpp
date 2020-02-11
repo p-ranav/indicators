@@ -10,8 +10,8 @@ int main() {
     indicators::option::Lead{"█"},
     indicators::option::Remainder{"-"},
     indicators::option::End{"]"},
-    indicators::option::PostfixText{"Training Gaze Network "},
-    indicators::option::ForegroundColor{indicators::Color::YELLOW},
+    indicators::option::PrefixText{"Training Gaze Network 👀"},
+    indicators::option::ForegroundColor{indicators::Color::yellow},
     indicators::option::ShowElapsedTime{true},
     indicators::option::ShowRemainingTime{true},
   };

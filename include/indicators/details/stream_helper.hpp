@@ -18,28 +18,28 @@ namespace details {
 
 inline void set_stream_color(std::ostream &os, Color color) {
     switch (color) {
-        case Color::GREY:
+        case Color::grey:
             os << termcolor::grey;
             break;
-        case Color::RED:
+        case Color::red:
             os << termcolor::red;
             break;
-        case Color::GREEN:
+        case Color::green:
             os << termcolor::green;
             break;
-        case Color::YELLOW:
+        case Color::yellow:
             os << termcolor::yellow;
             break;
-        case Color::BLUE:
+        case Color::blue:
             os << termcolor::blue;
             break;
-        case Color::MAGENTA:
+        case Color::magenta:
             os << termcolor::magenta;
             break;
-        case Color::CYAN:
+        case Color::cyan:
             os << termcolor::cyan;
             break;
-        case Color::WHITE:
+        case Color::white:
             os << termcolor::white;
             break;
         default:
