@@ -70,8 +70,8 @@ int main() {
     option::Lead{">"},
     option::Remainder{" "},
     option::End{"]"},
-    option::PostfixText{"Extracting Archive"};
-    option::ForegroundColor{Color::green};
+    option::PostfixText{"Extracting Archive"},
+    option::ForegroundColor{Color::green}
   };
   
   // Update bar state
@@ -174,9 +174,9 @@ int main() {
     option::Remainder{"-"},
     option::End{"]"},
     option::PrefixText{"Training Gaze Network 👀"},
-    option::ForegroundColor{Color::yellow}
-    option::ShowElapsedTime{true};
-    option::ShowRemainingTime{true};
+    option::ForegroundColor{Color::yellow},
+    option::ShowElapsedTime{true},
+    option::ShowRemainingTime{true}
   };
 
   // Update bar state
@@ -271,7 +271,7 @@ int main() {
 
   // Configure second progress bar
 
-  ProgressBar bar1{
+  ProgressBar bar2{
     option::BarWidth{50},
     option::Start{"["},
     option::Fill{"="},
