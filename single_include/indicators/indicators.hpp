@@ -31,23 +31,22 @@ SOFTWARE.
 */
 #pragma once
 #include <algorithm>
+#include <atomic>
 #include <cassert>
 #include <chrono>
 #include <cmath>
-#include <iomanip>
-#include <ostream>
-#include <string>
-#include <vector>
-#define NOMINMAX
-#include <algorithm>
-#include <atomic>
 #include <cstddef>
+#include <iomanip>
 #include <iostream>
 #include <mutex>
+#include <ostream>
+#include <string>
 #include <thread>
 #include <tuple>
 #include <type_traits>
 #include <utility>
+#include <vector>
+#define NOMINMAX
 
 namespace indicators {
 enum class Color { grey, red, green, yellow, blue, magenta, cyan, white };
@@ -613,6 +612,33 @@ private:
 
 } // namespace details
 } // namespace indicators
+
+/*
+Activity Indicators for Modern C++
+https://github.com/p-ranav/indicators
+
+Licensed under the MIT License <http://opensource.org/licenses/MIT>.
+SPDX-License-Identifier: MIT
+Copyright (c) 2019 Dawid Pilarski <dawid.pilarski@panicsoftware.com>.
+
+Permission is hereby  granted, free of charge, to any  person obtaining a copy
+of this software and associated  documentation files (the "Software"), to deal
+in the Software  without restriction, including without  limitation the rights
+to  use, copy,  modify, merge,  publish, distribute,  sublicense, and/or  sell
+copies  of  the Software,  and  to  permit persons  to  whom  the Software  is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE  IS PROVIDED "AS  IS", WITHOUT WARRANTY  OF ANY KIND,  EXPRESS OR
+IMPLIED,  INCLUDING BUT  NOT  LIMITED TO  THE  WARRANTIES OF  MERCHANTABILITY,
+FITNESS FOR  A PARTICULAR PURPOSE AND  NONINFRINGEMENT. IN NO EVENT  SHALL THE
+AUTHORS  OR COPYRIGHT  HOLDERS  BE  LIABLE FOR  ANY  CLAIM,  DAMAGES OR  OTHER
+LIABILITY, WHETHER IN AN ACTION OF  CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 namespace indicators {
 
