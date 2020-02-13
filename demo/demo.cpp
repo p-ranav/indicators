@@ -60,7 +60,8 @@ int main() {
     p.set_option(option::ShowPercentage{false});
     auto job = [&p]() {
       while (true) {
-        p.set_option(option::PrefixText{"Reading package list... " + std::to_string(p.current()) + "% "});
+        p.set_option(
+            option::PrefixText{"Reading package list... " + std::to_string(p.current()) + "% "});
         if (p.current() + 2 >= 100)
           p.set_option(option::PrefixText{"Reading package list... Done"});
         p.tick();
@@ -155,16 +156,14 @@ int main() {
       //
       // GOING BACKWARDS
       //
-      indicators::ProgressBar p{
-          option::BarWidth {50},
-          option::Start{"["},
-          option::Fill{"■"},
-          option::Lead{"■"},
-          option::Remainder{"-"},
-          option::End{"]"},
-          option::ForegroundColor{indicators::Color::white},
-          option::PostfixText{"Reverting system restore"}
-      };
+      indicators::ProgressBar p{option::BarWidth{50},
+                                option::Start{"["},
+                                option::Fill{"■"},
+                                option::Lead{"■"},
+                                option::Remainder{"-"},
+                                option::End{"]"},
+                                option::ForegroundColor{indicators::Color::white},
+                                option::PostfixText{"Reverting system restore"}};
       p.set_progress(100); // TODO backwards as an option?
       std::atomic<size_t> progress{100};
       auto job = [&p, &progress]() {
@@ -189,11 +188,9 @@ int main() {
     // PROGRESS BAR 5
     //
     indicators::ProgressSpinner p{
-      option::PrefixText{""},
-      option::PostfixText{"Checking credentials"},
-      option::ForegroundColor{indicators::Color::yellow},
-      option::SpinnerStates{std::vector<std::string>{"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"}}
-    };
+        option::PrefixText{""}, option::PostfixText{"Checking credentials"},
+        option::ForegroundColor{indicators::Color::yellow},
+        option::SpinnerStates{std::vector<std::string>{"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"}}};
 
     auto job = [&p]() {
       while (true) {
@@ -220,12 +217,9 @@ int main() {
     // PROGRESS BAR 6
     //
     indicators::ProgressSpinner p{
-      option::PrefixText{" - "},
-      option::PostfixText{"Searching for the Moon"},
-      option::ForegroundColor{indicators::Color::white},
-      option::ShowPercentage{false},
-      option::SpinnerStates{std::vector<std::string>{"▖", "▘", "▝", "▗"}}
-    };
+        option::PrefixText{" - "}, option::PostfixText{"Searching for the Moon"},
+        option::ForegroundColor{indicators::Color::white}, option::ShowPercentage{false},
+        option::SpinnerStates{std::vector<std::string>{"▖", "▘", "▝", "▗"}}};
     auto job = [&p]() {
       while (true) {
         auto current = p.current();
@@ -261,17 +255,15 @@ int main() {
           //
           // NESTED PROGRESS BAR
           //
-          indicators::ProgressBar p2{
-              option::BarWidth{30},
-              option::PrefixText{" - "},
-              option::Start{"🌎"},
-              option::Fill{"·"},
-              option::Lead{"🚀"},
-              option::Remainder{" "},
-              option::End{"🌑"},
-              option::PostfixText{"Achieved low-Earth orbit"},
-              option::ForegroundColor{indicators::Color::white}
-          };
+          indicators::ProgressBar p2{option::BarWidth{30},
+                                     option::PrefixText{" - "},
+                                     option::Start{"🌎"},
+                                     option::Fill{"·"},
+                                     option::Lead{"🚀"},
+                                     option::Remainder{" "},
+                                     option::End{"🌑"},
+                                     option::PostfixText{"Achieved low-Earth orbit"},
+                                     option::ForegroundColor{indicators::Color::white}};
           std::vector<std::string> ship_trail{"⠁", "⠂", "⠄", "⡀", "⢀", "⠠", "⠐", "⠈"};
           std::atomic<int> ship_trail_index{0};
           auto job2 = [&p2, &ship_trail_index, &ship_trail]() {

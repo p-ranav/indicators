@@ -4,13 +4,13 @@
 int main() {
 
   indicators::ProgressBar bar{
-    indicators::option::BarWidth{50},
-    indicators::option::Start{"["},
-    indicators::option::Fill{"■"},
-    indicators::option::Lead{"■"},
-    indicators::option::Remainder{"-"},
-    indicators::option::End{" ]"},
-    indicators::option::ForegroundColor{indicators::Color::yellow},
+      indicators::option::BarWidth{50},
+      indicators::option::Start{"["},
+      indicators::option::Fill{"■"},
+      indicators::option::Lead{"■"},
+      indicators::option::Remainder{"-"},
+      indicators::option::End{" ]"},
+      indicators::option::ForegroundColor{indicators::Color::yellow},
   };
 
   // As configured, the bar will look like this:

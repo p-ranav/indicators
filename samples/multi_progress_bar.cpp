@@ -3,44 +3,38 @@
 
 int main() {
 
-  indicators::ProgressBar bar1{
-    indicators::option::BarWidth{50},
-    indicators::option::Start{"["},
-    indicators::option::Fill{"■"},
-    indicators::option::Lead{"■"},
-    indicators::option::Remainder{" "},
-    indicators::option::End{" ]"},
-    indicators::option::ForegroundColor{indicators::Color::yellow},
-    indicators::option::ShowElapsedTime{true},
-    indicators::option::ShowRemainingTime{true},
-    indicators::option::PrefixText{"Progress Bar #1 "}
-  };
+  indicators::ProgressBar bar1{indicators::option::BarWidth{50},
+                               indicators::option::Start{"["},
+                               indicators::option::Fill{"■"},
+                               indicators::option::Lead{"■"},
+                               indicators::option::Remainder{" "},
+                               indicators::option::End{" ]"},
+                               indicators::option::ForegroundColor{indicators::Color::yellow},
+                               indicators::option::ShowElapsedTime{true},
+                               indicators::option::ShowRemainingTime{true},
+                               indicators::option::PrefixText{"Progress Bar #1 "}};
 
-  indicators::ProgressBar bar2{
-    indicators::option::BarWidth{50},
-    indicators::option::Start{"["},
-    indicators::option::Fill{"="},
-    indicators::option::Lead{">"},
-    indicators::option::Remainder{" "},
-    indicators::option::End{" ]"},
-    indicators::option::ForegroundColor{indicators::Color::cyan},
-    indicators::option::ShowElapsedTime{true},
-    indicators::option::ShowRemainingTime{true},
-    indicators::option::PrefixText{"Progress Bar #2 "}
-  };
+  indicators::ProgressBar bar2{indicators::option::BarWidth{50},
+                               indicators::option::Start{"["},
+                               indicators::option::Fill{"="},
+                               indicators::option::Lead{">"},
+                               indicators::option::Remainder{" "},
+                               indicators::option::End{" ]"},
+                               indicators::option::ForegroundColor{indicators::Color::cyan},
+                               indicators::option::ShowElapsedTime{true},
+                               indicators::option::ShowRemainingTime{true},
+                               indicators::option::PrefixText{"Progress Bar #2 "}};
 
-  indicators::ProgressBar bar3{
-    indicators::option::BarWidth{50},
-    indicators::option::Start{"["},
-    indicators::option::Fill{"#"},
-    indicators::option::Lead{"#"},
-    indicators::option::Remainder{" "},
-    indicators::option::End{" ]"},
-    indicators::option::ForegroundColor{indicators::Color::red},
-    indicators::option::ShowElapsedTime{true},
-    indicators::option::ShowRemainingTime{true},
-    indicators::option::PrefixText{"Progress Bar #3 "}
-  };
+  indicators::ProgressBar bar3{indicators::option::BarWidth{50},
+                               indicators::option::Start{"["},
+                               indicators::option::Fill{"#"},
+                               indicators::option::Lead{"#"},
+                               indicators::option::Remainder{" "},
+                               indicators::option::End{" ]"},
+                               indicators::option::ForegroundColor{indicators::Color::red},
+                               indicators::option::ShowElapsedTime{true},
+                               indicators::option::ShowRemainingTime{true},
+                               indicators::option::PrefixText{"Progress Bar #3 "}};
 
   indicators::MultiProgress<indicators::ProgressBar, 3> bars(bar1, bar2, bar3);
 

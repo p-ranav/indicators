@@ -6,9 +6,10 @@ int main() {
   std::cout << "\e[?25l";
 
   indicators::ProgressSpinner spinner{
-    indicators::option::PostfixText{"Checking credentials"},
-    indicators::option::ForegroundColor{indicators::Color::yellow},
-    indicators::option::SpinnerStates{std::vector<std::string>{"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"}},
+      indicators::option::PostfixText{"Checking credentials"},
+      indicators::option::ForegroundColor{indicators::Color::yellow},
+      indicators::option::SpinnerStates{
+          std::vector<std::string>{"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"}},
   };
 
   // Update spinner state

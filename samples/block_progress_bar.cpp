@@ -7,9 +7,7 @@ int main() {
   // Hide cursor
   std::cout << "\e[?25l";
 
-  indicators::BlockProgressBar bar{
-    indicators::option::BarWidth {80}
-  };
+  indicators::BlockProgressBar bar{indicators::option::BarWidth{80}};
 
   // Update bar state
   auto progress = 0.0f;

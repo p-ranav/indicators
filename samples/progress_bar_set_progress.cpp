@@ -8,14 +8,14 @@ int main() {
   std::cout << "\e[?25l";
 
   indicators::ProgressBar bar{
-    indicators::option::BarWidth{50},
-    indicators::option::Start{"["},
-    indicators::option::Fill{"■"},
-    indicators::option::Lead{"■"},
-    indicators::option::Remainder{"-"},
-    indicators::option::End{" ]"},
-    indicators::option::PostfixText{"Loading dependency 1/4"},
-    indicators::option::ForegroundColor{indicators::Color::cyan},
+      indicators::option::BarWidth{50},
+      indicators::option::Start{"["},
+      indicators::option::Fill{"■"},
+      indicators::option::Lead{"■"},
+      indicators::option::Remainder{"-"},
+      indicators::option::End{" ]"},
+      indicators::option::PostfixText{"Loading dependency 1/4"},
+      indicators::option::ForegroundColor{indicators::Color::cyan},
   };
 
   // Update bar state

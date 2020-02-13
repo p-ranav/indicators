@@ -3,29 +3,17 @@
 
 int main() {
   using namespace indicators;
-  BlockProgressBar bar1{
-    option::BarWidth{50},
-    option::ForegroundColor{Color::yellow},
-    option::ShowElapsedTime{true},
-    option::ShowRemainingTime{true},
-    option::PrefixText{"Progress Bar #1 "}
-  };
+  BlockProgressBar bar1{option::BarWidth{50}, option::ForegroundColor{Color::yellow},
+                        option::ShowElapsedTime{true}, option::ShowRemainingTime{true},
+                        option::PrefixText{"Progress Bar #1 "}};
 
-  BlockProgressBar bar2{
-    option::BarWidth{50},
-    option::ForegroundColor{Color::cyan},
-    option::ShowElapsedTime{true},
-    option::ShowRemainingTime{true},
-    option::PrefixText{"Progress Bar #2 "}
-  };
+  BlockProgressBar bar2{option::BarWidth{50}, option::ForegroundColor{Color::cyan},
+                        option::ShowElapsedTime{true}, option::ShowRemainingTime{true},
+                        option::PrefixText{"Progress Bar #2 "}};
 
-  BlockProgressBar bar3{
-    option::BarWidth{50},
-    option::ForegroundColor{Color::red},
-    option::ShowElapsedTime{true},
-    option::ShowRemainingTime{true},
-    option::PrefixText{"Progress Bar #3 "}
-  };
+  BlockProgressBar bar3{option::BarWidth{50}, option::ForegroundColor{Color::red},
+                        option::ShowElapsedTime{true}, option::ShowRemainingTime{true},
+                        option::PrefixText{"Progress Bar #3 "}};
 
   indicators::MultiProgress<indicators::BlockProgressBar, 3> bars(bar1, bar2, bar3);
 

@@ -4,14 +4,14 @@
 
 int main() {
   indicators::ProgressBar bar{
-    indicators::option::BarWidth{50},
-    indicators::option::Start{"["},
-    indicators::option::Fill{"="},
-    indicators::option::Lead{">"},
-    indicators::option::Remainder{" "},
-    indicators::option::End{" ]"},
-    indicators::option::PostfixText{"Getting started"},
-    indicators::option::ForegroundColor{indicators::Color::green},
+      indicators::option::BarWidth{50},
+      indicators::option::Start{"["},
+      indicators::option::Fill{"="},
+      indicators::option::Lead{">"},
+      indicators::option::Remainder{" "},
+      indicators::option::End{" ]"},
+      indicators::option::PostfixText{"Getting started"},
+      indicators::option::ForegroundColor{indicators::Color::green},
   };
 
   // Update bar state

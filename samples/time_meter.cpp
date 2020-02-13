@@ -4,16 +4,16 @@
 
 int main() {
   indicators::ProgressBar bar{
-    indicators::option::BarWidth{50},
-    indicators::option::Start{" ["},
-    indicators::option::Fill{"█"},
-    indicators::option::Lead{"█"},
-    indicators::option::Remainder{"-"},
-    indicators::option::End{"]"},
-    indicators::option::PrefixText{"Training Gaze Network 👀"},
-    indicators::option::ForegroundColor{indicators::Color::yellow},
-    indicators::option::ShowElapsedTime{true},
-    indicators::option::ShowRemainingTime{true},
+      indicators::option::BarWidth{50},
+      indicators::option::Start{" ["},
+      indicators::option::Fill{"█"},
+      indicators::option::Lead{"█"},
+      indicators::option::Remainder{"-"},
+      indicators::option::End{"]"},
+      indicators::option::PrefixText{"Training Gaze Network 👀"},
+      indicators::option::ForegroundColor{indicators::Color::yellow},
+      indicators::option::ShowElapsedTime{true},
+      indicators::option::ShowRemainingTime{true},
   };
 
   // Update bar state
