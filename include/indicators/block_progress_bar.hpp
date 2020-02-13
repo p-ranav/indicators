@@ -39,7 +39,7 @@ SOFTWARE.
 #include <string>
 #include <tuple>
 #include <thread>
-#include "setting.hpp"
+#include <indicators/setting.hpp>
 
 namespace indicators {
 
