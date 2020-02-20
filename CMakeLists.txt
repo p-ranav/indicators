@@ -8,6 +8,11 @@ project(indicators VERSION 1.7.0 LANGUAGES CXX
   HOMEPAGE_URL "https://github.com/p-ranav/indicators"
   DESCRIPTION "Activity Indicators for Modern C++")
 
+if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+    include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+    conan_basic_setup()
+endif()
+
 option(INDICATORS_BUILD_TESTS "Build indicators tests + enable CTest")
 option(INDICATORS_SAMPLES "Build indicators samples")
 option(INDICATORS_DEMO "Build indicators demo" OFF)
