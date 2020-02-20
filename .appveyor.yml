@@ -1,0 +1,16 @@
+environment:
+  CONAN_RUN_TESTS: True
+  matrix:
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      PATH: C:\\Python37;C:\\Python37\Scripts;C:\Users\appveyor\AppData\Roaming\Python\Python37\Scripts;%PATH%
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
+    #   PATH: /home/appveyor/.local/bin:$PATH
+    # - APPVEYOR_BUILD_WORKER_IMAGE: macOS
+
+install:
+  - python --version
+  - python -m pip install conan --upgrade --user
+  - conan user
+
+build_script:
+  - conan create .
