@@ -26,6 +26,14 @@
 * Source for the above GIF can be found [here](demo/demo.cpp)
 * MIT License
 
+```bash
+git clone https://github.com/p-ranav/indicators
+cd indicators
+mkdir build && cd build
+cmake -DINDICATORS_SAMPLES=ON -DINDICATORS_DEMO=ON ..
+make
+```
+
 # Table of Contents
 
 * [Progress Bar](#progress-bar)
