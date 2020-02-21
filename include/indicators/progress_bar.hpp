@@ -176,6 +176,7 @@ private:
   std::mutex mutex_;
 
   template <typename Indicator, size_t count> friend class MultiProgress;
+  template <typename Indicator> friend class DynamicProgress;
   std::atomic<bool> multi_progress_mode_{false};
 
   void save_start_time() {
@@ -189,13 +190,13 @@ private:
   }
 
   void print_progress(bool from_multi_progress = false) {
+    std::lock_guard<std::mutex> lock{mutex_};
     if (multi_progress_mode_ && !from_multi_progress) {
       if (progress_ > 100.0) {
         get_value<details::ProgressBarOption::completed>() = true;
       }
       return;
     }
-    std::lock_guard<std::mutex> lock{mutex_};
     auto now = std::chrono::high_resolution_clock::now();
     if (!get_value<details::ProgressBarOption::completed>())
       elapsed_ = std::chrono::duration_cast<std::chrono::nanoseconds>(now - start_time_point_);
