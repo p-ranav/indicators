@@ -44,6 +44,7 @@ public:
     for (auto &bar : bars_) {
       bar.get().multi_progress_mode_ = true;
       ++total_count_;
+      ++incomplete_count_;
     }
   }
 
@@ -101,21 +102,21 @@ private:
     std::lock_guard<std::mutex> lock{mutex_};
     auto &hide_bar_when_complete = get_value<details::ProgressBarOption::hide_bar_when_complete>();
     if (hide_bar_when_complete) {
-    //   incomplete_count_ = 0;
-    //   for (auto &bar : bars_)
-    //     if (!bar.get().is_completed())
-    //       incomplete_count_ += 1;
-    //   if (started_) {
-    //     for (size_t i = 0; i < incomplete_count_; ++i)
-    //         std::cout << "\e[A"
-    //                 << "\r\e[K" << std::flush;
-    //   }
-    //   for (auto &bar : bars_) {
-    //     if (!bar.get().is_completed()) {
-    //       bar.get().print_progress(true);
-    //       std::cout << "\n";
-    //     }
-    //   }
+      // Hide completed bars
+      if (started_) {
+        for (size_t i = 0; i < incomplete_count_; ++i)
+          std::cout << "\033[A\r\033[K" << std::flush;
+      }
+      incomplete_count_ = 0;
+      for (auto &bar : bars_) {
+        if (!bar.get().is_completed()) {
+          bar.get().print_progress(true);
+          std::cout << "\n";
+          ++incomplete_count_;
+        }
+      }
+      if (!started_)
+        started_ = true;
     } else {
       // Don't hide any bars
       if (started_) {
