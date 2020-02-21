@@ -31,7 +31,7 @@ int main() {
   std::cout << termcolor::bold << termcolor::white << "Pulling image foo:bar/baz\n";
 
   DynamicProgress<ProgressBar> bars(bar1, bar2, bar3);
-  bars.set_option(option::HideBarWhenComplete{true});
+  bars.set_option(option::HideBarWhenComplete{false});
 
   std::thread fourth_job, fifth_job, sixth_job;
 
