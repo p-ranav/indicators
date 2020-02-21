@@ -28,7 +28,6 @@ SOFTWARE.
 
 #include <indicators/details/stream_helper.hpp>
 
-#define NOMINMAX
 #include <algorithm>
 #include <atomic>
 #include <chrono>

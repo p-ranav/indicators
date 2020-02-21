@@ -46,7 +46,6 @@ SOFTWARE.
 #include <type_traits>
 #include <utility>
 #include <vector>
-#define NOMINMAX
 
 namespace indicators {
 enum class Color { grey, red, green, yellow, blue, magenta, cyan, white };
@@ -86,6 +85,9 @@ enum class Color { grey, red, green, yellow, blue, magenta, cyan, white };
 #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
 #include <unistd.h>
 #elif defined(TERMCOLOR_OS_WINDOWS)
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
 #include <io.h>
 #include <windows.h>
 #endif
