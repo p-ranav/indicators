@@ -164,6 +164,7 @@ private:
   std::mutex mutex_;
 
   template <typename Indicator, size_t count> friend class MultiProgress;
+  template <typename Indicator> friend class DynamicProgress;
   std::atomic<bool> multi_progress_mode_{false};
 
   void save_start_time() {

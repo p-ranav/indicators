@@ -22,3 +22,6 @@ target_link_libraries(multi_progress_bar PRIVATE indicators::indicators)
 
 add_executable(multi_block_progress_bar multi_block_progress_bar.cpp)
 target_link_libraries(multi_block_progress_bar PRIVATE indicators::indicators)
+
+add_executable(dynamic_progress dynamic_progress.cpp)
+target_link_libraries(dynamic_progress PRIVATE indicators::indicators)

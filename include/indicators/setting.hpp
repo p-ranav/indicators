@@ -85,7 +85,8 @@ enum class ProgressBarOption {
   saved_start_time,
   foreground_color,
   spinner_show,
-  spinner_states
+  spinner_states,
+  hide_bar_when_complete
 };
 
 template <typename T, ProgressBarOption Id> struct Setting {
@@ -196,5 +197,7 @@ using ForegroundColor = details::Setting<Color, details::ProgressBarOption::fore
 using ShowSpinner = details::BooleanSetting<details::ProgressBarOption::spinner_show>;
 using SpinnerStates =
     details::Setting<std::vector<std::string>, details::ProgressBarOption::spinner_states>;
+using HideBarWhenComplete =
+    details::BooleanSetting<details::ProgressBarOption::hide_bar_when_complete>;
 } // namespace option
 } // namespace indicators
