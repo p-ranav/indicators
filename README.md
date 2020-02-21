@@ -386,8 +386,11 @@ int main() {
 
   std::cout << termcolor::bold << termcolor::white << "Pulling image foo:bar/baz\n";
 
+  // Construct with 3 progress bars. We'll add 3 more at a later point
   DynamicProgress<ProgressBar> bars(bar1, bar2, bar3);
-  bars.set_option(option::HideBarWhenComplete{true});
+  
+  // Do not hide bars when completed
+  bars.set_option(option::HideBarWhenComplete{false});
 
   std::thread fourth_job, fifth_job, sixth_job;
 
