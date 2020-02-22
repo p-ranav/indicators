@@ -46,6 +46,13 @@ public:
   }
 
   template <size_t index>
+  typename std::enable_if<(index >= 0 && index < count), void>::type set_progress(size_t value) {
+    if (!bars_[index].get().is_completed())
+      bars_[index].get().set_progress(value);
+    print_progress();
+  }
+
+  template <size_t index>
   typename std::enable_if<(index >= 0 && index < count), void>::type set_progress(float value) {
     if (!bars_[index].get().is_completed())
       bars_[index].get().set_progress(value);

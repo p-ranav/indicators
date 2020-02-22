@@ -123,7 +123,7 @@ private:
         for (size_t i = 0; i < total_count_; ++i)
           std::cout << "\x1b[A";
       }
-      for (auto &bar: bars_) {
+      for (auto &bar : bars_) {
         bar.get().print_progress(true);
         std::cout << "\n";
       }

@@ -53,7 +53,7 @@ To introduce a progress bar in your application, include `indicators/progress_ba
          ^^^^^^^^^^^^^ Bar Width ^^^^^^^^^^^^^^^   
 ```
 
-The amount of progress in ProgressBar is maintained as a float in range `[0, 100]`. When progress reaches 100, the progression is complete. 
+The amount of progress in ProgressBar is maintained as a size_t in range `[0, 100]`. When progress reaches 100, the progression is complete. 
 
 From application-level code, there are two ways in which you can update this progress:
 
