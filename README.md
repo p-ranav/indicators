@@ -252,6 +252,8 @@ int main() {
 
 `template <typename Indicator, size_t count> class MultiProgress` is a class template that holds references to multiple progress bars and provides a safe interface to update the state of each bar. `MultiProgress` works with both `ProgressBar` and `BlockProgressBar` classes.
 
+Use this class if you know the number of progress bars to manage at compile time.
+
 Below is an example `MultiProgress` object that manages three `ProgressBar` objects.
 
 <p align="center">
@@ -354,6 +356,8 @@ int main() {
 # DynamicProgress
 
 `DynamicProgress` is a container class, similar to `MultiProgress`, for managing multiple progress bars. As the name suggests, with `DynamicProgress`, you can dynamically add new progress bars. Simply call `bars.push_back`. 
+
+Use this class if you don't know the number of progress bars at compile time.
 
 Below is an example `DynamicProgress` object that manages six `ProgressBar` objects. Three of these bars are added dynamically.
 
