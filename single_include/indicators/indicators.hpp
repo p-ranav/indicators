@@ -502,6 +502,8 @@ inline void win_change_attributes(std::ostream &stream, int foreground, int back
 
 #endif // TERMCOLOR_HPP_
 
+// details/stream_helper.hpp
+
 namespace indicators {
 namespace details {
 
@@ -591,8 +593,8 @@ public:
                       const std::string &lead, const std::string &remainder)
       : os(os), bar_width(bar_width), fill(fill), lead(lead), remainder(remainder) {}
 
-  std::ostream &write(float progress) {
-    auto pos = static_cast<size_t>(progress * static_cast<float>(bar_width) / 100.0);
+  std::ostream &write(size_t progress) {
+    auto pos = static_cast<size_t>(progress * bar_width / 100.0);
     for (size_t i = 0; i < bar_width; ++i) {
       if (i < pos)
         os << fill;
@@ -615,32 +617,9 @@ private:
 } // namespace details
 } // namespace indicators
 
-/*
-Activity Indicators for Modern C++
-https://github.com/p-ranav/indicators
-
-Licensed under the MIT License <http://opensource.org/licenses/MIT>.
-SPDX-License-Identifier: MIT
-Copyright (c) 2019 Dawid Pilarski <dawid.pilarski@panicsoftware.com>.
-
-Permission is hereby  granted, free of charge, to any  person obtaining a copy
-of this software and associated  documentation files (the "Software"), to deal
-in the Software  without restriction, including without  limitation the rights
-to  use, copy,  modify, merge,  publish, distribute,  sublicense, and/or  sell
-copies  of  the Software,  and  to  permit persons  to  whom  the Software  is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE  IS PROVIDED "AS  IS", WITHOUT WARRANTY  OF ANY KIND,  EXPRESS OR
-IMPLIED,  INCLUDING BUT  NOT  LIMITED TO  THE  WARRANTIES OF  MERCHANTABILITY,
-FITNESS FOR  A PARTICULAR PURPOSE AND  NONINFRINGEMENT. IN NO EVENT  SHALL THE
-AUTHORS  OR COPYRIGHT  HOLDERS  BE  LIABLE FOR  ANY  CLAIM,  DAMAGES OR  OTHER
-LIABILITY, WHETHER IN AN ACTION OF  CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
+//
+// setting.hpp
+//
 
 namespace indicators {
 
@@ -695,7 +674,8 @@ enum class ProgressBarOption {
   saved_start_time,
   foreground_color,
   spinner_show,
-  spinner_states
+  spinner_states,
+  hide_bar_when_complete
 };
 
 template <typename T, ProgressBarOption Id> struct Setting {
@@ -806,8 +786,14 @@ using ForegroundColor = details::Setting<Color, details::ProgressBarOption::fore
 using ShowSpinner = details::BooleanSetting<details::ProgressBarOption::spinner_show>;
 using SpinnerStates =
     details::Setting<std::vector<std::string>, details::ProgressBarOption::spinner_states>;
+using HideBarWhenComplete =
+    details::BooleanSetting<details::ProgressBarOption::hide_bar_when_complete>;
 } // namespace option
 } // namespace indicators
+
+//
+// progress_bar.hpp
+//
 
 namespace indicators {
 
@@ -893,9 +879,9 @@ public:
     }
   }
 
-  void set_progress(float new_progress) {
+  void set_progress(size_t new_progress) {
     {
-      std::lock_guard<std::mutex> lck(mutex_);
+      std::lock_guard<std::mutex> lock(mutex_);
       progress_ = new_progress;
     }
 
@@ -914,7 +900,7 @@ public:
 
   size_t current() {
     std::lock_guard<std::mutex> lock{mutex_};
-    return std::min(static_cast<size_t>(progress_), size_t(100));
+    return std::min(progress_, size_t(100));
   }
 
   bool is_completed() const { return get_value<details::ProgressBarOption::completed>(); }
@@ -936,13 +922,14 @@ private:
     return details::get_value<id>(settings_).value;
   }
 
-  float progress_{0};
+  size_t progress_{0};
   Settings settings_;
   std::chrono::nanoseconds elapsed_;
   std::chrono::time_point<std::chrono::high_resolution_clock> start_time_point_;
   std::mutex mutex_;
 
   template <typename Indicator, size_t count> friend class MultiProgress;
+  template <typename Indicator> friend class DynamicProgress;
   std::atomic<bool> multi_progress_mode_{false};
 
   void save_start_time() {
@@ -956,13 +943,13 @@ private:
   }
 
   void print_progress(bool from_multi_progress = false) {
+    std::lock_guard<std::mutex> lock{mutex_};
     if (multi_progress_mode_ && !from_multi_progress) {
-      if (progress_ > 100.0) {
+      if (progress_ > 100) {
         get_value<details::ProgressBarOption::completed>() = true;
       }
       return;
     }
-    std::lock_guard<std::mutex> lock{mutex_};
     auto now = std::chrono::high_resolution_clock::now();
     if (!get_value<details::ProgressBarOption::completed>())
       elapsed_ = std::chrono::duration_cast<std::chrono::nanoseconds>(now - start_time_point_);
@@ -983,7 +970,7 @@ private:
     std::cout << get_value<details::ProgressBarOption::end>();
 
     if (get_value<details::ProgressBarOption::show_percentage>()) {
-      std::cout << " " << std::min(static_cast<size_t>(progress_), size_t(100)) << "%";
+      std::cout << " " << std::min(progress_, size_t(100)) << "%";
     }
 
     if (get_value<details::ProgressBarOption::show_elapsed_time>()) {
@@ -1012,7 +999,7 @@ private:
               << std::string(get_value<details::ProgressBarOption::max_postfix_text_len>(), ' ')
               << "\r";
     std::cout.flush();
-    if (progress_ > 100.0) {
+    if (progress_ > 100) {
       get_value<details::ProgressBarOption::completed>() = true;
     }
     if (get_value<details::ProgressBarOption::completed>() &&
@@ -1022,6 +1009,10 @@ private:
 };
 
 } // namespace indicators
+
+//
+// block_progress_bar.hpp
+//
 
 namespace indicators {
 
@@ -1147,6 +1138,7 @@ private:
   std::mutex mutex_;
 
   template <typename Indicator, size_t count> friend class MultiProgress;
+  template <typename Indicator> friend class DynamicProgress;
   std::atomic<bool> multi_progress_mode_{false};
 
   void save_start_time() {
@@ -1220,6 +1212,10 @@ private:
 };
 
 } // namespace indicators
+
+//
+// progress_spinner.hpp
+//
 
 namespace indicators {
 
@@ -1298,7 +1294,7 @@ public:
     }
   }
 
-  void set_progress(float value) {
+  void set_progress(size_t value) {
     {
       std::lock_guard<std::mutex> lock{mutex_};
       progress_ = value;
@@ -1318,7 +1314,7 @@ public:
 
   size_t current() {
     std::lock_guard<std::mutex> lock{mutex_};
-    return std::min(static_cast<size_t>(progress_), size_t(100));
+    return std::min(progress_, size_t(100));
   }
 
   bool is_completed() const { return get_value<details::ProgressBarOption::completed>(); }
@@ -1330,7 +1326,7 @@ public:
 
 private:
   Settings settings_;
-  float progress_{0.0};
+  size_t progress_{0};
   size_t index_{0};
   std::chrono::time_point<std::chrono::high_resolution_clock> start_time_point_;
   std::mutex mutex_;
@@ -1368,7 +1364,7 @@ private:
       std::cout << get_value<details::ProgressBarOption::spinner_states>()
               [index_ % get_value<details::ProgressBarOption::spinner_states>().size()];
     if (get_value<details::ProgressBarOption::show_percentage>()) {
-      std::cout << " " << std::min(static_cast<size_t>(progress_), size_t(100)) << "%";
+      std::cout << " " << std::min(progress_, size_t(100)) << "%";
     }
 
     if (get_value<details::ProgressBarOption::show_elapsed_time>()) {
@@ -1398,7 +1394,7 @@ private:
               << "\r";
     std::cout.flush();
     index_ += 1;
-    if (progress_ > 100.0) {
+    if (progress_ > 100) {
       get_value<details::ProgressBarOption::completed>() = true;
     }
     if (get_value<details::ProgressBarOption::completed>())
@@ -1407,6 +1403,10 @@ private:
 };
 
 } // namespace indicators
+
+//
+// multi_progress.hpp
+//
 
 namespace indicators {
 
@@ -1419,6 +1419,13 @@ public:
     for (auto &bar : bars_) {
       bar.get().multi_progress_mode_ = true;
     }
+  }
+
+  template <size_t index>
+  typename std::enable_if<(index >= 0 && index < count), void>::type set_progress(size_t value) {
+    if (!bars_[index].get().is_completed())
+      bars_[index].get().set_progress(value);
+    print_progress();
   }
 
   template <size_t index>
@@ -1464,6 +1471,114 @@ private:
     std::cout << termcolor::reset;
     if (!started_)
       started_ = true;
+  }
+};
+
+} // namespace indicators
+
+//
+// dynamic_progress.hpp
+//
+
+namespace indicators {
+
+template <typename Indicator> class DynamicProgress {
+  using Settings = std::tuple<option::HideBarWhenComplete>;
+
+public:
+  template <typename... Indicators> explicit DynamicProgress(Indicators &... bars) {
+    bars_ = {bars...};
+    for (auto &bar : bars_) {
+      bar.get().multi_progress_mode_ = true;
+      ++total_count_;
+      ++incomplete_count_;
+    }
+  }
+
+  Indicator &operator[](size_t index) {
+    print_progress();
+    std::lock_guard<std::mutex> lock{mutex_};
+    return bars_[index].get();
+  }
+
+  size_t push_back(Indicator &bar) {
+    std::lock_guard<std::mutex> lock{mutex_};
+    bar.multi_progress_mode_ = true;
+    bars_.push_back(bar);
+    return bars_.size() - 1;
+  }
+
+  template <typename T, details::ProgressBarOption id>
+  void set_option(details::Setting<T, id> &&setting) {
+    static_assert(!std::is_same<T, typename std::decay<decltype(details::get_value<id>(
+                                       std::declval<Settings>()))>::type>::value,
+                  "Setting has wrong type!");
+    std::lock_guard<std::mutex> lock(mutex_);
+    get_value<id>() = std::move(setting).value;
+  }
+
+  template <typename T, details::ProgressBarOption id>
+  void set_option(const details::Setting<T, id> &setting) {
+    static_assert(!std::is_same<T, typename std::decay<decltype(details::get_value<id>(
+                                       std::declval<Settings>()))>::type>::value,
+                  "Setting has wrong type!");
+    std::lock_guard<std::mutex> lock(mutex_);
+    get_value<id>() = setting.value;
+  }
+
+private:
+  Settings settings_;
+  std::atomic<bool> started_{false};
+  std::mutex mutex_;
+  std::vector<std::reference_wrapper<Indicator>> bars_;
+  std::atomic<size_t> total_count_{0};
+  std::atomic<size_t> incomplete_count_{0};
+
+  template <details::ProgressBarOption id>
+  auto get_value() -> decltype((details::get_value<id>(std::declval<Settings &>()).value)) {
+    return details::get_value<id>(settings_).value;
+  }
+
+  template <details::ProgressBarOption id>
+  auto get_value() const
+      -> decltype((details::get_value<id>(std::declval<const Settings &>()).value)) {
+    return details::get_value<id>(settings_).value;
+  }
+
+  void print_progress() {
+    std::lock_guard<std::mutex> lock{mutex_};
+    auto &hide_bar_when_complete = get_value<details::ProgressBarOption::hide_bar_when_complete>();
+    if (hide_bar_when_complete) {
+      // Hide completed bars
+      if (started_) {
+        for (size_t i = 0; i < incomplete_count_; ++i)
+          std::cout << "\033[A\r\033[K" << std::flush;
+      }
+      incomplete_count_ = 0;
+      for (auto &bar : bars_) {
+        if (!bar.get().is_completed()) {
+          bar.get().print_progress(true);
+          std::cout << "\n";
+          ++incomplete_count_;
+        }
+      }
+      if (!started_)
+        started_ = true;
+    } else {
+      // Don't hide any bars
+      if (started_) {
+        for (size_t i = 0; i < total_count_; ++i)
+          std::cout << "\x1b[A";
+      }
+      for (auto &bar : bars_) {
+        bar.get().print_progress(true);
+        std::cout << "\n";
+      }
+      if (!started_)
+        started_ = true;
+    }
+    total_count_ = bars_.size();
+    std::cout << termcolor::reset;
   }
 };
 
