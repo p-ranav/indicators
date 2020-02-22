@@ -119,7 +119,7 @@ public:
     }
   }
 
-  void set_progress(float value) {
+  void set_progress(size_t value) {
     {
       std::lock_guard<std::mutex> lock{mutex_};
       progress_ = value;
@@ -139,7 +139,7 @@ public:
 
   size_t current() {
     std::lock_guard<std::mutex> lock{mutex_};
-    return std::min(static_cast<size_t>(progress_), size_t(100));
+    return std::min(progress_, size_t(100));
   }
 
   bool is_completed() const { return get_value<details::ProgressBarOption::completed>(); }
@@ -151,7 +151,7 @@ public:
 
 private:
   Settings settings_;
-  float progress_{0.0};
+  size_t progress_{0};
   size_t index_{0};
   std::chrono::time_point<std::chrono::high_resolution_clock> start_time_point_;
   std::mutex mutex_;
@@ -189,7 +189,7 @@ private:
       std::cout << get_value<details::ProgressBarOption::spinner_states>()
               [index_ % get_value<details::ProgressBarOption::spinner_states>().size()];
     if (get_value<details::ProgressBarOption::show_percentage>()) {
-      std::cout << " " << std::min(static_cast<size_t>(progress_), size_t(100)) << "%";
+      std::cout << " " << std::min(progress_, size_t(100)) << "%";
     }
 
     if (get_value<details::ProgressBarOption::show_elapsed_time>()) {
@@ -219,7 +219,7 @@ private:
               << "\r";
     std::cout.flush();
     index_ += 1;
-    if (progress_ > 100.0) {
+    if (progress_ > 100) {
       get_value<details::ProgressBarOption::completed>() = true;
     }
     if (get_value<details::ProgressBarOption::completed>())

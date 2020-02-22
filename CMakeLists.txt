@@ -4,7 +4,7 @@ if(DEFINED PROJECT_NAME)
   set(INDICATORS_SUBPROJECT ON)
 endif()
 
-project(indicators VERSION 1.7.0 LANGUAGES CXX
+project(indicators VERSION 1.8.0 LANGUAGES CXX
   HOMEPAGE_URL "https://github.com/p-ranav/indicators"
   DESCRIPTION "Activity Indicators for Modern C++")
 

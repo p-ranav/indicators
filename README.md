@@ -12,7 +12,7 @@
   <a href="https://github.com/p-ranav/indicators/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="license"/>
   </a>
-  <img src="https://img.shields.io/badge/version-1.7-blue.svg?cacheSeconds=2592000" alt="version"/>
+  <img src="https://img.shields.io/badge/version-1.8-blue.svg?cacheSeconds=2592000" alt="version"/>
 </p>
 
 <p align="center">
@@ -53,7 +53,7 @@ To introduce a progress bar in your application, include `indicators/progress_ba
          ^^^^^^^^^^^^^ Bar Width ^^^^^^^^^^^^^^^   
 ```
 
-The amount of progress in ProgressBar is maintained as a float in range `[0, 100]`. When progress reaches 100, the progression is complete. 
+The amount of progress in ProgressBar is maintained as a size_t in range `[0, 100]`. When progress reaches 100, the progression is complete. 
 
 From application-level code, there are two ways in which you can update this progress:
 
