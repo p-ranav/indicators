@@ -356,7 +356,9 @@ int main() {
 
 # DynamicProgress
 
-`DynamicProgress` is a container class, similar to `MultiProgress`, for managing multiple progress bars. As the name suggests, with `DynamicProgress`, you can dynamically add new progress bars. Simply call `bars.push_back`. 
+`DynamicProgress` is a container class, similar to `MultiProgress`, for managing multiple progress bars. As the name suggests, with `DynamicProgress`, you can dynamically add new progress bars. 
+
+To add new progress bars, call `bars.push_back(new_bar)`. This call will return the index of the appended bar. You can then refer to this bar with the indexing operator, e.g., `bars[4].set_progress(55)`.  
 
 Use this class if you don't know the number of progress bars at compile time.
 
