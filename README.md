@@ -19,7 +19,7 @@
   <img src="img/demo.gif"/> 
 </p>
 
-# Highlights
+## Highlights
 
 * Thread-safe progress bars and spinners
 * Header-only library. Grab a copy of `include/indicators`. 
@@ -35,7 +35,7 @@ cmake -DINDICATORS_SAMPLES=ON -DINDICATORS_DEMO=ON ..
 make
 ```
 
-# Table of Contents
+## Table of Contents
 
 * [Progress Bar](#progress-bar)
 * [Block Progress Bar](#block-progress-bar)
@@ -45,7 +45,7 @@ make
 * [Contributing](#contributing)
 * [License](#license)
 
-# Progress bar
+## Progress bar
 
 To introduce a progress bar in your application, include `indicators/progress_bar.hpp` and create a `ProgressBar` object. Here's the general structure of a progress bar:
 
@@ -58,7 +58,7 @@ The amount of progress in ProgressBar is maintained as a `size_t` in range `[0, 
 
 From application-level code, there are two ways in which you can update this progress:
 
-## Update progress using `bar.tick()`
+### Update progress using `bar.tick()`
 
 You can update the progress bar using `bar.tick()` which increments progress by exactly `1%`.
 
@@ -98,7 +98,7 @@ int main() {
 
 The above code will print a progress bar that goes from 0 to 100% at the rate of 1% every 100 ms.
 
-## Updating progress using `bar.set_progress(value)`
+### Updating progress using `bar.set_progress(value)`
 
 If you'd rather control progress of the bar in discrete steps, consider using `bar.set_progress(value)`. Example:
 
@@ -161,7 +161,7 @@ int main() {
 }
 ```
 
-## Showing Time Elapsed/Remaining
+### Showing Time Elapsed/Remaining
 
 All progress bars and spinners in `indicators` support showing time elapsed and time remaining. Inspired by python's [tqdm](https://github.com/tqdm/tqdm) module, the format of this meter is `[{elapsed}<{remaining}]`:
 
@@ -204,7 +204,7 @@ int main() {
 }
 ```
 
-# Block Progress Bar
+## Block Progress Bar
 
 Are you in need of a smooth block progress bar using [unicode block elements](https://en.wikipedia.org/wiki/Block_Elements)? Use `BlockProgressBar` instead of `ProgressBar`. Thanks to [this blog post](https://mike42.me/blog/2018-06-make-better-cli-progress-bars-with-unicode-block-characters) for making `BlockProgressBar` an easy addition to the library. 
 
@@ -247,7 +247,7 @@ int main() {
 }
 ```
 
-# MultiProgress
+## MultiProgress
 
 `indicators` supports management of multiple progress bars with the `MultiProgress` class template. 
 
@@ -354,7 +354,7 @@ int main() {
 }
 ```
 
-# DynamicProgress
+## DynamicProgress
 
 `DynamicProgress` is a container class, similar to `MultiProgress`, for managing multiple progress bars. As the name suggests, with `DynamicProgress`, you can dynamically add new progress bars. 
 
@@ -511,7 +511,7 @@ In the above code, notice the option `bars.set_option(option::HideBarWhenComplet
   <img src="img/dynamic_progress_bar_hide_completed.gif"/>  
 </p>
 
-# Progress Spinner
+## Progress Spinner
 
 To introduce a progress spinner in your application, include `indicators/progress_spinner.hpp` and create a `ProgressSpinner` object. Here's the general structure of a progress spinner:
 
