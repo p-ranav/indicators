@@ -22,7 +22,8 @@
 # Highlights
 
 * Thread-safe progress bars and spinners
-* Header-only library. Grab a copy of `include/indicators`
+* Header-only library. Grab a copy of `include/indicators`. 
+* Single-header version in `single_include/indicators`.
 * Source for the above GIF can be found [here](demo/demo.cpp)
 * MIT License
 
