@@ -130,14 +130,14 @@ template <ProgressBarOption Id, typename Default> Default &&get_impl(Default &&d
 }
 
 template <ProgressBarOption Id, typename Default, typename T, typename... Args>
-auto get_impl(Default &&def, T &&first, Args &&... tail) ->
+auto get_impl(Default &&/*def*/, T &&first, Args &&... /*tail*/) ->
     typename std::enable_if<(std::decay<T>::type::id == Id),
                             decltype(std::forward<T>(first))>::type {
   return std::forward<T>(first);
 }
 
 template <ProgressBarOption Id, typename Default, typename T, typename... Args>
-auto get_impl(Default &&def, T &&first, Args &&... tail) ->
+auto get_impl(Default &&def, T &&/*first*/, Args &&... tail) ->
     typename std::enable_if<(std::decay<T>::type::id != Id),
                             decltype(get_impl<Id>(std::forward<Default>(def),
                                                   std::forward<Args>(tail)...))>::type {
