@@ -87,7 +87,7 @@ public:
                   details::get<details::ProgressBarOption::saved_start_time>(
                       option::SavedStartTime{false}, std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::foreground_color>(
-                      option::ForegroundColor{Color::white}, std::forward<Args>(args)...)) {}
+                      option::ForegroundColor{Color::unspecified}, std::forward<Args>(args)...)) {}
 
   template <typename T, details::ProgressBarOption id>
   void set_option(details::Setting<T, id> &&setting) {
@@ -201,8 +201,8 @@ private:
     if (!get_value<details::ProgressBarOption::completed>())
       elapsed_ = std::chrono::duration_cast<std::chrono::nanoseconds>(now - start_time_point_);
 
-    std::cout << termcolor::bold;
-    details::set_stream_color(std::cout, get_value<details::ProgressBarOption::foreground_color>());
+    if (get_value<details::ProgressBarOption::foreground_color>() != Color::unspecified)
+      details::set_stream_color(std::cout, get_value<details::ProgressBarOption::foreground_color>());
     std::cout << get_value<details::ProgressBarOption::prefix_text>();
 
     std::cout << get_value<details::ProgressBarOption::start>();
