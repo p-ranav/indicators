@@ -28,9 +28,11 @@ SOFTWARE.
 
 #include <cstddef>
 #include <indicators/color.hpp>
+#include <indicators/font_style.hpp>
 #include <string>
 #include <type_traits>
 #include <utility>
+#include <vector>
 
 namespace indicators {
 
@@ -86,6 +88,7 @@ enum class ProgressBarOption {
   foreground_color,
   spinner_show,
   spinner_states,
+  font_styles,
   hide_bar_when_complete
 };
 
@@ -199,5 +202,7 @@ using SpinnerStates =
     details::Setting<std::vector<std::string>, details::ProgressBarOption::spinner_states>;
 using HideBarWhenComplete =
     details::BooleanSetting<details::ProgressBarOption::hide_bar_when_complete>;
+using FontStyles =
+    details::Setting<std::vector<FontStyle>, details::ProgressBarOption::font_styles>;
 } // namespace option
 } // namespace indicators

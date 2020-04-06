@@ -1,6 +1,7 @@
 #pragma once
 
 #include <indicators/color.hpp>
+#include <indicators/font_style.hpp>
 #include <indicators/termcolor.hpp>
 
 #include <algorithm>
@@ -44,6 +45,37 @@ inline void set_stream_color(std::ostream &os, Color color) {
     break;
   default:
     assert(false);
+  }
+}
+
+inline void set_font_style(std::ostream &os, FontStyle style) {
+  switch (style) {
+  case FontStyle::bold:
+    os << termcolor::bold;
+    break;
+  case FontStyle::dark:
+    os << termcolor::dark;
+    break;
+  case FontStyle::italic:
+    os << termcolor::italic;
+    break;
+  case FontStyle::underline:
+    os << termcolor::underline;
+    break;
+  case FontStyle::blink:
+    os << termcolor::blink;
+    break;
+  case FontStyle::reverse:
+    os << termcolor::reverse;
+    break;
+  case FontStyle::concealed:
+    os << termcolor::concealed;
+    break;
+  case FontStyle::crossed:
+    os << termcolor::crossed;
+    break;
+  default:
+    break;
   }
 }
 

@@ -50,7 +50,7 @@ class ProgressBar {
                  option::End, option::Fill, option::Lead, option::Remainder,
                  option::MaxPostfixTextLen, option::Completed, option::ShowPercentage,
                  option::ShowElapsedTime, option::ShowRemainingTime, option::SavedStartTime,
-                 option::ForegroundColor>;
+                 option::ForegroundColor, option::FontStyles>;
 
 public:
   template <typename... Args,
@@ -203,6 +203,10 @@ private:
 
     std::cout << termcolor::bold;
     details::set_stream_color(std::cout, get_value<details::ProgressBarOption::foreground_color>());
+
+    for (auto &style : get_value<details::ProgressBarOption::font_styles>())
+      details::set_font_style(std::cout, style);
+
     std::cout << get_value<details::ProgressBarOption::prefix_text>();
 
     std::cout << get_value<details::ProgressBarOption::start>();
