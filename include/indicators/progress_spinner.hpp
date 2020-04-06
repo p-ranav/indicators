@@ -58,7 +58,7 @@ public:
                                     void *>::type = nullptr>
   explicit ProgressSpinner(Args &&... args)
       : settings_(details::get<details::ProgressBarOption::foreground_color>(
-                      option::ForegroundColor{Color::white}, std::forward<Args>(args)...),
+                      option::ForegroundColor{Color::unspecified}, std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::prefix_text>(
                       option::PrefixText{}, std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::postfix_text>(
@@ -182,8 +182,8 @@ private:
     auto now = std::chrono::high_resolution_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - start_time_point_);
 
-    std::cout << termcolor::bold;
-    details::set_stream_color(std::cout, get_value<details::ProgressBarOption::foreground_color>());
+    if (get_value<details::ProgressBarOption::foreground_color>() != Color::unspecified)
+      details::set_stream_color(std::cout, get_value<details::ProgressBarOption::foreground_color>());
     std::cout << get_value<details::ProgressBarOption::prefix_text>();
     if (get_value<details::ProgressBarOption::spinner_show>())
       std::cout << get_value<details::ProgressBarOption::spinner_states>()
