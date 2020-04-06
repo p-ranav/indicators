@@ -12,7 +12,8 @@ int main() {
       indicators::option::End{" ]"},
       indicators::option::PostfixText{"Getting started"},
       indicators::option::ForegroundColor{indicators::Color::green},
-      indicators::option::FontStyles{std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}
+      indicators::option::FontStyles{
+          std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}
   };
 
   // Update bar state

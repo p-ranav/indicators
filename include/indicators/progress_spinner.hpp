@@ -1,4 +1,4 @@
-/*
+  /*
 Activity Indicators for Modern C++
 https://github.com/p-ranav/indicators
 
@@ -49,7 +49,7 @@ class ProgressSpinner {
       std::tuple<option::ForegroundColor, option::PrefixText, option::PostfixText,
                  option::ShowPercentage, option::ShowElapsedTime, option::ShowRemainingTime,
                  option::ShowSpinner, option::SavedStartTime, option::Completed,
-                 option::MaxPostfixTextLen, option::SpinnerStates>;
+                 option::MaxPostfixTextLen, option::SpinnerStates, option::FontStyles>;
 
 public:
   template <typename... Args,
@@ -80,7 +80,9 @@ public:
                   details::get<details::ProgressBarOption::spinner_states>(
                       option::SpinnerStates{std::vector<std::string>{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴",
                                                                      "⠦", "⠧", "⠇", "⠏"}},
-                      std::forward<Args>(args)...)) {}
+                      std::forward<Args>(args)...),
+                  details::get<details::ProgressBarOption::font_styles>(
+                      option::FontStyles{std::vector<FontStyle>{}}, std::forward<Args>(args)...)) {}
 
   template <typename T, details::ProgressBarOption id>
   void set_option(details::Setting<T, id> &&setting) {
@@ -184,6 +186,10 @@ private:
 
     if (get_value<details::ProgressBarOption::foreground_color>() != Color::unspecified)
       details::set_stream_color(std::cout, get_value<details::ProgressBarOption::foreground_color>());
+
+    for (auto &style : get_value<details::ProgressBarOption::font_styles>())
+      details::set_font_style(std::cout, style);
+
     std::cout << get_value<details::ProgressBarOption::prefix_text>();
     if (get_value<details::ProgressBarOption::spinner_show>())
       std::cout << get_value<details::ProgressBarOption::spinner_states>()

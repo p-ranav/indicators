@@ -14,6 +14,8 @@ int main() {
       indicators::option::ForegroundColor{indicators::Color::yellow},
       indicators::option::ShowElapsedTime{true},
       indicators::option::ShowRemainingTime{true},
+      indicators::option::FontStyles{
+          std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}
   };
 
   // Update bar state

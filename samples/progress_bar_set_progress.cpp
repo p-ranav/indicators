@@ -16,6 +16,8 @@ int main() {
       indicators::option::End{" ]"},
       indicators::option::PostfixText{"Loading dependency 1/4"},
       indicators::option::ForegroundColor{indicators::Color::cyan},
+      indicators::option::FontStyles{
+          std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}
   };
 
   // Update bar state

@@ -87,7 +87,9 @@ public:
                   details::get<details::ProgressBarOption::saved_start_time>(
                       option::SavedStartTime{false}, std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::foreground_color>(
-                      option::ForegroundColor{Color::unspecified}, std::forward<Args>(args)...)) {}
+                      option::ForegroundColor{Color::unspecified}, std::forward<Args>(args)...),
+                  details::get<details::ProgressBarOption::font_styles>(
+                      option::FontStyles{std::vector<FontStyle>{}}, std::forward<Args>(args)...)) {}
 
   template <typename T, details::ProgressBarOption id>
   void set_option(details::Setting<T, id> &&setting) {

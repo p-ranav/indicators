@@ -5,15 +5,21 @@ int main() {
   using namespace indicators;
   BlockProgressBar bar1{option::BarWidth{50}, option::ForegroundColor{Color::yellow},
                         option::ShowElapsedTime{true}, option::ShowRemainingTime{true},
-                        option::PrefixText{"Progress Bar #1 "}};
+                        option::PrefixText{"Progress Bar #1 "},
+                        indicators::option::FontStyles{
+                                  std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
 
   BlockProgressBar bar2{option::BarWidth{50}, option::ForegroundColor{Color::cyan},
                         option::ShowElapsedTime{true}, option::ShowRemainingTime{true},
-                        option::PrefixText{"Progress Bar #2 "}};
+                        option::PrefixText{"Progress Bar #2 "},
+                        indicators::option::FontStyles{
+                                  std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
 
   BlockProgressBar bar3{option::BarWidth{50}, option::ForegroundColor{Color::red},
                         option::ShowElapsedTime{true}, option::ShowRemainingTime{true},
-                        option::PrefixText{"Progress Bar #3 "}};
+                        option::PrefixText{"Progress Bar #3 "},
+                        indicators::option::FontStyles{
+                                  std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
 
   indicators::MultiProgress<indicators::BlockProgressBar, 3> bars(bar1, bar2, bar3);
 
