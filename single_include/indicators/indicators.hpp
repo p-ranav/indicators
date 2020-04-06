@@ -49,6 +49,8 @@ SOFTWARE.
 
 namespace indicators {
 enum class Color { grey, red, green, yellow, blue, magenta, cyan, white };
+enum class FontStyle { bold, dark, italic, underline, blink, reverse, concealed, crossed };
+
 }
 
 //!
@@ -538,6 +540,37 @@ inline void set_stream_color(std::ostream &os, Color color) {
   }
 }
 
+inline void set_font_style(std::ostream &os, FontStyle style) {
+  switch (style) {
+  case FontStyle::bold:
+    os << termcolor::bold;
+    break;
+  case FontStyle::dark:
+    os << termcolor::dark;
+    break;
+  case FontStyle::italic:
+    os << termcolor::italic;
+    break;
+  case FontStyle::underline:
+    os << termcolor::underline;
+    break;
+  case FontStyle::blink:
+    os << termcolor::blink;
+    break;
+  case FontStyle::reverse:
+    os << termcolor::reverse;
+    break;
+  case FontStyle::concealed:
+    os << termcolor::concealed;
+    break;
+  case FontStyle::crossed:
+    os << termcolor::crossed;
+    break;
+  default:
+    break;
+  }
+}
+
 inline std::ostream &write_duration(std::ostream &os, std::chrono::nanoseconds ns) {
   using namespace std;
   using namespace std::chrono;
@@ -675,6 +708,7 @@ enum class ProgressBarOption {
   foreground_color,
   spinner_show,
   spinner_states,
+  font_styles,
   hide_bar_when_complete
 };
 
@@ -788,6 +822,8 @@ using SpinnerStates =
     details::Setting<std::vector<std::string>, details::ProgressBarOption::spinner_states>;
 using HideBarWhenComplete =
     details::BooleanSetting<details::ProgressBarOption::hide_bar_when_complete>;
+using FontStyles =
+    details::Setting<std::vector<FontStyle>, details::ProgressBarOption::font_styles>;
 } // namespace option
 } // namespace indicators
 
@@ -803,7 +839,7 @@ class ProgressBar {
                  option::End, option::Fill, option::Lead, option::Remainder,
                  option::MaxPostfixTextLen, option::Completed, option::ShowPercentage,
                  option::ShowElapsedTime, option::ShowRemainingTime, option::SavedStartTime,
-                 option::ForegroundColor>;
+                 option::ForegroundColor, option::FontStyles>;
 
 public:
   template <typename... Args,
@@ -840,7 +876,9 @@ public:
                   details::get<details::ProgressBarOption::saved_start_time>(
                       option::SavedStartTime{false}, std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::foreground_color>(
-                      option::ForegroundColor{Color::white}, std::forward<Args>(args)...)) {}
+                      option::ForegroundColor{Color::unspecified}, std::forward<Args>(args)...),
+                  details::get<details::ProgressBarOption::font_styles>(
+                      option::FontStyles{std::vector<FontStyle>{}}, std::forward<Args>(args)...)) {}
 
   template <typename T, details::ProgressBarOption id>
   void set_option(details::Setting<T, id> &&setting) {
@@ -956,6 +994,10 @@ private:
 
     std::cout << termcolor::bold;
     details::set_stream_color(std::cout, get_value<details::ProgressBarOption::foreground_color>());
+
+    for (auto &style : get_value<details::ProgressBarOption::font_styles>())
+      details::set_font_style(std::cout, style);
+
     std::cout << get_value<details::ProgressBarOption::prefix_text>();
 
     std::cout << get_value<details::ProgressBarOption::start>();
@@ -1020,7 +1062,7 @@ class BlockProgressBar {
   using Settings = std::tuple<option::ForegroundColor, option::BarWidth, option::Start, option::End,
                               option::PrefixText, option::PostfixText, option::ShowPercentage,
                               option::ShowElapsedTime, option::ShowRemainingTime, option::Completed,
-                              option::SavedStartTime, option::MaxPostfixTextLen>;
+                              option::SavedStartTime, option::MaxPostfixTextLen, option::FontStyles>;
 
 public:
   template <typename... Args,
@@ -1029,7 +1071,7 @@ public:
                                     void *>::type = nullptr>
   explicit BlockProgressBar(Args &&... args)
       : settings_(details::get<details::ProgressBarOption::foreground_color>(
-                      option::ForegroundColor{Color::white}, std::forward<Args>(args)...),
+                      option::ForegroundColor{Color::unspecified}, std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::bar_width>(option::BarWidth{100},
                                                                       std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::start>(option::Start{"["},
@@ -1051,7 +1093,9 @@ public:
                   details::get<details::ProgressBarOption::saved_start_time>(
                       option::SavedStartTime{false}, std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::max_postfix_text_len>(
-                      option::MaxPostfixTextLen{0}, std::forward<Args>(args)...)) {}
+                      option::MaxPostfixTextLen{0}, std::forward<Args>(args)...),
+                  details::get<details::ProgressBarOption::font_styles>(
+                      option::FontStyles{std::vector<FontStyle>{}}, std::forward<Args>(args)...)) {}
 
   template <typename T, details::ProgressBarOption id>
   void set_option(details::Setting<T, id> &&setting) {
@@ -1164,6 +1208,10 @@ private:
 
     std::cout << termcolor::bold;
     details::set_stream_color(std::cout, get_value<details::ProgressBarOption::foreground_color>());
+
+    for (auto &style : get_value<details::ProgressBarOption::font_styles>())
+      details::set_font_style(std::cout, style);
+
     std::cout << get_value<details::ProgressBarOption::prefix_text>();
     std::cout << get_value<details::ProgressBarOption::start>();
 
@@ -1224,7 +1272,7 @@ class ProgressSpinner {
       std::tuple<option::ForegroundColor, option::PrefixText, option::PostfixText,
                  option::ShowPercentage, option::ShowElapsedTime, option::ShowRemainingTime,
                  option::ShowSpinner, option::SavedStartTime, option::Completed,
-                 option::MaxPostfixTextLen, option::SpinnerStates>;
+                 option::MaxPostfixTextLen, option::SpinnerStates, option::FontStyles>;
 
 public:
   template <typename... Args,
@@ -1233,7 +1281,7 @@ public:
                                     void *>::type = nullptr>
   explicit ProgressSpinner(Args &&... args)
       : settings_(details::get<details::ProgressBarOption::foreground_color>(
-                      option::ForegroundColor{Color::white}, std::forward<Args>(args)...),
+                      option::ForegroundColor{Color::unspecified}, std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::prefix_text>(
                       option::PrefixText{}, std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::postfix_text>(
@@ -1255,7 +1303,9 @@ public:
                   details::get<details::ProgressBarOption::spinner_states>(
                       option::SpinnerStates{std::vector<std::string>{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴",
                                                                      "⠦", "⠧", "⠇", "⠏"}},
-                      std::forward<Args>(args)...)) {}
+                      std::forward<Args>(args)...),
+                  details::get<details::ProgressBarOption::font_styles>(
+                      option::FontStyles{std::vector<FontStyle>{}}, std::forward<Args>(args)...)) {}
 
   template <typename T, details::ProgressBarOption id>
   void set_option(details::Setting<T, id> &&setting) {
@@ -1359,6 +1409,10 @@ private:
 
     std::cout << termcolor::bold;
     details::set_stream_color(std::cout, get_value<details::ProgressBarOption::foreground_color>());
+
+    for (auto &style : get_value<details::ProgressBarOption::font_styles>())
+      details::set_font_style(std::cout, style);
+
     std::cout << get_value<details::ProgressBarOption::prefix_text>();
     if (get_value<details::ProgressBarOption::spinner_show>())
       std::cout << get_value<details::ProgressBarOption::spinner_states>()
