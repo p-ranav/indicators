@@ -81,7 +81,8 @@ int main() {
     option::Remainder{" "},
     option::End{"]"},
     option::PostfixText{"Extracting Archive"},
-    option::ForegroundColor{Color::green}
+    option::ForegroundColor{Color::green},
+    option::FontStyles{std::vector<FontStyle>{FontStyle::bold}}
   };
   
   // Update bar state
@@ -125,7 +126,8 @@ int main() {
     option::Remainder{"-"},
     option::End{" ]"},
     option::PostfixText{"Loading dependency 1/4"},
-    option::ForegroundColor{Color::cyan}  
+    option::ForegroundColor{Color::cyan},
+    option::FontStyles{std::vector<FontStyle>{FontStyle::bold}}
   };
 
   // Update bar state
@@ -186,7 +188,8 @@ int main() {
     option::PrefixText{"Training Gaze Network 👀"},
     option::ForegroundColor{Color::yellow},
     option::ShowElapsedTime{true},
-    option::ShowRemainingTime{true}
+    option::ShowRemainingTime{true},
+    option::FontStyles{std::vector<FontStyle>{FontStyle::bold}}
   };
 
   // Update bar state
@@ -227,7 +230,8 @@ int main() {
     option::BarWidth{80},
     option::Start{"["},
     option::End{"]"},
-    option::ForegroundColor{Color::white}  
+    option::ForegroundColor{Color::white}  ,
+    option::FontStyles{std::vector<FontStyle>{FontStyle::bold}}
   };
   
   // Update bar state
@@ -278,7 +282,8 @@ int main() {
     option::ForegroundColor{Color::yellow},
     option::ShowElapsedTime{true},
     option::ShowRemainingTime{true},
-    option::PrefixText{"Progress Bar #1 "}
+    option::PrefixText{"Progress Bar #1 "},
+    option::FontStyles{std::vector<FontStyle>{FontStyle::bold}}
   };
 
   // Configure second progress bar
@@ -293,7 +298,8 @@ int main() {
     option::ForegroundColor{Color::cyan},
     option::ShowElapsedTime{true},
     option::ShowRemainingTime{true},
-    option::PrefixText{"Progress Bar #2 "}
+    option::PrefixText{"Progress Bar #2 "},
+    option::FontStyles{std::vector<FontStyle>{FontStyle::bold}}
   };
   
   // Configure third progress bar
@@ -307,7 +313,8 @@ int main() {
     option::ForegroundColor{Color::red},
     option::ShowElapsedTime{true},
     option::ShowRemainingTime{true},
-    option::PrefixText{"Progress Bar #3 "}
+    option::PrefixText{"Progress Bar #3 "},
+    option::FontStyles{std::vector<FontStyle>{FontStyle::bold}}
   };
 
   // Construct MultiProgress object
@@ -533,7 +540,8 @@ int main() {
   indicators::ProgressSpinner spinner{
     option::PostfixText{"Checking credentials"},
     option::ForegroundColor{Color::yellow},
-    option::SpinnerStates{std::vector<std::string>{"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"}}
+    option::SpinnerStates{std::vector<std::string>{"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"}},
+    option::FontStyles{std::vector<FontStyle>{FontStyle::bold}}
   };
  
   // Update spinner state

@@ -10,6 +10,8 @@ int main() {
       indicators::option::ForegroundColor{indicators::Color::yellow},
       indicators::option::SpinnerStates{
           std::vector<std::string>{"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"}},
+      indicators::option::FontStyles{
+          std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}
   };
 
   // Update spinner state

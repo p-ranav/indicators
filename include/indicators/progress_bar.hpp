@@ -50,7 +50,7 @@ class ProgressBar {
                  option::End, option::Fill, option::Lead, option::Remainder,
                  option::MaxPostfixTextLen, option::Completed, option::ShowPercentage,
                  option::ShowElapsedTime, option::ShowRemainingTime, option::SavedStartTime,
-                 option::ForegroundColor>;
+                 option::ForegroundColor, option::FontStyles>;
 
 public:
   template <typename... Args,
@@ -87,7 +87,9 @@ public:
                   details::get<details::ProgressBarOption::saved_start_time>(
                       option::SavedStartTime{false}, std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::foreground_color>(
-                      option::ForegroundColor{Color::unspecified}, std::forward<Args>(args)...)) {}
+                      option::ForegroundColor{Color::unspecified}, std::forward<Args>(args)...),
+                  details::get<details::ProgressBarOption::font_styles>(
+                      option::FontStyles{std::vector<FontStyle>{}}, std::forward<Args>(args)...)) {}
 
   template <typename T, details::ProgressBarOption id>
   void set_option(details::Setting<T, id> &&setting) {
@@ -203,6 +205,10 @@ private:
 
     if (get_value<details::ProgressBarOption::foreground_color>() != Color::unspecified)
       details::set_stream_color(std::cout, get_value<details::ProgressBarOption::foreground_color>());
+
+    for (auto &style : get_value<details::ProgressBarOption::font_styles>())
+      details::set_font_style(std::cout, style);
+
     std::cout << get_value<details::ProgressBarOption::prefix_text>();
 
     std::cout << get_value<details::ProgressBarOption::start>();

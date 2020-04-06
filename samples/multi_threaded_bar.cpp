@@ -11,6 +11,8 @@ int main() {
       indicators::option::Remainder{"-"},
       indicators::option::End{" ]"},
       indicators::option::ForegroundColor{indicators::Color::yellow},
+      indicators::option::FontStyles{
+          std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}
   };
 
   // As configured, the bar will look like this:

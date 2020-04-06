@@ -12,7 +12,9 @@ int main() {
                                indicators::option::ForegroundColor{indicators::Color::yellow},
                                indicators::option::ShowElapsedTime{true},
                                indicators::option::ShowRemainingTime{true},
-                               indicators::option::PrefixText{"Progress Bar #1 "}};
+                               indicators::option::PrefixText{"Progress Bar #1 "},
+                               indicators::option::FontStyles{
+                                  std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
 
   indicators::ProgressBar bar2{indicators::option::BarWidth{50},
                                indicators::option::Start{"["},
@@ -23,7 +25,9 @@ int main() {
                                indicators::option::ForegroundColor{indicators::Color::cyan},
                                indicators::option::ShowElapsedTime{true},
                                indicators::option::ShowRemainingTime{true},
-                               indicators::option::PrefixText{"Progress Bar #2 "}};
+                               indicators::option::PrefixText{"Progress Bar #2 "},
+                               indicators::option::FontStyles{
+                                  std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
 
   indicators::ProgressBar bar3{indicators::option::BarWidth{50},
                                indicators::option::Start{"["},
@@ -34,7 +38,9 @@ int main() {
                                indicators::option::ForegroundColor{indicators::Color::red},
                                indicators::option::ShowElapsedTime{true},
                                indicators::option::ShowRemainingTime{true},
-                               indicators::option::PrefixText{"Progress Bar #3 "}};
+                               indicators::option::PrefixText{"Progress Bar #3 "},
+                               indicators::option::FontStyles{
+                                  std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
 
   indicators::MultiProgress<indicators::ProgressBar, 3> bars(bar1, bar2, bar3);
 
