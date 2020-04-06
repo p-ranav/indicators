@@ -4,9 +4,9 @@ if(DEFINED PROJECT_NAME)
   set(INDICATORS_SUBPROJECT ON)
 endif()
 
-project(indicators VERSION 1.8.0 LANGUAGES CXX
-  HOMEPAGE_URL "https://github.com/p-ranav/indicators"
-  DESCRIPTION "Activity Indicators for Modern C++")
+project(indicators VERSION 1.8.0 LANGUAGES CXX)
+#  HOMEPAGE_URL "https://github.com/p-ranav/indicators"
+#  DESCRIPTION "Activity Indicators for Modern C++")
   
 if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
     include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
