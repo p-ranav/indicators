@@ -208,9 +208,14 @@ private:
       std::cout << " " << std::min(static_cast<size_t>(progress_), size_t(100)) << "%";
     }
 
+    auto &saved_start_time = get_value<details::ProgressBarOption::saved_start_time>();
+
     if (get_value<details::ProgressBarOption::show_elapsed_time>()) {
       std::cout << " [";
-      details::write_duration(std::cout, elapsed);
+      if (saved_start_time)
+        details::write_duration(std::cout, elapsed);
+      else
+        std::cout << "00:00s";
     }
 
     if (get_value<details::ProgressBarOption::show_remaining_time>()) {
@@ -218,10 +223,16 @@ private:
         std::cout << "<";
       else
         std::cout << " [";
-      auto eta = std::chrono::nanoseconds(
-          progress_ > 0 ? static_cast<long long>(elapsed.count() * 100 / progress_) : 0);
-      auto remaining = eta > elapsed ? (eta - elapsed) : (elapsed - eta);
-      details::write_duration(std::cout, remaining);
+
+      if (saved_start_time) {
+        auto eta = std::chrono::nanoseconds(
+            progress_ > 0 ? static_cast<long long>(elapsed.count() * 100 / progress_) : 0);
+        auto remaining = eta > elapsed ? (eta - elapsed) : (elapsed - eta);
+        details::write_duration(std::cout, remaining);
+      } else {
+        std::cout << "00:00s";
+      }
+
       std::cout << "]";
     } else {
       if (get_value<details::ProgressBarOption::show_elapsed_time>())
