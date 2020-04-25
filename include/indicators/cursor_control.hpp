@@ -14,12 +14,6 @@ namespace indicators {
 
 #if defined(_MSC_VER)
 
-void enable_cursor_movement() {
-  auto hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
-  SetConsoleMode(hStdout,
-                 ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
-}
-
 void show_console_cursor(bool const show) {
   HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -31,8 +25,6 @@ void show_console_cursor(bool const show) {
 }
 
 #else
-
-void enable_cursor_movement() {}
 
 void show_console_cursor(bool const show) {
   std::fputs(show ? "\e[?25h" : "\e[?25l", stdout);

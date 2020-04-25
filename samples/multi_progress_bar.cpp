@@ -3,7 +3,6 @@
 #include <indicators/cursor_control.hpp>
 
 int main() {
-  indicators::enable_cursor_movement();
   indicators::show_console_cursor(false);
 
   indicators::ProgressBar bar1{indicators::option::BarWidth{50},
