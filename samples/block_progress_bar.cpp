@@ -1,11 +1,12 @@
 #include <chrono>
 #include <indicators/block_progress_bar.hpp>
+#include <indicators/cursor_control.hpp>
 #include <thread>
 
 int main() {
 
   // Hide cursor
-  std::cout << "\e[?25l";
+  indicators::show_console_cursor(false);
 
   indicators::BlockProgressBar bar{
     indicators::option::BarWidth{80},
@@ -24,7 +25,7 @@ int main() {
   }
 
   // Show cursor
-  std::cout << "\e[?25h";
+  indicators::show_console_cursor(true);
 
   return 0;
 }

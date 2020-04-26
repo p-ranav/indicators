@@ -1,9 +1,10 @@
+#include <indicators/cursor_control.hpp>
 #include <indicators/progress_spinner.hpp>
 
 int main() {
 
   // Hide cursor
-  std::cout << "\e[?25l";
+  indicators::show_console_cursor(false);
 
   indicators::ProgressSpinner spinner{
       indicators::option::PostfixText{"Checking credentials"},
@@ -34,7 +35,7 @@ int main() {
   thread.join();
 
   // Show cursor
-  std::cout << "\e[?25h";
+  indicators::show_console_cursor(true);
 
   return 0;
 }

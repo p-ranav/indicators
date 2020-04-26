@@ -27,10 +27,12 @@ SOFTWARE.
 #pragma once
 #include <atomic>
 #include <functional>
-#include <indicators/color.hpp>
 #include <iostream>
 #include <mutex>
 #include <vector>
+
+#include <indicators/cursor_movement.hpp>
+#include <indicators/color.hpp>
 
 namespace indicators {
 
@@ -86,8 +88,7 @@ private:
   void print_progress() {
     std::lock_guard<std::mutex> lock{mutex_};
     if (started_)
-      for (size_t i = 0; i < count; ++i)
-        std::cout << "\x1b[A";
+      move_up(count);
     for (auto &bar : bars_) {
       bar.get().print_progress(true);
       std::cout << "\n";
