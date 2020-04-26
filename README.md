@@ -110,14 +110,16 @@ If you'd rather control progress of the bar in discrete steps, consider using `b
 
 ```cpp
 #include <chrono>
+#include <indicators/cursor_control.hpp>
 #include <indicators/progress_bar.hpp>
 #include <thread>
 
 int main() {
+  using namespace indicators;
 
   // Hide cursor
-  std::cout << "\e[?25l";
-  using namespace indicators;
+  show_console_cursor(false);
+
   ProgressBar bar{
     option::BarWidth{50},
     option::Start{"["},
@@ -157,7 +159,7 @@ int main() {
   bar.mark_as_completed();
 
   // Show cursor
-  std::cout << "\e[?25h";  
+  show_console_cursor(true);
 
   return 0;
 }
@@ -173,11 +175,16 @@ All progress bars and spinners in `indicators` support showing time elapsed and 
 
 ```cpp
 #include <chrono>
+#include <indicators/cursor_control.hpp>
 #include <indicators/progress_bar.hpp>
 #include <thread>
 
 int main() {
   using namespace indicators;
+
+  // Hide cursor
+  show_console_cursor(false);
+
   indicators::ProgressBar bar{
     option::BarWidth{50},
     option::Start{" ["},
@@ -201,7 +208,7 @@ int main() {
   }
 
   // Show cursor
-  std::cout << "\e[?25h";  
+  show_console_cursor(true);
 
   return 0;
 }
@@ -222,9 +229,10 @@ Are you in need of a smooth block progress bar using [unicode block elements](ht
 
 int main() {
 
-  // Hide cursor
-  std::cout << "\e[?25l";
   using namespace indicators;
+
+  // Hide cursor
+  show_console_cursor(false);
 
   BlockProgressBar bar{
     option::BarWidth{80},
@@ -245,7 +253,7 @@ int main() {
   }
 
   // Show cursor
-  std::cout << "\e[?25h";  
+  show_console_cursor(true);
 
   return 0;
 }

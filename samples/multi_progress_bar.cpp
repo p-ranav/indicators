@@ -1,9 +1,7 @@
 #include <indicators/multi_progress.hpp>
 #include <indicators/progress_bar.hpp>
-#include <indicators/cursor_control.hpp>
 
 int main() {
-  indicators::show_console_cursor(false);
 
   indicators::ProgressBar bar1{indicators::option::BarWidth{50},
                                indicators::option::Start{"["},
@@ -82,8 +80,6 @@ int main() {
   first_job.join();
   second_job.join();
   third_job.join();
-
-  indicators::show_console_cursor(true);
 
   return 0;
 }

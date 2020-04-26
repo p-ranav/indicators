@@ -1,12 +1,14 @@
 #include <indicators/progress_bar.hpp>
 #include <indicators/progress_spinner.hpp>
+#include <indicators/cursor_control.hpp>
 #include <vector>
 
 int main() {
+  using namespace indicators;
 
   // Hide cursor
-  std::cout << "\e[?25l";
-  using namespace indicators;
+  show_console_cursor(false);
+
   {
     //
     // PROGRESS BAR 1
@@ -312,7 +314,7 @@ int main() {
   }
 
   // Show cursor
-  std::cout << "\e[?25h";
+  show_console_cursor(true);
 
   return 0;
 }
