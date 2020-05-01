@@ -89,7 +89,8 @@ enum class ProgressBarOption {
   spinner_show,
   spinner_states,
   font_styles,
-  hide_bar_when_complete
+  hide_bar_when_complete,
+  max_progress
 };
 
 template <typename T, ProgressBarOption Id> struct Setting {
@@ -204,5 +205,6 @@ using HideBarWhenComplete =
     details::BooleanSetting<details::ProgressBarOption::hide_bar_when_complete>;
 using FontStyles =
     details::Setting<std::vector<FontStyle>, details::ProgressBarOption::font_styles>;
+using MaxProgress = details::IntegerSetting<details::ProgressBarOption::max_progress>;
 } // namespace option
 } // namespace indicators
