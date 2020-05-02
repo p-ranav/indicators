@@ -49,7 +49,8 @@ class ProgressSpinner {
       std::tuple<option::ForegroundColor, option::PrefixText, option::PostfixText,
                  option::ShowPercentage, option::ShowElapsedTime, option::ShowRemainingTime,
                  option::ShowSpinner, option::SavedStartTime, option::Completed,
-                 option::MaxPostfixTextLen, option::SpinnerStates, option::FontStyles>;
+                 option::MaxPostfixTextLen, option::SpinnerStates, option::FontStyles,
+                 option::MaxProgress>;
 
 public:
   template <typename... Args,
@@ -82,7 +83,9 @@ public:
                                                                      "⠦", "⠧", "⠇", "⠏"}},
                       std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::font_styles>(
-                      option::FontStyles{std::vector<FontStyle>{}}, std::forward<Args>(args)...)) {}
+                      option::FontStyles{std::vector<FontStyle>{}}, std::forward<Args>(args)...),
+                  details::get<details::ProgressBarOption::max_progress>(
+                      option::MaxProgress{100}, std::forward<Args>(args)...)) {}
 
   template <typename T, details::ProgressBarOption id>
   void set_option(details::Setting<T, id> &&setting) {
@@ -141,7 +144,7 @@ public:
 
   size_t current() {
     std::lock_guard<std::mutex> lock{mutex_};
-    return std::min(progress_, size_t(100));
+    return std::min(progress_, size_t(get_value<details::ProgressBarOption::max_progress>()));
   }
 
   bool is_completed() const { return get_value<details::ProgressBarOption::completed>(); }
@@ -181,6 +184,7 @@ private:
 
   void print_progress() {
     std::lock_guard<std::mutex> lock{mutex_};
+    const auto max_progress = get_value<details::ProgressBarOption::max_progress>();
     auto now = std::chrono::high_resolution_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - start_time_point_);
 
@@ -195,7 +199,7 @@ private:
       std::cout << get_value<details::ProgressBarOption::spinner_states>()
               [index_ % get_value<details::ProgressBarOption::spinner_states>().size()];
     if (get_value<details::ProgressBarOption::show_percentage>()) {
-      std::cout << " " << std::min(progress_, size_t(100)) << "%";
+      std::cout << " " << std::min(progress_, size_t(max_progress)) << "%";
     }
 
     if (get_value<details::ProgressBarOption::show_elapsed_time>()) {
@@ -209,7 +213,7 @@ private:
       else
         std::cout << " [";
       auto eta = std::chrono::nanoseconds(
-          progress_ > 0 ? static_cast<long long>(elapsed.count() * 100 / progress_) : 0);
+          progress_ > 0 ? static_cast<long long>(elapsed.count() * max_progress / progress_) : 0);
       auto remaining = eta > elapsed ? (eta - elapsed) : (elapsed - eta);
       details::write_duration(std::cout, remaining);
       std::cout << "]";
@@ -225,7 +229,7 @@ private:
               << "\r";
     std::cout.flush();
     index_ += 1;
-    if (progress_ > 100) {
+    if (progress_ > max_progress) {
       get_value<details::ProgressBarOption::completed>() = true;
     }
     if (get_value<details::ProgressBarOption::completed>())
