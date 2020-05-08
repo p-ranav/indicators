@@ -49,8 +49,14 @@ class IndeterminateProgressBar {
       std::tuple<option::BarWidth, option::PrefixText, option::PostfixText, option::Start,
                  option::End, option::Fill, option::Lead,
                  option::MaxPostfixTextLen, option::Completed,
-                 option::ShowElapsedTime, option::ShowRemainingTime, option::SavedStartTime,
                  option::ForegroundColor, option::FontStyles>;
+
+  enum class Direction {
+    forward,
+    backward
+  };
+
+  Direction direction_{Direction::forward};
 
 public:
   template <typename... Args,
@@ -68,26 +74,31 @@ public:
                                                                   std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::end>(option::End{"]"},
                                                                 std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::fill>(option::Fill{"="},
+                  details::get<details::ProgressBarOption::fill>(option::Fill{"."},
                                                                  std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::lead>(option::Lead{">"},
+                  details::get<details::ProgressBarOption::lead>(option::Lead{"<==>"},
                                                                  std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::max_postfix_text_len>(
                       option::MaxPostfixTextLen{0}, std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::completed>(option::Completed{false},
                                                                       std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::show_elapsed_time>(
-                      option::ShowElapsedTime{false}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::show_remaining_time>(
-                      option::ShowRemainingTime{false}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::saved_start_time>(
-                      option::SavedStartTime{false}, std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::foreground_color>(
                       option::ForegroundColor{Color::unspecified}, std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::font_styles>(
-                      option::FontStyles{std::vector<FontStyle>{}}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::max_progress>(
-                      option::MaxProgress{100}, std::forward<Args>(args)...)) {}
+                      option::FontStyles{std::vector<FontStyle>{}}, std::forward<Args>(args)...)) {
+    // starts with [<==>...........]
+    // progress_ = 0
+
+    // ends with   [...........<==>]
+    //             ^^^^^^^^^^^^^^^^^ bar_width
+    //             ^^^^^^^^^^^^ (bar_width - len(lead))
+    // progress_ = bar_width - len(lead)
+    progress_ = 0;
+    max_progress_ = get_value<details::ProgressBarOption::bar_width>()
+      - get_value<details::ProgressBarOption::lead>().size() 
+      + get_value<details::ProgressBarOption::start>().size()
+      + get_value<details::ProgressBarOption::end>().size();
+  }
 
   template <typename T, details::ProgressBarOption id>
   void set_option(details::Setting<T, id> &&setting) {
@@ -129,10 +140,22 @@ public:
   void tick() {
     {
       std::lock_guard<std::mutex> lock{mutex_};
-      progress_ += 1;
+      if (get_value<details::ProgressBarOption::completed>())
+        return;
+
+      progress_ += (direction_ == Direction::forward) ? 1 : -1;
+      if (direction_ == Direction::forward && progress_ == max_progress_) {
+        // time to go back
+        direction_ = Direction::backward;
+      } else if (direction_ == Direction::backward && progress_ == 0) {
+        direction_ = Direction::forward;
+      }
     }
-    save_start_time();
     print_progress();
+  }
+
+  bool is_completed() {
+    return get_value<details::ProgressBarOption::completed>();
   }
 
   void mark_as_completed() {
@@ -153,24 +176,14 @@ private:
   }
 
   size_t progress_{0};
+  size_t max_progress_;
   Settings settings_;
   std::chrono::nanoseconds elapsed_;
-  std::chrono::time_point<std::chrono::high_resolution_clock> start_time_point_;
   std::mutex mutex_;
 
   template <typename Indicator, size_t count> friend class MultiProgress;
   template <typename Indicator> friend class DynamicProgress;
   std::atomic<bool> multi_progress_mode_{false};
-
-  void save_start_time() {
-    auto &show_elapsed_time = get_value<details::ProgressBarOption::show_elapsed_time>();
-    auto &saved_start_time = get_value<details::ProgressBarOption::saved_start_time>();
-    auto &show_remaining_time = get_value<details::ProgressBarOption::show_remaining_time>();
-    if ((show_elapsed_time || show_remaining_time) && !saved_start_time) {
-      start_time_point_ = std::chrono::high_resolution_clock::now();
-      saved_start_time = true;
-    }
-  }
 
 public:
   void print_progress(bool from_multi_progress = false) {
@@ -178,10 +191,6 @@ public:
     if (multi_progress_mode_ && !from_multi_progress) {
       return;
     }
-    auto now = std::chrono::high_resolution_clock::now();
-    if (!get_value<details::ProgressBarOption::completed>())
-      elapsed_ = std::chrono::duration_cast<std::chrono::nanoseconds>(now - start_time_point_);
-
     if (get_value<details::ProgressBarOption::foreground_color>() != Color::unspecified)
       details::set_stream_color(std::cout, get_value<details::ProgressBarOption::foreground_color>());
 
@@ -192,49 +201,13 @@ public:
 
     std::cout << get_value<details::ProgressBarOption::start>();
 
-    details::ProgressScaleWriter writer{std::cout,
+    details::IndeterminateProgressScaleWriter writer{std::cout,
                                         get_value<details::ProgressBarOption::bar_width>(),
                                         get_value<details::ProgressBarOption::fill>(),
-                                        get_value<details::ProgressBarOption::lead>(),
-                                        get_value<details::ProgressBarOption::remainder>()};
-    writer.write(double(progress_) / double(max_progress) * 100.0f);
+                                        get_value<details::ProgressBarOption::lead>()};
+    writer.write(progress_);
 
     std::cout << get_value<details::ProgressBarOption::end>();
-
-    if (get_value<details::ProgressBarOption::show_percentage>()) {
-      std::cout << " " << std::min(static_cast<size_t>(static_cast<float>(progress_) / max_progress * 100), size_t(100)) << "%";
-    }
-
-    auto &saved_start_time = get_value<details::ProgressBarOption::saved_start_time>();
-
-    if (get_value<details::ProgressBarOption::show_elapsed_time>()) {
-      std::cout << " [";
-      if (saved_start_time)
-        details::write_duration(std::cout, elapsed_);
-      else
-        std::cout << "00:00s";
-    }
-
-    if (get_value<details::ProgressBarOption::show_remaining_time>()) {
-      if (get_value<details::ProgressBarOption::show_elapsed_time>())
-        std::cout << "<";
-      else
-        std::cout << " [";
-
-      if (saved_start_time) {
-        auto eta = std::chrono::nanoseconds(
-            progress_ > 0 ? static_cast<long long>(elapsed_.count() * max_progress / progress_) : 0);
-        auto remaining = eta > elapsed_ ? (eta - elapsed_) : (elapsed_ - eta);
-        details::write_duration(std::cout, remaining);
-      } else {
-        std::cout << "00:00s";
-      }
-
-      std::cout << "]";
-    } else {
-      if (get_value<details::ProgressBarOption::show_elapsed_time>())
-        std::cout << "]";
-    }
 
     if (get_value<details::ProgressBarOption::max_postfix_text_len>() == 0)
       get_value<details::ProgressBarOption::max_postfix_text_len>() = 10;
@@ -242,9 +215,6 @@ public:
               << std::string(get_value<details::ProgressBarOption::max_postfix_text_len>(), ' ')
               << "\r";
     std::cout.flush();
-    if (progress_ >= max_progress) {
-      get_value<details::ProgressBarOption::completed>() = true;
-    }
     if (get_value<details::ProgressBarOption::completed>() &&
         !from_multi_progress) // Don't std::endl if calling from MultiProgress
       std::cout << termcolor::reset << std::endl;

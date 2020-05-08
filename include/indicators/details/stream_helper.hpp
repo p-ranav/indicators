@@ -161,15 +161,14 @@ public:
                       const std::string &lead)
       : os(os), bar_width(bar_width), fill(fill), lead(lead) {}
 
-  std::ostream &write(float progress) {
-    auto pos = static_cast<size_t>(progress * bar_width / 100.0);
+  std::ostream &write(size_t progress) {
     for (size_t i = 0; i < bar_width; ++i) {
-      if (i < pos)
+      if (i < progress)
         os << fill;
-      else if (i == pos)
+      else if (i == progress)
         os << lead;
-      else
-        os << remainder;
+      else 
+        os << fill;
     }
     return os;
   }
