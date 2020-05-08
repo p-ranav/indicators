@@ -20,7 +20,7 @@ int main() {
   indicators::show_console_cursor(false);
 
   auto job = [&bar]() {
-    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
     bar.mark_as_completed();
     std::cout << termcolor::bold << termcolor::green 
         << "System is up to date!\n" << termcolor::reset;
@@ -30,9 +30,11 @@ int main() {
   // Update bar state
   while (!bar.is_completed()) {
     bar.tick();
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
 
   job_completion_thread.join();
+  
+  indicators::show_console_cursor(true);  
   return 0;
 }
