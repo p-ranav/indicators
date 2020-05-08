@@ -155,5 +155,31 @@ private:
   std::string remainder;
 };
 
+class IndeterminateProgressScaleWriter {
+public:
+  IndeterminateProgressScaleWriter(std::ostream &os, size_t bar_width, const std::string &fill,
+                      const std::string &lead)
+      : os(os), bar_width(bar_width), fill(fill), lead(lead) {}
+
+  std::ostream &write(float progress) {
+    auto pos = static_cast<size_t>(progress * bar_width / 100.0);
+    for (size_t i = 0; i < bar_width; ++i) {
+      if (i < pos)
+        os << fill;
+      else if (i == pos)
+        os << lead;
+      else
+        os << remainder;
+    }
+    return os;
+  }
+
+private:
+  std::ostream &os;
+  size_t bar_width = 0;
+  std::string fill;
+  std::string lead;
+};
+
 } // namespace details
 } // namespace indicators
