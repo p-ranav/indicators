@@ -626,7 +626,7 @@ public:
                       const std::string &lead, const std::string &remainder)
       : os(os), bar_width(bar_width), fill(fill), lead(lead), remainder(remainder) {}
 
-  std::ostream &write(size_t progress) {
+  std::ostream &write(float progress) {
     auto pos = static_cast<size_t>(progress * bar_width / 100.0);
     for (size_t i = 0; i < bar_width; ++i) {
       if (i < pos)
@@ -980,6 +980,7 @@ private:
     }
   }
 
+public:
   void print_progress(bool from_multi_progress = false) {
     std::lock_guard<std::mutex> lock{mutex_};
     if (multi_progress_mode_ && !from_multi_progress) {
@@ -1195,6 +1196,7 @@ private:
     }
   }
 
+public:
   void print_progress(bool from_multi_progress = false) {
     if (multi_progress_mode_ && !from_multi_progress) {
       if (progress_ > 100.0) {
@@ -1402,6 +1404,7 @@ private:
     }
   }
 
+public:
   void print_progress() {
     std::lock_guard<std::mutex> lock{mutex_};
     auto now = std::chrono::high_resolution_clock::now();
@@ -1513,6 +1516,7 @@ private:
     return result;
   }
 
+public:
   void print_progress() {
     std::lock_guard<std::mutex> lock{mutex_};
     if (started_)
@@ -1599,6 +1603,7 @@ private:
     return details::get_value<id>(settings_).value;
   }
 
+public:
   void print_progress() {
     std::lock_guard<std::mutex> lock{mutex_};
     auto &hide_bar_when_complete = get_value<details::ProgressBarOption::hide_bar_when_complete>();

@@ -85,6 +85,7 @@ private:
     return result;
   }
 
+public:
   void print_progress() {
     std::lock_guard<std::mutex> lock{mutex_};
     if (started_)

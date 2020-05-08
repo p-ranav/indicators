@@ -158,38 +158,6 @@ int main() {
     thread4.join();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-    {
-      //
-      // GOING BACKWARDS
-      //
-      indicators::ProgressBar p{option::BarWidth{50},
-                                option::Start{"["},
-                                option::Fill{"■"},
-                                option::Lead{"■"},
-                                option::Remainder{"-"},
-                                option::End{"]"},
-                                option::ForegroundColor{indicators::Color::white},
-                                option::PostfixText{"Reverting system restore"},
-                                option::FontStyles{
-                                    std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
-      p.set_progress(100); // TODO backwards as an option?
-      std::atomic<size_t> progress{100};
-      auto job = [&p, &progress]() {
-        while (true) {
-          progress -= 1;
-          p.set_progress(progress);
-          if (progress == 0) {
-            p.set_option(option::PostfixText{"Revert complete!"});
-            p.mark_as_completed();
-            break;
-          }
-          std::this_thread::sleep_for(std::chrono::milliseconds(60));
-        }
-      };
-      std::thread thread(job);
-      thread.join();
-    }
   }
 
   {

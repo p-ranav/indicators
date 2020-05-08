@@ -98,6 +98,7 @@ private:
     return details::get_value<id>(settings_).value;
   }
 
+public:
   void print_progress() {
     std::lock_guard<std::mutex> lock{mutex_};
     auto &hide_bar_when_complete = get_value<details::ProgressBarOption::hide_bar_when_complete>();

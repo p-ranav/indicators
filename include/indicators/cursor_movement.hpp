@@ -36,10 +36,10 @@ void move_left(int cols) { move(-cols, 0); }
 
 #else
 
-void move_up(int lines) { std::cout << "x1b[" << lines << "A"; }
-void move_down(int lines) { std::cout << "x1b[" << lines << "B"; }
-void move_right(int cols) { std::cout << "x1b[" << cols << "C"; }
-void move_left(int cols) { std::cout << "x1b[" << cols << "D"; }
+void move_up(int lines) { std::cout << "\033[" << lines << "A"; }
+void move_down(int lines) { std::cout << "\033[" << lines << "B"; }
+void move_right(int cols) { std::cout << "\033[" << cols << "C"; }
+void move_left(int cols) { std::cout << "\033[" << cols << "D"; }
 
 #endif
 

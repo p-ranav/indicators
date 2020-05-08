@@ -193,6 +193,7 @@ private:
     }
   }
 
+public:
   void print_progress(bool from_multi_progress = false) {
     std::lock_guard<std::mutex> lock{mutex_};
     const auto max_progress = get_value<details::ProgressBarOption::max_progress>();
@@ -221,7 +222,7 @@ private:
                                         get_value<details::ProgressBarOption::fill>(),
                                         get_value<details::ProgressBarOption::lead>(),
                                         get_value<details::ProgressBarOption::remainder>()};
-    writer.write(progress_ / max_progress * 100);
+    writer.write(double(progress_) / double(max_progress) * 100.0f);
 
     std::cout << get_value<details::ProgressBarOption::end>();
 

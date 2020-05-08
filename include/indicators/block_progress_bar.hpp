@@ -183,6 +183,7 @@ private:
     }
   }
 
+public:
   void print_progress(bool from_multi_progress = false) {
     const auto max_progress = get_value<details::ProgressBarOption::max_progress>();
     if (multi_progress_mode_ && !from_multi_progress) {

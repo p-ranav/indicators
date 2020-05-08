@@ -182,6 +182,7 @@ private:
     }
   }
 
+public:
   void print_progress() {
     std::lock_guard<std::mutex> lock{mutex_};
     const auto max_progress = get_value<details::ProgressBarOption::max_progress>();
