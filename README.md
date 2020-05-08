@@ -38,6 +38,7 @@ make
 ## Table of Contents
 
 * [Progress Bar](#progress-bar)
+* [Indeterminate Progress Bar](#indeterminate-progress-bar)
 * [Block Progress Bar](#block-progress-bar)
 * [Multi Progress](#multiprogress)
 * [Dynamic Progress](#dynamicprogress)
@@ -208,6 +209,61 @@ int main() {
   // Show cursor
   show_console_cursor(true);
 
+  return 0;
+}
+```
+
+## Indeterminate Progress Bar
+
+You might have a use-case for a progress bar where the maximum amount of progress is unknown, e.g., you're downloading from a remote server that isn't advertising the total bytes. 
+
+Use an `indicators::IndeterminateProgressBar` for such cases. An `IndeterminateProgressBar` is similar to a regular progress bar except the total amount to progress towards is unknown. Ticking on this progress bar will happily run forever. 
+
+When you know progress is complete, simply call `bar.mark_as_completed()`. 
+
+<p align="center">
+  <img src="img/indeterminate_progress_bar.gif"/>  
+</p>
+
+```cpp
+#include <chrono>
+#include <indicators/indeterminate_progress_bar.hpp>
+#include <indicators/cursor_control.hpp>
+#include <indicators/termcolor.hpp>
+#include <thread>
+
+int main() {
+  indicators::IndeterminateProgressBar bar{
+      indicators::option::BarWidth{40},
+      indicators::option::Start{"["},
+      indicators::option::Fill{"·"},
+      indicators::option::Lead{"<==>"},
+      indicators::option::End{"]"},
+      indicators::option::PostfixText{"Checking for Updates"},
+      indicators::option::ForegroundColor{indicators::Color::yellow},
+      indicators::option::FontStyles{
+          std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}
+  };
+
+  indicators::show_console_cursor(false);
+
+  auto job = [&bar]() {
+    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    bar.mark_as_completed();
+    std::cout << termcolor::bold << termcolor::green 
+        << "System is up to date!\n" << termcolor::reset;
+  };
+  std::thread job_completion_thread(job);
+
+  // Update bar state
+  while (!bar.is_completed()) {
+    bar.tick();
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  }
+
+  job_completion_thread.join();
+  
+  indicators::show_console_cursor(true);  
   return 0;
 }
 ```
