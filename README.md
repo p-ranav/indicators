@@ -156,8 +156,6 @@ int main() {
 
   bar.set_progress(100); // all done
 
-  bar.mark_as_completed();
-
   // Show cursor
   show_console_cursor(true);
 
