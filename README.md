@@ -37,16 +37,17 @@ make
 
 ## Table of Contents
 
-* [Progress Bar](#progress-bar)
-* [Indeterminate Progress Bar](#indeterminate-progress-bar)
-* [Block Progress Bar](#block-progress-bar)
-* [Multi Progress](#multiprogress)
-* [Dynamic Progress](#dynamicprogress)
-* [Progress Spinner](#progress-spinner)
-* [Contributing](#contributing)
-* [License](#license)
+*    Supported Indicators
+     -    [Basic Progress Bar](#basic-progress-bar)
+     -    [Indeterminate Progress Bar](#indeterminate-progress-bar)
+     -    [Block Progress Bar](#block-progress-bar)
+     -    [Multi Progress](#multiprogress)
+     -    [Dynamic Progress](#dynamicprogress)
+     -    [Progress Spinner](#progress-spinner)
+*    [Contributing](#contributing)
+*    [License](#license)
 
-## Progress bar
+## Basic Progress bar
 
 To introduce a progress bar in your application, include `indicators/progress_bar.hpp` and create a `ProgressBar` object. Here's the general structure of a progress bar:
 
