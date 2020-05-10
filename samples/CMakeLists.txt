@@ -2,6 +2,9 @@
 add_executable(block_progress_bar block_progress_bar.cpp)
 target_link_libraries(block_progress_bar PRIVATE indicators::indicators)
 
+add_executable(block_progress_bar_iterable block_progress_bar_iterable.cpp)
+target_link_libraries(block_progress_bar_iterable PRIVATE indicators::indicators)
+
 add_executable(multi_threaded_bar multi_threaded_bar.cpp)
 target_link_libraries(multi_threaded_bar PRIVATE indicators::indicators)
 
