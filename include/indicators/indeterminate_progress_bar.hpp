@@ -49,7 +49,7 @@ class IndeterminateProgressBar {
       std::tuple<option::BarWidth, option::PrefixText, option::PostfixText, option::Start,
                  option::End, option::Fill, option::Lead,
                  option::MaxPostfixTextLen, option::Completed,
-                 option::ForegroundColor, option::FontStyles>;
+                 option::ForegroundColor, option::FontStyles, option::Stream>;
 
   enum class Direction {
     forward,
@@ -85,7 +85,9 @@ public:
                   details::get<details::ProgressBarOption::foreground_color>(
                       option::ForegroundColor{Color::unspecified}, std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::font_styles>(
-                      option::FontStyles{std::vector<FontStyle>{}}, std::forward<Args>(args)...)) {
+                      option::FontStyles{std::vector<FontStyle>{}}, std::forward<Args>(args)...),
+                  details::get<details::ProgressBarOption::stream>(
+                      option::Stream{std::cout}, std::forward<Args>(args)...)) {
     // starts with [<==>...........]
     // progress_ = 0
 
@@ -188,36 +190,39 @@ private:
 public:
   void print_progress(bool from_multi_progress = false) {
     std::lock_guard<std::mutex> lock{mutex_};
+
+    auto& os = get_value<details::ProgressBarOption::stream>();
+
     if (multi_progress_mode_ && !from_multi_progress) {
       return;
     }
     if (get_value<details::ProgressBarOption::foreground_color>() != Color::unspecified)
-      details::set_stream_color(std::cout, get_value<details::ProgressBarOption::foreground_color>());
+      details::set_stream_color(os, get_value<details::ProgressBarOption::foreground_color>());
 
     for (auto &style : get_value<details::ProgressBarOption::font_styles>())
-      details::set_font_style(std::cout, style);
+      details::set_font_style(os, style);
 
-    std::cout << get_value<details::ProgressBarOption::prefix_text>();
+    os << get_value<details::ProgressBarOption::prefix_text>();
 
-    std::cout << get_value<details::ProgressBarOption::start>();
+    os << get_value<details::ProgressBarOption::start>();
 
-    details::IndeterminateProgressScaleWriter writer{std::cout,
+    details::IndeterminateProgressScaleWriter writer{os,
                                         get_value<details::ProgressBarOption::bar_width>(),
                                         get_value<details::ProgressBarOption::fill>(),
                                         get_value<details::ProgressBarOption::lead>()};
     writer.write(progress_);
 
-    std::cout << get_value<details::ProgressBarOption::end>();
+    os << get_value<details::ProgressBarOption::end>();
 
     if (get_value<details::ProgressBarOption::max_postfix_text_len>() == 0)
       get_value<details::ProgressBarOption::max_postfix_text_len>() = 10;
-    std::cout << " " << get_value<details::ProgressBarOption::postfix_text>()
+    os << " " << get_value<details::ProgressBarOption::postfix_text>()
               << std::string(get_value<details::ProgressBarOption::max_postfix_text_len>(), ' ')
               << "\r";
-    std::cout.flush();
+    os.flush();
     if (get_value<details::ProgressBarOption::completed>() &&
         !from_multi_progress) // Don't std::endl if calling from MultiProgress
-      std::cout << termcolor::reset << std::endl;
+      os << termcolor::reset << std::endl;
   }
 };
 
