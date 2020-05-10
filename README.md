@@ -38,12 +38,12 @@ make
 ## Table of Contents
 
 *    Supported Indicators
-     -    [Basic Progress Bar](#basic-progress-bar)
-     -    [Indeterminate Progress Bar](#indeterminate-progress-bar)
-     -    [Block Progress Bar](#block-progress-bar)
-     -    [Multi Progress](#multiprogress)
-     -    [Dynamic Progress](#dynamicprogress)
-     -    [Progress Spinner](#progress-spinner)
+     *    [Basic Progress Bar](#basic-progress-bar)
+     *    [Indeterminate Progress Bar](#indeterminate-progress-bar)
+     *    [Block Progress Bar](#block-progress-bar)
+     *    [Multi Progress](#multiprogress)
+     *    [Dynamic Progress](#dynamicprogress)
+     *    [Progress Spinner](#progress-spinner)
 *    [Contributing](#contributing)
 *    [License](#license)
 
