@@ -38,6 +38,7 @@
      *    [Progress Spinner](#progress-spinner)
 *    [Working with Iterables](#working-with-iterables)
 *    [Building Samples](#building-samples)
+*    [Generating Single Header](#generating-single-header)
 *    [Contributing](#contributing)
 *    [License](#license)
 
@@ -694,6 +695,12 @@ cd indicators
 mkdir build && cd build
 cmake -DINDICATORS_SAMPLES=ON -DINDICATORS_DEMO=ON ..
 make
+```
+
+## Generating Single Header
+
+```bash
+python3 utils/amalgamate/amalgamate.py -c single_include.json -s .
 ```
 
 ## Contributing
