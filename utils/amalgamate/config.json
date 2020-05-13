@@ -1,0 +1,8 @@
+{
+	"project": "cgame competitive programming for codingame",
+	"target": "AllTrees.cpp",
+	"sources": [
+		"test/gametheory/TreesTest.cpp"
+	],
+	"include_paths": ["include"]
+}

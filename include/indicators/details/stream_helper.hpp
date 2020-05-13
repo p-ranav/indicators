@@ -1,7 +1,6 @@
 #pragma once
 
-#include <indicators/color.hpp>
-#include <indicators/font_style.hpp>
+#include <indicators/setting.hpp>
 #include <indicators/termcolor.hpp>
 
 #include <algorithm>
