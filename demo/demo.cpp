@@ -1,4 +1,6 @@
-#include "indicators.hpp"
+#include <indicators/progress_bar.hpp>
+#include <indicators/progress_spinner.hpp>
+#include <indicators/cursor_control.hpp>
 #include <vector>
 
 int main() {
