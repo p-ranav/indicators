@@ -30,6 +30,7 @@ SOFTWARE.
 #include <indicators/color.hpp>
 #include <indicators/font_style.hpp>
 #include <string>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 #include <vector>
