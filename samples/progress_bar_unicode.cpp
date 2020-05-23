@@ -7,7 +7,6 @@
 int main() {
 
     indicators::show_console_cursor(false);
-    std::cout << "\n\n";
 
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 
@@ -15,7 +14,7 @@ int main() {
         // Plain old ASCII
         indicators::ProgressBar bar{
             indicators::option::BarWidth{50},
-            indicators::option::Start{"  ["},
+            indicators::option::Start{"["},
             indicators::option::Fill{"="},
             indicators::option::Lead{">"},
             indicators::option::Remainder{" "},
@@ -39,7 +38,7 @@ int main() {
         // Unicode
         indicators::ProgressBar bar{
             indicators::option::BarWidth{50},
-            indicators::option::Start{"  ["},
+            indicators::option::Start{"["},
             indicators::option::Fill{"驚くばかり"},
             indicators::option::Lead{">"},
             indicators::option::Remainder{" "},
@@ -63,7 +62,7 @@ int main() {
         // Russian
         indicators::ProgressBar bar{
             indicators::option::BarWidth{50},
-            indicators::option::Start{"  ["},
+            indicators::option::Start{"["},
             indicators::option::Fill{"Потрясающие"},
             indicators::option::Remainder{" "},
             indicators::option::End{" ]"},
@@ -86,7 +85,7 @@ int main() {
         // Greek
         indicators::ProgressBar bar{
             indicators::option::BarWidth{50},
-            indicators::option::Start{"  ["},
+            indicators::option::Start{"["},
             indicators::option::Fill{"Φοβερός"},
             indicators::option::Remainder{" "},
             indicators::option::End{" ]"},
@@ -109,7 +108,7 @@ int main() {
         // Chinese
         indicators::ProgressBar bar{
             indicators::option::BarWidth{50},
-            indicators::option::Start{"  ["},
+            indicators::option::Start{"["},
             indicators::option::Fill{"太棒了"},
             indicators::option::Remainder{" "},
             indicators::option::End{" ]"},
@@ -132,7 +131,7 @@ int main() {
         // Emojis
         indicators::ProgressBar bar{
             indicators::option::BarWidth{50},
-            indicators::option::Start{"  ["},
+            indicators::option::Start{"["},
             indicators::option::Fill{"🔥"},
             indicators::option::Lead{"🔥"},
             indicators::option::Remainder{" "},
@@ -156,7 +155,7 @@ int main() {
         // Indeterminate progress bar
         indicators::IndeterminateProgressBar bar{
             indicators::option::BarWidth{50},
-            indicators::option::Start{"  ["},
+            indicators::option::Start{"["},
             indicators::option::Fill{"✯"},
             indicators::option::Lead{"載入中"},
             indicators::option::End{" ]"},
@@ -182,7 +181,6 @@ int main() {
     }
 
     indicators::show_console_cursor(true);
-    std::cout << "\n\n";
 
   return 0;
 }
