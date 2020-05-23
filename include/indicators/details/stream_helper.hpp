@@ -2,6 +2,7 @@
 
 #include <indicators/setting.hpp>
 #include <indicators/termcolor.hpp>
+#include <indicators/display_width.hpp>
 
 #include <algorithm>
 #include <chrono>
@@ -135,13 +136,30 @@ public:
 
   std::ostream &write(float progress) {
     auto pos = static_cast<size_t>(progress * bar_width / 100.0);
-    for (size_t i = 0; i < bar_width; ++i) {
-      if (i < pos)
-        os << fill;
-      else if (i == pos)
-        os << lead;
-      else
-        os << remainder;
+    for (size_t i = 0, current_display_width = 0; i < bar_width;) {
+      std::string next;
+
+      if (i < pos) {
+        next = fill;
+        current_display_width = unicode::display_width(fill);
+      } else if (i == pos) {
+        next = lead;
+        current_display_width = unicode::display_width(lead);
+      } else {
+        next = remainder;
+        current_display_width = unicode::display_width(remainder);
+      }
+
+      i += current_display_width;
+
+      if (i > bar_width) {
+        // `next` is larger than the allowed bar width
+        // fill with empty space instead
+        os << std::string((bar_width - (i - current_display_width)), ' ');
+        break;
+      }
+
+      os << next;
     }
     return os;
   }

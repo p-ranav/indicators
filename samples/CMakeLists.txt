@@ -17,6 +17,9 @@ target_link_libraries(progress_bar_tick PRIVATE indicators::indicators)
 add_executable(progress_bar_sstream progress_bar_sstream.cpp)
 target_link_libraries(progress_bar_sstream PRIVATE indicators::indicators)
 
+add_executable(progress_bar_unicode progress_bar_unicode.cpp)
+target_link_libraries(progress_bar_unicode PRIVATE indicators::indicators)
+
 add_executable(progress_spinner progress_spinner.cpp)
 target_link_libraries(progress_spinner PRIVATE indicators::indicators)
 
