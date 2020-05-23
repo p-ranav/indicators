@@ -179,13 +179,30 @@ public:
       : os(os), bar_width(bar_width), fill(fill), lead(lead) {}
 
   std::ostream &write(size_t progress) {
-    for (size_t i = 0; i < bar_width; ++i) {
-      if (i < progress)
-        os << fill;
-      else if (i == progress)
-        os << lead;
-      else 
-        os << fill;
+    for (size_t i = 0, current_display_width = 0; i < bar_width;) {
+      std::string next;
+
+      if (i < progress) {
+        next = fill;
+        current_display_width = unicode::display_width(fill);
+      } else if (i == progress) {
+        next = lead;
+        current_display_width = unicode::display_width(lead);
+      } else {
+        next = fill;
+        current_display_width = unicode::display_width(fill);
+      }
+
+      i += current_display_width;
+
+      if (i > bar_width) {
+        // `next` is larger than the allowed bar width
+        // fill with empty space instead
+        os << std::string((bar_width - (i - current_display_width)), ' ');
+        break;
+      }
+
+      os << next;
     }
     return os;
   }
