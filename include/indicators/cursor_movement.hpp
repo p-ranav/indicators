@@ -14,7 +14,7 @@ namespace indicators {
 
 #ifdef _MSC_VER
 
-void move(int x, int y) {
+static inline void move(int x, int y) {
   auto hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
   if (!hStdout)
     return;
@@ -29,17 +29,17 @@ void move(int x, int y) {
   SetConsoleCursorPosition(hStdout, cursor);
 }
 
-void move_up(int lines) { move(0, -lines); }
-void move_down(int lines) { move(0, -lines); }
-void move_right(int cols) { move(cols, 0); }
-void move_left(int cols) { move(-cols, 0); }
+static inline void move_up(int lines) { move(0, -lines); }
+static inline void move_down(int lines) { move(0, -lines); }
+static inline void move_right(int cols) { move(cols, 0); }
+static inline void move_left(int cols) { move(-cols, 0); }
 
 #else
 
-void move_up(int lines) { std::cout << "\033[" << lines << "A"; }
-void move_down(int lines) { std::cout << "\033[" << lines << "B"; }
-void move_right(int cols) { std::cout << "\033[" << cols << "C"; }
-void move_left(int cols) { std::cout << "\033[" << cols << "D"; }
+static inline void move_up(int lines) { std::cout << "\033[" << lines << "A"; }
+static inline void move_down(int lines) { std::cout << "\033[" << lines << "B"; }
+static inline void move_right(int cols) { std::cout << "\033[" << cols << "C"; }
+static inline void move_left(int cols) { std::cout << "\033[" << cols << "D"; }
 
 #endif
 

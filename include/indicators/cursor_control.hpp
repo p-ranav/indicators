@@ -14,7 +14,7 @@ namespace indicators {
 
 #if defined(_MSC_VER)
 
-void show_console_cursor(bool const show) {
+static inline void show_console_cursor(bool const show) {
   HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
 
   CONSOLE_CURSOR_INFO cursorInfo;
@@ -26,7 +26,7 @@ void show_console_cursor(bool const show) {
 
 #else
 
-void show_console_cursor(bool const show) {
+static inline void show_console_cursor(bool const show) {
   std::fputs(show ? "\e[?25h" : "\e[?25l", stdout);
 }
 
