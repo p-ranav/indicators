@@ -692,7 +692,7 @@ int main() {
 
 `indicators` supports multi-byte unicode characters in progress bars. 
 
-If the `option::BarWidth` is set, the library aims to respect this setting. When filling the bar, if the next `Fill` string is has a display width that would exceed the bar width, then the library will fill the available portion with `' '` space characters instead. 
+If the `option::BarWidth` is set, the library aims to respect this setting. When filling the bar, if the next `Fill` string has a display width that would exceed the bar width, then the library will fill the remainder of the bar with `' '` space characters instead. 
 
 See below an example of some progress bars, each with a bar width of 50, displaying different unicode characters:
 
