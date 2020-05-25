@@ -214,16 +214,14 @@ private:
     }
   }
 
-  size_t get_prefix_length() {
+  std::pair<std::string, size_t> get_prefix_text() {
     std::stringstream os;
     os << get_value<details::ProgressBarOption::prefix_text>();
-    return os.str().size();
+    return {os.str(), os.str().size()};
   }
 
-  size_t get_postfix_length() {
+  std::pair<std::string, size_t> get_postfix_text() {
     std::stringstream os;
-    const auto min_progress =
-        get_value<details::ProgressBarOption::min_progress>();
     const auto max_progress =
         get_value<details::ProgressBarOption::max_progress>();
 
@@ -271,7 +269,7 @@ private:
 
     os << " " << get_value<details::ProgressBarOption::postfix_text>();
 
-    return os.str().size();
+    return {os.str(), os.str().size()};
   }
 
 public:
@@ -305,7 +303,10 @@ public:
     for (auto &style : get_value<details::ProgressBarOption::font_styles>())
       details::set_font_style(os, style);
 
-    os << get_value<details::ProgressBarOption::prefix_text>();
+    const auto prefix_pair = get_prefix_text();
+    const auto prefix_text = prefix_pair.first;
+    const auto prefix_length = prefix_pair.second;
+    os << prefix_text;
 
     os << get_value<details::ProgressBarOption::start>();
 
@@ -318,56 +319,15 @@ public:
 
     os << get_value<details::ProgressBarOption::end>();
 
-    if (get_value<details::ProgressBarOption::show_percentage>()) {
-      os << " "
-         << std::min(static_cast<size_t>(static_cast<float>(progress_) /
-                                         max_progress * 100),
-                     size_t(100))
-         << "%";
-    }
-
-    auto &saved_start_time =
-        get_value<details::ProgressBarOption::saved_start_time>();
-
-    if (get_value<details::ProgressBarOption::show_elapsed_time>()) {
-      os << " [";
-      if (saved_start_time)
-        details::write_duration(os, elapsed_);
-      else
-        os << "00:00s";
-    }
-
-    if (get_value<details::ProgressBarOption::show_remaining_time>()) {
-      if (get_value<details::ProgressBarOption::show_elapsed_time>())
-        os << "<";
-      else
-        os << " [";
-
-      if (saved_start_time) {
-        auto eta = std::chrono::nanoseconds(
-            progress_ > 0 ? static_cast<long long>(elapsed_.count() *
-                                                   max_progress / progress_)
-                          : 0);
-        auto remaining = eta > elapsed_ ? (eta - elapsed_) : (elapsed_ - eta);
-        details::write_duration(os, remaining);
-      } else {
-        os << "00:00s";
-      }
-
-      os << "]";
-    } else {
-      if (get_value<details::ProgressBarOption::show_elapsed_time>())
-        os << "]";
-    }
-
-    os << " " << get_value<details::ProgressBarOption::postfix_text>();
+    const auto postfix_pair = get_postfix_text();
+    const auto postfix_text = postfix_pair.first;
+    const auto postfix_length = postfix_pair.second;
+    os << postfix_text;
 
     // Get length of prefix text and postfix text
-    const auto prefix_length = get_prefix_length();
     const auto start_length = get_value<details::ProgressBarOption::start>().size();
     const auto bar_width = get_value<details::ProgressBarOption::bar_width>();
     const auto end_length = get_value<details::ProgressBarOption::end>().size();
-    const auto postfix_length = get_postfix_length();
     const auto terminal_width = terminal_size().second;
     // prefix + bar_width + postfix should be <= terminal_width
     const int remaining = terminal_width - (prefix_length + start_length + bar_width + end_length + postfix_length);

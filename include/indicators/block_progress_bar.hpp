@@ -168,6 +168,53 @@ private:
     return os.str().size();
   }
 
+  size_t get_postfix_length() {
+    std::stringstream os;
+    const auto max_progress = get_value<details::ProgressBarOption::max_progress>();
+    auto now = std::chrono::high_resolution_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - start_time_point_);
+
+    if (get_value<details::ProgressBarOption::show_percentage>()) {
+      os << " " << std::min(static_cast<size_t>(progress_ / max_progress * 100.0), size_t(100))
+         << "%";
+    }
+
+    auto &saved_start_time = get_value<details::ProgressBarOption::saved_start_time>();
+
+    if (get_value<details::ProgressBarOption::show_elapsed_time>()) {
+      os << " [";
+      if (saved_start_time)
+        details::write_duration(os, elapsed);
+      else
+        os << "00:00s";
+    }
+
+    if (get_value<details::ProgressBarOption::show_remaining_time>()) {
+      if (get_value<details::ProgressBarOption::show_elapsed_time>())
+        os << "<";
+      else
+        os << " [";
+
+      if (saved_start_time) {
+        auto eta = std::chrono::nanoseconds(
+            progress_ > 0 ? static_cast<long long>(elapsed.count() * max_progress / progress_) : 0);
+        auto remaining = eta > elapsed ? (eta - elapsed) : (elapsed - eta);
+        details::write_duration(os, remaining);
+      } else {
+        os << "00:00s";
+      }
+
+      os << "]";
+    } else {
+      if (get_value<details::ProgressBarOption::show_elapsed_time>())
+        os << "]";
+    }
+
+    os << " " << get_value<details::ProgressBarOption::postfix_text>();
+
+    return os.str().size();
+  }
+
 public:
   void print_progress(bool from_multi_progress = false) {
     std::lock_guard<std::mutex> lock{mutex_};
@@ -240,6 +287,7 @@ public:
     os << " " << get_value<details::ProgressBarOption::postfix_text>()
        << std::string(get_value<details::ProgressBarOption::max_postfix_text_len>(), ' ') << "\r";
     os.flush();
+
     if (progress_ > max_progress) {
       get_value<details::ProgressBarOption::completed>() = true;
     }
