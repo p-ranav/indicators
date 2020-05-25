@@ -2101,8 +2101,9 @@ public:
       : os(os), bar_width(bar_width), fill(fill), lead(lead) {}
 
   std::ostream &write(size_t progress) {
-    for (size_t i = 0, current_display_width = 0; i < bar_width;) {
+    for (size_t i = 0; i < bar_width;) {
       std::string next;
+      size_t current_display_width = 0;
 
       if (i < progress) {
         next = fill;
@@ -2148,6 +2149,7 @@ private:
 #include <cmath>
 // #include <indicators/color.hpp>
 // #include <indicators/setting.hpp>
+// #include <indicators/terminal_size.hpp>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -2156,6 +2158,7 @@ private:
 #include <thread>
 #include <tuple>
 #include <type_traits>
+#include <utility>
 
 namespace indicators {
 
@@ -2352,16 +2355,16 @@ private:
     }
   }
 
-  size_t get_prefix_length() {
+  std::pair<std::string, size_t> get_prefix_text() {
     std::stringstream os;
     os << get_value<details::ProgressBarOption::prefix_text>();
-    return os.str().size();
+    const auto result = os.str();
+    const auto result_size = result.size();
+    return {result, result_size};
   }
 
-  size_t get_postfix_length() {
+  std::pair<std::string, size_t> get_postfix_text() {
     std::stringstream os;
-    const auto min_progress =
-        get_value<details::ProgressBarOption::min_progress>();
     const auto max_progress =
         get_value<details::ProgressBarOption::max_progress>();
 
@@ -2409,7 +2412,9 @@ private:
 
     os << " " << get_value<details::ProgressBarOption::postfix_text>();
 
-    return os.str().size();
+    const auto result = os.str();
+    const auto result_size = result.size();
+    return {result, result_size};
   }
 
 public:
@@ -2443,7 +2448,10 @@ public:
     for (auto &style : get_value<details::ProgressBarOption::font_styles>())
       details::set_font_style(os, style);
 
-    os << get_value<details::ProgressBarOption::prefix_text>();
+    const auto prefix_pair = get_prefix_text();
+    const auto prefix_text = prefix_pair.first;
+    const auto prefix_length = prefix_pair.second;
+    os << prefix_text;
 
     os << get_value<details::ProgressBarOption::start>();
 
@@ -2456,56 +2464,15 @@ public:
 
     os << get_value<details::ProgressBarOption::end>();
 
-    if (get_value<details::ProgressBarOption::show_percentage>()) {
-      os << " "
-         << std::min(static_cast<size_t>(static_cast<float>(progress_) /
-                                         max_progress * 100),
-                     size_t(100))
-         << "%";
-    }
-
-    auto &saved_start_time =
-        get_value<details::ProgressBarOption::saved_start_time>();
-
-    if (get_value<details::ProgressBarOption::show_elapsed_time>()) {
-      os << " [";
-      if (saved_start_time)
-        details::write_duration(os, elapsed_);
-      else
-        os << "00:00s";
-    }
-
-    if (get_value<details::ProgressBarOption::show_remaining_time>()) {
-      if (get_value<details::ProgressBarOption::show_elapsed_time>())
-        os << "<";
-      else
-        os << " [";
-
-      if (saved_start_time) {
-        auto eta = std::chrono::nanoseconds(
-            progress_ > 0 ? static_cast<long long>(elapsed_.count() *
-                                                   max_progress / progress_)
-                          : 0);
-        auto remaining = eta > elapsed_ ? (eta - elapsed_) : (elapsed_ - eta);
-        details::write_duration(os, remaining);
-      } else {
-        os << "00:00s";
-      }
-
-      os << "]";
-    } else {
-      if (get_value<details::ProgressBarOption::show_elapsed_time>())
-        os << "]";
-    }
-
-    os << " " << get_value<details::ProgressBarOption::postfix_text>();
+    const auto postfix_pair = get_postfix_text();
+    const auto postfix_text = postfix_pair.first;
+    const auto postfix_length = postfix_pair.second;
+    os << postfix_text;
 
     // Get length of prefix text and postfix text
-    const auto prefix_length = get_prefix_length();
     const auto start_length = get_value<details::ProgressBarOption::start>().size();
     const auto bar_width = get_value<details::ProgressBarOption::bar_width>();
     const auto end_length = get_value<details::ProgressBarOption::end>().size();
-    const auto postfix_length = get_postfix_length();
     const auto terminal_width = terminal_size().second;
     // prefix + bar_width + postfix should be <= terminal_width
     const int remaining = terminal_width - (prefix_length + start_length + bar_width + end_length + postfix_length);
@@ -2515,14 +2482,6 @@ public:
       // Do nothing. Maybe in the future truncate postfix with ...
     }
     os.flush();
-
-    // std::cout << "\n"
-    //           << prefix_length << " "
-    //           << start_length << " "
-    //           << bar_width << " "
-    //           << end_length << " "
-    //           << postfix_length << " "
-    //           << " = " << terminal_width << "\n";
 
     if ((type == ProgressType::incremental && progress_ >= max_progress) ||
         (type == ProgressType::decremental && progress_ <= min_progress)) {
@@ -2545,12 +2504,15 @@ public:
 #include <atomic>
 #include <chrono>
 // #include <indicators/setting.hpp>
+// #include <indicators/terminal_size.hpp>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <mutex>
 #include <string>
 #include <thread>
 #include <tuple>
+#include <utility>
 
 namespace indicators {
 
@@ -2697,37 +2659,20 @@ private:
     }
   }
 
-public:
-  void print_progress(bool from_multi_progress = false) {
-    std::lock_guard<std::mutex> lock{mutex_};
+  std::pair<std::string, size_t> get_prefix_text() {
+    std::stringstream os;
+    os << get_value<details::ProgressBarOption::prefix_text>();
+    const auto result = os.str();
+    const auto result_size = result.size();
+    return {result, result_size};
+  }
 
-    auto &os = get_value<details::ProgressBarOption::stream>();
-
+  std::pair<std::string, size_t> get_postfix_text() {
+    std::stringstream os;
     const auto max_progress = get_value<details::ProgressBarOption::max_progress>();
-    if (multi_progress_mode_ && !from_multi_progress) {
-      if (progress_ > max_progress) {
-        get_value<details::ProgressBarOption::completed>() = true;
-      }
-      return;
-    }
-
     auto now = std::chrono::high_resolution_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - start_time_point_);
 
-    if (get_value<details::ProgressBarOption::foreground_color>() != Color::unspecified)
-      details::set_stream_color(os, get_value<details::ProgressBarOption::foreground_color>());
-
-    for (auto &style : get_value<details::ProgressBarOption::font_styles>())
-      details::set_font_style(os, style);
-
-    os << get_value<details::ProgressBarOption::prefix_text>();
-    os << get_value<details::ProgressBarOption::start>();
-
-    details::BlockProgressScaleWriter writer{os,
-                                             get_value<details::ProgressBarOption::bar_width>()};
-    writer.write(progress_ / max_progress * 100);
-
-    os << get_value<details::ProgressBarOption::end>();
     if (get_value<details::ProgressBarOption::show_percentage>()) {
       os << " " << std::min(static_cast<size_t>(progress_ / max_progress * 100.0), size_t(100))
          << "%";
@@ -2764,11 +2709,68 @@ public:
         os << "]";
     }
 
-    if (get_value<details::ProgressBarOption::max_postfix_text_len>() == 0)
-      get_value<details::ProgressBarOption::max_postfix_text_len>() = 10;
-    os << " " << get_value<details::ProgressBarOption::postfix_text>()
-       << std::string(get_value<details::ProgressBarOption::max_postfix_text_len>(), ' ') << "\r";
+    os << " " << get_value<details::ProgressBarOption::postfix_text>();
+
+    const auto result = os.str();
+    const auto result_size = result.size();
+    return {result, result_size};
+  }
+
+public:
+  void print_progress(bool from_multi_progress = false) {
+    std::lock_guard<std::mutex> lock{mutex_};
+
+    auto &os = get_value<details::ProgressBarOption::stream>();
+
+    const auto max_progress = get_value<details::ProgressBarOption::max_progress>();
+    if (multi_progress_mode_ && !from_multi_progress) {
+      if (progress_ > max_progress) {
+        get_value<details::ProgressBarOption::completed>() = true;
+      }
+      return;
+    }
+
+    auto now = std::chrono::high_resolution_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - start_time_point_);
+
+    if (get_value<details::ProgressBarOption::foreground_color>() != Color::unspecified)
+      details::set_stream_color(os, get_value<details::ProgressBarOption::foreground_color>());
+
+    for (auto &style : get_value<details::ProgressBarOption::font_styles>())
+      details::set_font_style(os, style);
+
+    const auto prefix_pair = get_prefix_text();
+    const auto prefix_text = prefix_pair.first;
+    const auto prefix_length = prefix_pair.second;
+    os << prefix_text;
+
+    os << get_value<details::ProgressBarOption::start>();
+
+    details::BlockProgressScaleWriter writer{os,
+                                             get_value<details::ProgressBarOption::bar_width>()};
+    writer.write(progress_ / max_progress * 100);
+
+    os << get_value<details::ProgressBarOption::end>();
+
+    const auto postfix_pair = get_postfix_text();
+    const auto postfix_text = postfix_pair.first;
+    const auto postfix_length = postfix_pair.second;
+    os << postfix_text;
+
+    // Get length of prefix text and postfix text
+    const auto start_length = get_value<details::ProgressBarOption::start>().size();
+    const auto bar_width = get_value<details::ProgressBarOption::bar_width>();
+    const auto end_length = get_value<details::ProgressBarOption::end>().size();
+    const auto terminal_width = terminal_size().second;
+    // prefix + bar_width + postfix should be <= terminal_width
+    const int remaining = terminal_width - (prefix_length + start_length + bar_width + end_length + postfix_length);
+    if (remaining > 0) {
+      os << std::string(remaining, ' ') << "\r";
+    } else if (remaining < 0) {
+      // Do nothing. Maybe in the future truncate postfix with ...
+    }
     os.flush();
+
     if (progress_ > max_progress) {
       get_value<details::ProgressBarOption::completed>() = true;
     }
@@ -2790,6 +2792,7 @@ public:
 #include <cmath>
 // #include <indicators/color.hpp>
 // #include <indicators/setting.hpp>
+// #include <indicators/terminal_size.hpp>
 #include <iomanip>
 #include <iostream>
 #include <mutex>
@@ -2797,6 +2800,8 @@ public:
 #include <thread>
 #include <tuple>
 #include <type_traits>
+#include <sstream>
+#include <utility>
 
 namespace indicators {
 
@@ -2937,6 +2942,23 @@ private:
   template <typename Indicator> friend class DynamicProgress;
   std::atomic<bool> multi_progress_mode_{false};
 
+  std::pair<std::string, size_t> get_prefix_text() {
+    std::stringstream os;
+    os << get_value<details::ProgressBarOption::prefix_text>();
+    const auto result = os.str();
+    const auto result_size = result.size();
+    return {result, result_size};
+  }
+
+  std::pair<std::string, size_t> get_postfix_text() {
+    std::stringstream os;
+    os << " " << get_value<details::ProgressBarOption::postfix_text>();
+
+    const auto result = os.str();
+    const auto result_size = result.size();
+    return {result, result_size};
+  }
+
 public:
   void print_progress(bool from_multi_progress = false) {
     std::lock_guard<std::mutex> lock{mutex_};
@@ -2952,7 +2974,10 @@ public:
     for (auto &style : get_value<details::ProgressBarOption::font_styles>())
       details::set_font_style(os, style);
 
-    os << get_value<details::ProgressBarOption::prefix_text>();
+    const auto prefix_pair = get_prefix_text();
+    const auto prefix_text = prefix_pair.first;
+    const auto prefix_length = prefix_pair.second;
+    os << prefix_text;
 
     os << get_value<details::ProgressBarOption::start>();
 
@@ -2964,11 +2989,25 @@ public:
 
     os << get_value<details::ProgressBarOption::end>();
 
-    if (get_value<details::ProgressBarOption::max_postfix_text_len>() == 0)
-      get_value<details::ProgressBarOption::max_postfix_text_len>() = 10;
-    os << " " << get_value<details::ProgressBarOption::postfix_text>()
-       << std::string(get_value<details::ProgressBarOption::max_postfix_text_len>(), ' ') << "\r";
+    const auto postfix_pair = get_postfix_text();
+    const auto postfix_text = postfix_pair.first;
+    const auto postfix_length = postfix_pair.second;
+    os << postfix_text;
+
+    // Get length of prefix text and postfix text
+    const auto start_length = get_value<details::ProgressBarOption::start>().size();
+    const auto bar_width = get_value<details::ProgressBarOption::bar_width>();
+    const auto end_length = get_value<details::ProgressBarOption::end>().size();
+    const auto terminal_width = terminal_size().second;
+    // prefix + bar_width + postfix should be <= terminal_width
+    const int remaining = terminal_width - (prefix_length + start_length + bar_width + end_length + postfix_length);
+    if (remaining > 0) {
+      os << std::string(remaining, ' ') << "\r";
+    } else if (remaining < 0) {
+      // Do nothing. Maybe in the future truncate postfix with ...
+    }
     os.flush();
+
     if (get_value<details::ProgressBarOption::completed>() &&
         !from_multi_progress) // Don't std::endl if calling from MultiProgress
       os << termcolor::reset << std::endl;
