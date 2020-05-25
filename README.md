@@ -36,9 +36,10 @@
      *    [Multi Progress](#multiprogress)
      *    [Dynamic Progress](#dynamicprogress)
      *    [Progress Spinner](#progress-spinner)
-*    [Decremental Progress](#decremental-progress)
-*    [Working with Iterables](#working-with-iterables)
-*    [Unicode Support](#unicode-support)
+*    Additional Samples
+     *    [Decremental Progress](#decremental-progress)
+     *    [Working with Iterables](#working-with-iterables)
+     *    [Unicode Support](#unicode-support)
 *    [Building Samples](#building-samples)
 *    [Generating Single Header](#generating-single-header)
 *    [Contributing](#contributing)
