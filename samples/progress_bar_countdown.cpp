@@ -5,11 +5,9 @@ using namespace indicators;
 
 int main() {
 
-  std::cout << "\n\n";
-
   ProgressBar bar{option::BarWidth{50},
                   option::ProgressType{ProgressType::decremental},
-                  option::Start{"    ["},
+                  option::Start{"["},
                   option::Fill{"■"},
                   option::Lead{"■"},
                   option::Remainder{"-"},
@@ -26,10 +24,8 @@ int main() {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
 
-  std::cout << termcolor::bold << termcolor::white
-  << "    Task Failed Successfully\n" << termcolor::reset;
-
-  std::cout << "\n\n";
+  std::cout << termcolor::bold << termcolor::white << "Task Failed Successfully\n"
+            << termcolor::reset;
 
   return 0;
 }
