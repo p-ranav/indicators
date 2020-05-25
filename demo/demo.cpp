@@ -141,6 +141,7 @@ int main() {
           std::cout << std::endl;
           p4.set_option(option::ForegroundColor{indicators::Color::red});
           p4.set_option(option::PrefixText{"{ ERROR }"});
+          p4.set_option(option::BarWidth{0});
           p4.set_option(option::Start{});
           p4.set_option(option::Fill{});
           p4.set_option(option::Lead{});
@@ -179,7 +180,6 @@ int main() {
           p.tick();
           if (p.is_completed()) {
             p.set_option(option::PostfixText{"Revert complete!"});
-            p.mark_as_completed();
             break;
           }
           std::this_thread::sleep_for(std::chrono::milliseconds(60));
