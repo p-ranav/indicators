@@ -5,8 +5,8 @@
 #include <mutex>
 #include <vector>
 
-#include <indicators/cursor_movement.hpp>
 #include <indicators/color.hpp>
+#include <indicators/cursor_movement.hpp>
 
 namespace indicators {
 

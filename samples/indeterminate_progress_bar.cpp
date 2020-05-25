@@ -1,6 +1,6 @@
 #include <chrono>
-#include <indicators/indeterminate_progress_bar.hpp>
 #include <indicators/cursor_control.hpp>
+#include <indicators/indeterminate_progress_bar.hpp>
 #include <indicators/termcolor.hpp>
 #include <thread>
 
@@ -14,16 +14,15 @@ int main() {
       indicators::option::PostfixText{"Checking for Updates"},
       indicators::option::ForegroundColor{indicators::Color::yellow},
       indicators::option::FontStyles{
-          std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}
-  };
+          std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
 
   indicators::show_console_cursor(false);
 
   auto job = [&bar]() {
     std::this_thread::sleep_for(std::chrono::milliseconds(10000));
     bar.mark_as_completed();
-    std::cout << termcolor::bold << termcolor::green 
-        << "System is up to date!\n" << termcolor::reset;
+    std::cout << termcolor::bold << termcolor::green << "System is up to date!\n"
+              << termcolor::reset;
   };
   std::thread job_completion_thread(job);
 
@@ -34,7 +33,7 @@ int main() {
   }
 
   job_completion_thread.join();
-  
-  indicators::show_console_cursor(true);  
+
+  indicators::show_console_cursor(true);
   return 0;
 }

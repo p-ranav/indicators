@@ -1,7 +1,7 @@
 #include <chrono>
 #include <indicators/progress_bar.hpp>
-#include <thread>
 #include <sstream>
+#include <thread>
 
 int main() {
   using namespace indicators;
@@ -17,10 +17,8 @@ int main() {
       option::End{"]"},
       option::PostfixText{"Getting started"},
       option::ForegroundColor{indicators::Color::green},
-      option::FontStyles{
-          std::vector<indicators::FontStyle>{indicators::FontStyle::bold}},
-      option::Stream{os}
-  };
+      option::FontStyles{std::vector<indicators::FontStyle>{indicators::FontStyle::bold}},
+      option::Stream{os}};
 
   // Update bar state
   while (true) {

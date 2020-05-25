@@ -9,11 +9,10 @@ int main() {
   indicators::show_console_cursor(false);
 
   indicators::BlockProgressBar bar{
-    indicators::option::BarWidth{80},
-    indicators::option::FontStyles{
+      indicators::option::BarWidth{80},
+      indicators::option::FontStyles{
           std::vector<indicators::FontStyle>{indicators::FontStyle::bold}},
-    indicators::option::MaxProgress{400}
-  };
+      indicators::option::MaxProgress{400}};
 
   // Update bar state
   while (true) {

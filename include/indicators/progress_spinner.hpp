@@ -32,36 +32,37 @@ public:
                                         Settings, typename std::decay<Args>::type...>::value,
                                     void *>::type = nullptr>
   explicit ProgressSpinner(Args &&... args)
-      : settings_(details::get<details::ProgressBarOption::foreground_color>(
-                      option::ForegroundColor{Color::unspecified}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::prefix_text>(
-                      option::PrefixText{}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::postfix_text>(
-                      option::PostfixText{}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::show_percentage>(
-                      option::ShowPercentage{true}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::show_elapsed_time>(
-                      option::ShowElapsedTime{false}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::show_remaining_time>(
-                      option::ShowRemainingTime{false}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::spinner_show>(
-                      option::ShowSpinner{true}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::saved_start_time>(
-                      option::SavedStartTime{false}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::completed>(option::Completed{false},
+      : settings_(
+            details::get<details::ProgressBarOption::foreground_color>(
+                option::ForegroundColor{Color::unspecified}, std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::prefix_text>(option::PrefixText{},
+                                                                  std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::postfix_text>(option::PostfixText{},
+                                                                   std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::show_percentage>(option::ShowPercentage{true},
                                                                       std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::max_postfix_text_len>(
-                      option::MaxPostfixTextLen{0}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::spinner_states>(
-                      option::SpinnerStates{std::vector<std::string>{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴",
-                                                                     "⠦", "⠧", "⠇", "⠏"}},
-                      std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::font_styles>(
-                      option::FontStyles{std::vector<FontStyle>{}}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::max_progress>(
-                      option::MaxProgress{100}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::stream>(
-                      option::Stream{std::cout}, std::forward<Args>(args)...)) {}
+            details::get<details::ProgressBarOption::show_elapsed_time>(
+                option::ShowElapsedTime{false}, std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::show_remaining_time>(
+                option::ShowRemainingTime{false}, std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::spinner_show>(option::ShowSpinner{true},
+                                                                   std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::saved_start_time>(
+                option::SavedStartTime{false}, std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::completed>(option::Completed{false},
+                                                                std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::max_postfix_text_len>(
+                option::MaxPostfixTextLen{0}, std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::spinner_states>(
+                option::SpinnerStates{
+                    std::vector<std::string>{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}},
+                std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::font_styles>(
+                option::FontStyles{std::vector<FontStyle>{}}, std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::max_progress>(option::MaxProgress{100},
+                                                                   std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::stream>(option::Stream{std::cout},
+                                                             std::forward<Args>(args)...)) {}
 
   template <typename T, details::ProgressBarOption id>
   void set_option(details::Setting<T, id> &&setting) {
@@ -162,7 +163,7 @@ public:
   void print_progress() {
     std::lock_guard<std::mutex> lock{mutex_};
 
-    auto& os = get_value<details::ProgressBarOption::stream>();
+    auto &os = get_value<details::ProgressBarOption::stream>();
 
     const auto max_progress = get_value<details::ProgressBarOption::max_progress>();
     auto now = std::chrono::high_resolution_clock::now();
@@ -205,8 +206,7 @@ public:
     if (get_value<details::ProgressBarOption::max_postfix_text_len>() == 0)
       get_value<details::ProgressBarOption::max_postfix_text_len>() = 10;
     os << " " << get_value<details::ProgressBarOption::postfix_text>()
-              << std::string(get_value<details::ProgressBarOption::max_postfix_text_len>(), ' ')
-              << "\r";
+       << std::string(get_value<details::ProgressBarOption::max_postfix_text_len>(), ' ') << "\r";
     os.flush();
     index_ += 1;
     if (progress_ > max_progress) {

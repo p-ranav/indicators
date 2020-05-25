@@ -8,18 +8,16 @@ int main() {
   // Hide cursor
   indicators::show_console_cursor(false);
 
-  indicators::ProgressBar bar{
-      indicators::option::BarWidth{50},
-      indicators::option::Start{"["},
-      indicators::option::Fill{"■"},
-      indicators::option::Lead{"■"},
-      indicators::option::Remainder{"-"},
-      indicators::option::End{" ]"},
-      indicators::option::PostfixText{"Loading dependency 1/4"},
-      indicators::option::ForegroundColor{indicators::Color::cyan},
-      indicators::option::FontStyles{
-          std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}
-  };
+  indicators::ProgressBar bar{indicators::option::BarWidth{50},
+                              indicators::option::Start{"["},
+                              indicators::option::Fill{"■"},
+                              indicators::option::Lead{"■"},
+                              indicators::option::Remainder{"-"},
+                              indicators::option::End{" ]"},
+                              indicators::option::PostfixText{"Loading dependency 1/4"},
+                              indicators::option::ForegroundColor{indicators::Color::cyan},
+                              indicators::option::FontStyles{
+                                  std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
 
   // Update bar state
   bar.set_progress(10); // 10% done

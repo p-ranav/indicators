@@ -24,10 +24,8 @@ class ProgressBar {
                  option::End, option::Fill, option::Lead, option::Remainder,
                  option::MaxPostfixTextLen, option::Completed, option::ShowPercentage,
                  option::ShowElapsedTime, option::ShowRemainingTime, option::SavedStartTime,
-                 option::ForegroundColor, option::FontStyles, 
-                 option::MinProgress, option::MaxProgress, 
-                 option::ProgressType,
-                 option::Stream>;
+                 option::ForegroundColor, option::FontStyles, option::MinProgress,
+                 option::MaxProgress, option::ProgressType, option::Stream>;
 
 public:
   template <typename... Args,
@@ -35,53 +33,54 @@ public:
                                         Settings, typename std::decay<Args>::type...>::value,
                                     void *>::type = nullptr>
   explicit ProgressBar(Args &&... args)
-      : settings_(details::get<details::ProgressBarOption::bar_width>(option::BarWidth{100},
-                                                                      std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::prefix_text>(
-                      option::PrefixText{}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::postfix_text>(
-                      option::PostfixText{}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::start>(option::Start{"["},
-                                                                  std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::end>(option::End{"]"},
+      : settings_(
+            details::get<details::ProgressBarOption::bar_width>(option::BarWidth{100},
                                                                 std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::fill>(option::Fill{"="},
-                                                                 std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::lead>(option::Lead{">"},
-                                                                 std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::remainder>(option::Remainder{" "},
+            details::get<details::ProgressBarOption::prefix_text>(option::PrefixText{},
+                                                                  std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::postfix_text>(option::PostfixText{},
+                                                                   std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::start>(option::Start{"["},
+                                                            std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::end>(option::End{"]"},
+                                                          std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::fill>(option::Fill{"="},
+                                                           std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::lead>(option::Lead{">"},
+                                                           std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::remainder>(option::Remainder{" "},
+                                                                std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::max_postfix_text_len>(
+                option::MaxPostfixTextLen{0}, std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::completed>(option::Completed{false},
+                                                                std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::show_percentage>(option::ShowPercentage{false},
                                                                       std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::max_postfix_text_len>(
-                      option::MaxPostfixTextLen{0}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::completed>(option::Completed{false},
-                                                                      std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::show_percentage>(
-                      option::ShowPercentage{false}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::show_elapsed_time>(
-                      option::ShowElapsedTime{false}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::show_remaining_time>(
-                      option::ShowRemainingTime{false}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::saved_start_time>(
-                      option::SavedStartTime{false}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::foreground_color>(
-                      option::ForegroundColor{Color::unspecified}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::font_styles>(
-                      option::FontStyles{std::vector<FontStyle>{}}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::min_progress>(
-                      option::MinProgress{0}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::max_progress>(
-                      option::MaxProgress{100}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::progress_type>(
-                      option::ProgressType{ProgressType::incremental}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::stream>(
-                      option::Stream{std::cout}, std::forward<Args>(args)...)) {
+            details::get<details::ProgressBarOption::show_elapsed_time>(
+                option::ShowElapsedTime{false}, std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::show_remaining_time>(
+                option::ShowRemainingTime{false}, std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::saved_start_time>(
+                option::SavedStartTime{false}, std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::foreground_color>(
+                option::ForegroundColor{Color::unspecified}, std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::font_styles>(
+                option::FontStyles{std::vector<FontStyle>{}}, std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::min_progress>(option::MinProgress{0},
+                                                                   std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::max_progress>(option::MaxProgress{100},
+                                                                   std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::progress_type>(
+                option::ProgressType{ProgressType::incremental}, std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::stream>(option::Stream{std::cout},
+                                                             std::forward<Args>(args)...)) {
 
     // if progress is incremental, start from min_progress
     // else start from max_progress
     const auto type = get_value<details::ProgressBarOption::progress_type>();
     if (type == ProgressType::incremental)
       progress_ = get_value<details::ProgressBarOption::min_progress>();
-    else 
+    else
       progress_ = get_value<details::ProgressBarOption::max_progress>();
   }
 
@@ -138,7 +137,7 @@ public:
       const auto type = get_value<details::ProgressBarOption::progress_type>();
       if (type == ProgressType::incremental)
         progress_ += 1;
-      else 
+      else
         progress_ -= 1;
     }
     save_start_time();
@@ -193,14 +192,14 @@ public:
   void print_progress(bool from_multi_progress = false) {
     std::lock_guard<std::mutex> lock{mutex_};
 
-    auto& os = get_value<details::ProgressBarOption::stream>();
+    auto &os = get_value<details::ProgressBarOption::stream>();
 
     const auto type = get_value<details::ProgressBarOption::progress_type>();
     const auto min_progress = get_value<details::ProgressBarOption::min_progress>();
     const auto max_progress = get_value<details::ProgressBarOption::max_progress>();
     if (multi_progress_mode_ && !from_multi_progress) {
       if ((type == ProgressType::incremental && progress_ >= max_progress) ||
-        (type == ProgressType::decremental && progress_ <= min_progress)) {
+          (type == ProgressType::decremental && progress_ <= min_progress)) {
         get_value<details::ProgressBarOption::completed>() = true;
       }
       return;
@@ -219,8 +218,7 @@ public:
 
     os << get_value<details::ProgressBarOption::start>();
 
-    details::ProgressScaleWriter writer{os,
-                                        get_value<details::ProgressBarOption::bar_width>(),
+    details::ProgressScaleWriter writer{os, get_value<details::ProgressBarOption::bar_width>(),
                                         get_value<details::ProgressBarOption::fill>(),
                                         get_value<details::ProgressBarOption::lead>(),
                                         get_value<details::ProgressBarOption::remainder>()};
@@ -229,7 +227,10 @@ public:
     os << get_value<details::ProgressBarOption::end>();
 
     if (get_value<details::ProgressBarOption::show_percentage>()) {
-      os << " " << std::min(static_cast<size_t>(static_cast<float>(progress_) / max_progress * 100), size_t(100)) << "%";
+      os << " "
+         << std::min(static_cast<size_t>(static_cast<float>(progress_) / max_progress * 100),
+                     size_t(100))
+         << "%";
     }
 
     auto &saved_start_time = get_value<details::ProgressBarOption::saved_start_time>();
@@ -250,7 +251,8 @@ public:
 
       if (saved_start_time) {
         auto eta = std::chrono::nanoseconds(
-            progress_ > 0 ? static_cast<long long>(elapsed_.count() * max_progress / progress_) : 0);
+            progress_ > 0 ? static_cast<long long>(elapsed_.count() * max_progress / progress_)
+                          : 0);
         auto remaining = eta > elapsed_ ? (eta - elapsed_) : (elapsed_ - eta);
         details::write_duration(os, remaining);
       } else {
@@ -266,13 +268,12 @@ public:
     if (get_value<details::ProgressBarOption::max_postfix_text_len>() == 0)
       get_value<details::ProgressBarOption::max_postfix_text_len>() = 10;
     os << " " << get_value<details::ProgressBarOption::postfix_text>()
-              << std::string(get_value<details::ProgressBarOption::max_postfix_text_len>(), ' ')
-              << "\r";
+       << std::string(get_value<details::ProgressBarOption::max_postfix_text_len>(), ' ') << "\r";
     os.flush();
-      if ((type == ProgressType::incremental && progress_ >= max_progress) ||
+    if ((type == ProgressType::incremental && progress_ >= max_progress) ||
         (type == ProgressType::decremental && progress_ <= min_progress)) {
-        get_value<details::ProgressBarOption::completed>() = true;
-      }
+      get_value<details::ProgressBarOption::completed>() = true;
+    }
     if (get_value<details::ProgressBarOption::completed>() &&
         !from_multi_progress) // Don't std::endl if calling from MultiProgress
       os << termcolor::reset << std::endl;

@@ -55,11 +55,10 @@ public:
                       option::MaxPostfixTextLen{0}, std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::font_styles>(
                       option::FontStyles{std::vector<FontStyle>{}}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::max_progress>(option::MaxProgress{100},
-                                                                         std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::stream>(
-                      option::Stream{std::cout}, std::forward<Args>(args)...)
-                  ) {}
+                  details::get<details::ProgressBarOption::max_progress>(
+                      option::MaxProgress{100}, std::forward<Args>(args)...),
+                  details::get<details::ProgressBarOption::stream>(option::Stream{std::cout},
+                                                                   std::forward<Args>(args)...)) {}
 
   template <typename T, details::ProgressBarOption id>
   void set_option(details::Setting<T, id> &&setting) {
@@ -118,7 +117,8 @@ public:
 
   size_t current() {
     std::lock_guard<std::mutex> lock{mutex_};
-    return std::min(static_cast<size_t>(progress_), size_t(get_value<details::ProgressBarOption::max_progress>()));
+    return std::min(static_cast<size_t>(progress_),
+                    size_t(get_value<details::ProgressBarOption::max_progress>()));
   }
 
   bool is_completed() const { return get_value<details::ProgressBarOption::completed>(); }
@@ -163,7 +163,7 @@ public:
   void print_progress(bool from_multi_progress = false) {
     std::lock_guard<std::mutex> lock{mutex_};
 
-    auto& os = get_value<details::ProgressBarOption::stream>();
+    auto &os = get_value<details::ProgressBarOption::stream>();
 
     const auto max_progress = get_value<details::ProgressBarOption::max_progress>();
     if (multi_progress_mode_ && !from_multi_progress) {
@@ -181,7 +181,7 @@ public:
 
     for (auto &style : get_value<details::ProgressBarOption::font_styles>())
       details::set_font_style(os, style);
-    
+
     os << get_value<details::ProgressBarOption::prefix_text>();
     os << get_value<details::ProgressBarOption::start>();
 
@@ -191,7 +191,8 @@ public:
 
     os << get_value<details::ProgressBarOption::end>();
     if (get_value<details::ProgressBarOption::show_percentage>()) {
-      os << " " << std::min(static_cast<size_t>(progress_ / max_progress * 100.0), size_t(100)) << "%";
+      os << " " << std::min(static_cast<size_t>(progress_ / max_progress * 100.0), size_t(100))
+         << "%";
     }
 
     auto &saved_start_time = get_value<details::ProgressBarOption::saved_start_time>();
@@ -228,8 +229,7 @@ public:
     if (get_value<details::ProgressBarOption::max_postfix_text_len>() == 0)
       get_value<details::ProgressBarOption::max_postfix_text_len>() = 10;
     os << " " << get_value<details::ProgressBarOption::postfix_text>()
-              << std::string(get_value<details::ProgressBarOption::max_postfix_text_len>(), ' ')
-              << "\r";
+       << std::string(get_value<details::ProgressBarOption::max_postfix_text_len>(), ' ') << "\r";
     os.flush();
     if (progress_ > max_progress) {
       get_value<details::ProgressBarOption::completed>() = true;

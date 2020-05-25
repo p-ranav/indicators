@@ -139,14 +139,14 @@ template <ProgressBarOption Id, typename Default> Default &&get_impl(Default &&d
 }
 
 template <ProgressBarOption Id, typename Default, typename T, typename... Args>
-auto get_impl(Default &&/*def*/, T &&first, Args &&... /*tail*/) ->
+auto get_impl(Default && /*def*/, T &&first, Args &&... /*tail*/) ->
     typename std::enable_if<(std::decay<T>::type::id == Id),
                             decltype(std::forward<T>(first))>::type {
   return std::forward<T>(first);
 }
 
 template <ProgressBarOption Id, typename Default, typename T, typename... Args>
-auto get_impl(Default &&def, T &&/*first*/, Args &&... tail) ->
+auto get_impl(Default &&def, T && /*first*/, Args &&... tail) ->
     typename std::enable_if<(std::decay<T>::type::id != Id),
                             decltype(get_impl<Id>(std::forward<Default>(def),
                                                   std::forward<Args>(tail)...))>::type {
@@ -210,9 +210,9 @@ using HideBarWhenComplete =
     details::BooleanSetting<details::ProgressBarOption::hide_bar_when_complete>;
 using FontStyles =
     details::Setting<std::vector<FontStyle>, details::ProgressBarOption::font_styles>;
-using MinProgress = details::IntegerSetting<details::ProgressBarOption::min_progress>;    
+using MinProgress = details::IntegerSetting<details::ProgressBarOption::min_progress>;
 using MaxProgress = details::IntegerSetting<details::ProgressBarOption::max_progress>;
 using ProgressType = details::Setting<ProgressType, details::ProgressBarOption::progress_type>;
-using Stream = details::Setting<std::ostream&, details::ProgressBarOption::stream>;
+using Stream = details::Setting<std::ostream &, details::ProgressBarOption::stream>;
 } // namespace option
 } // namespace indicators

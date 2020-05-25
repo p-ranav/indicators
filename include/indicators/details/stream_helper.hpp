@@ -1,8 +1,8 @@
 #pragma once
 
+#include <indicators/display_width.hpp>
 #include <indicators/setting.hpp>
 #include <indicators/termcolor.hpp>
-#include <indicators/display_width.hpp>
 
 #include <algorithm>
 #include <chrono>
@@ -175,7 +175,7 @@ private:
 class IndeterminateProgressScaleWriter {
 public:
   IndeterminateProgressScaleWriter(std::ostream &os, size_t bar_width, const std::string &fill,
-                      const std::string &lead)
+                                   const std::string &lead)
       : os(os), bar_width(bar_width), fill(fill), lead(lead) {}
 
   std::ostream &write(size_t progress) {

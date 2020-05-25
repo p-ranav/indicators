@@ -12,8 +12,7 @@ int main() {
       indicators::option::SpinnerStates{
           std::vector<std::string>{"⠈", "⠐", "⠠", "⢀", "⡀", "⠄", "⠂", "⠁"}},
       indicators::option::FontStyles{
-          std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}
-  };
+          std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
 
   // Update spinner state
   auto job = [&spinner]() {

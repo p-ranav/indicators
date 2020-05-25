@@ -21,14 +21,10 @@ namespace indicators {
 class IndeterminateProgressBar {
   using Settings =
       std::tuple<option::BarWidth, option::PrefixText, option::PostfixText, option::Start,
-                 option::End, option::Fill, option::Lead,
-                 option::MaxPostfixTextLen, option::Completed,
-                 option::ForegroundColor, option::FontStyles, option::Stream>;
+                 option::End, option::Fill, option::Lead, option::MaxPostfixTextLen,
+                 option::Completed, option::ForegroundColor, option::FontStyles, option::Stream>;
 
-  enum class Direction {
-    forward,
-    backward
-  };
+  enum class Direction { forward, backward };
 
   Direction direction_{Direction::forward};
 
@@ -60,8 +56,8 @@ public:
                       option::ForegroundColor{Color::unspecified}, std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::font_styles>(
                       option::FontStyles{std::vector<FontStyle>{}}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::stream>(
-                      option::Stream{std::cout}, std::forward<Args>(args)...)) {
+                  details::get<details::ProgressBarOption::stream>(option::Stream{std::cout},
+                                                                   std::forward<Args>(args)...)) {
     // starts with [<==>...........]
     // progress_ = 0
 
@@ -70,10 +66,10 @@ public:
     //             ^^^^^^^^^^^^ (bar_width - len(lead))
     // progress_ = bar_width - len(lead)
     progress_ = 0;
-    max_progress_ = get_value<details::ProgressBarOption::bar_width>()
-      - get_value<details::ProgressBarOption::lead>().size() 
-      + get_value<details::ProgressBarOption::start>().size()
-      + get_value<details::ProgressBarOption::end>().size();
+    max_progress_ = get_value<details::ProgressBarOption::bar_width>() -
+                    get_value<details::ProgressBarOption::lead>().size() +
+                    get_value<details::ProgressBarOption::start>().size() +
+                    get_value<details::ProgressBarOption::end>().size();
   }
 
   template <typename T, details::ProgressBarOption id>
@@ -130,9 +126,7 @@ public:
     print_progress();
   }
 
-  bool is_completed() {
-    return get_value<details::ProgressBarOption::completed>();
-  }
+  bool is_completed() { return get_value<details::ProgressBarOption::completed>(); }
 
   void mark_as_completed() {
     get_value<details::ProgressBarOption::completed>() = true;
@@ -165,7 +159,7 @@ public:
   void print_progress(bool from_multi_progress = false) {
     std::lock_guard<std::mutex> lock{mutex_};
 
-    auto& os = get_value<details::ProgressBarOption::stream>();
+    auto &os = get_value<details::ProgressBarOption::stream>();
 
     if (multi_progress_mode_ && !from_multi_progress) {
       return;
@@ -180,10 +174,10 @@ public:
 
     os << get_value<details::ProgressBarOption::start>();
 
-    details::IndeterminateProgressScaleWriter writer{os,
-                                        get_value<details::ProgressBarOption::bar_width>(),
-                                        get_value<details::ProgressBarOption::fill>(),
-                                        get_value<details::ProgressBarOption::lead>()};
+    details::IndeterminateProgressScaleWriter writer{
+        os, get_value<details::ProgressBarOption::bar_width>(),
+        get_value<details::ProgressBarOption::fill>(),
+        get_value<details::ProgressBarOption::lead>()};
     writer.write(progress_);
 
     os << get_value<details::ProgressBarOption::end>();
@@ -191,8 +185,7 @@ public:
     if (get_value<details::ProgressBarOption::max_postfix_text_len>() == 0)
       get_value<details::ProgressBarOption::max_postfix_text_len>() = 10;
     os << " " << get_value<details::ProgressBarOption::postfix_text>()
-              << std::string(get_value<details::ProgressBarOption::max_postfix_text_len>(), ' ')
-              << "\r";
+       << std::string(get_value<details::ProgressBarOption::max_postfix_text_len>(), ' ') << "\r";
     os.flush();
     if (get_value<details::ProgressBarOption::completed>() &&
         !from_multi_progress) // Don't std::endl if calling from MultiProgress

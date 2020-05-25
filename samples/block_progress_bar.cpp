@@ -9,10 +9,9 @@ int main() {
   indicators::show_console_cursor(false);
 
   indicators::BlockProgressBar bar{
-    indicators::option::BarWidth{80},
-    indicators::option::FontStyles{
-          std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}
-  };
+      indicators::option::BarWidth{80},
+      indicators::option::FontStyles{
+          std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
 
   // Update bar state
   auto progress = 0.0f;
