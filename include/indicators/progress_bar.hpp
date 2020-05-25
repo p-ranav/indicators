@@ -18,6 +18,7 @@
 #include <thread>
 #include <tuple>
 #include <type_traits>
+#include <utility>
 
 namespace indicators {
 
@@ -217,7 +218,9 @@ private:
   std::pair<std::string, size_t> get_prefix_text() {
     std::stringstream os;
     os << get_value<details::ProgressBarOption::prefix_text>();
-    return {os.str(), os.str().size()};
+    const auto result = os.str();
+    const auto result_size = result.size();
+    return {result, result_size};
   }
 
   std::pair<std::string, size_t> get_postfix_text() {
@@ -269,7 +272,9 @@ private:
 
     os << " " << get_value<details::ProgressBarOption::postfix_text>();
 
-    return {os.str(), os.str().size()};
+    const auto result = os.str();
+    const auto result_size = result.size();
+    return {result, result_size};
   }
 
 public:

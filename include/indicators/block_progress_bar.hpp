@@ -16,6 +16,7 @@
 #include <string>
 #include <thread>
 #include <tuple>
+#include <utility>
 
 namespace indicators {
 
@@ -162,13 +163,15 @@ private:
     }
   }
 
-  size_t get_prefix_length() {
+  std::pair<std::string, size_t> get_prefix_text() {
     std::stringstream os;
     os << get_value<details::ProgressBarOption::prefix_text>();
-    return os.str().size();
+    const auto result = os.str();
+    const auto result_size = result.size();
+    return {result, result_size};
   }
 
-  size_t get_postfix_length() {
+  std::pair<std::string, size_t> get_postfix_text() {
     std::stringstream os;
     const auto max_progress = get_value<details::ProgressBarOption::max_progress>();
     auto now = std::chrono::high_resolution_clock::now();
@@ -212,7 +215,9 @@ private:
 
     os << " " << get_value<details::ProgressBarOption::postfix_text>();
 
-    return os.str().size();
+    const auto result = os.str();
+    const auto result_size = result.size();
+    return {result, result_size};
   }
 
 public:
@@ -238,7 +243,11 @@ public:
     for (auto &style : get_value<details::ProgressBarOption::font_styles>())
       details::set_font_style(os, style);
 
-    os << get_value<details::ProgressBarOption::prefix_text>();
+    const auto prefix_pair = get_prefix_text();
+    const auto prefix_text = prefix_pair.first;
+    const auto prefix_length = prefix_pair.second;
+    os << prefix_text;
+
     os << get_value<details::ProgressBarOption::start>();
 
     details::BlockProgressScaleWriter writer{os,
@@ -246,46 +255,24 @@ public:
     writer.write(progress_ / max_progress * 100);
 
     os << get_value<details::ProgressBarOption::end>();
-    if (get_value<details::ProgressBarOption::show_percentage>()) {
-      os << " " << std::min(static_cast<size_t>(progress_ / max_progress * 100.0), size_t(100))
-         << "%";
+
+    const auto postfix_pair = get_postfix_text();
+    const auto postfix_text = postfix_pair.first;
+    const auto postfix_length = postfix_pair.second;
+    os << postfix_text;
+
+    // Get length of prefix text and postfix text
+    const auto start_length = get_value<details::ProgressBarOption::start>().size();
+    const auto bar_width = get_value<details::ProgressBarOption::bar_width>();
+    const auto end_length = get_value<details::ProgressBarOption::end>().size();
+    const auto terminal_width = terminal_size().second;
+    // prefix + bar_width + postfix should be <= terminal_width
+    const int remaining = terminal_width - (prefix_length + start_length + bar_width + end_length + postfix_length);
+    if (remaining > 0) {
+      os << std::string(remaining, ' ') << "\r";
+    } else if (remaining < 0) {
+      // Do nothing. Maybe in the future truncate postfix with ...
     }
-
-    auto &saved_start_time = get_value<details::ProgressBarOption::saved_start_time>();
-
-    if (get_value<details::ProgressBarOption::show_elapsed_time>()) {
-      os << " [";
-      if (saved_start_time)
-        details::write_duration(os, elapsed);
-      else
-        os << "00:00s";
-    }
-
-    if (get_value<details::ProgressBarOption::show_remaining_time>()) {
-      if (get_value<details::ProgressBarOption::show_elapsed_time>())
-        os << "<";
-      else
-        os << " [";
-
-      if (saved_start_time) {
-        auto eta = std::chrono::nanoseconds(
-            progress_ > 0 ? static_cast<long long>(elapsed.count() * max_progress / progress_) : 0);
-        auto remaining = eta > elapsed ? (eta - elapsed) : (elapsed - eta);
-        details::write_duration(os, remaining);
-      } else {
-        os << "00:00s";
-      }
-
-      os << "]";
-    } else {
-      if (get_value<details::ProgressBarOption::show_elapsed_time>())
-        os << "]";
-    }
-
-    if (get_value<details::ProgressBarOption::max_postfix_text_len>() == 0)
-      get_value<details::ProgressBarOption::max_postfix_text_len>() = 10;
-    os << " " << get_value<details::ProgressBarOption::postfix_text>()
-       << std::string(get_value<details::ProgressBarOption::max_postfix_text_len>(), ' ') << "\r";
     os.flush();
 
     if (progress_ > max_progress) {
