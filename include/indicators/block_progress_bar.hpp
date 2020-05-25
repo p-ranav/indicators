@@ -8,8 +8,10 @@
 #include <atomic>
 #include <chrono>
 #include <indicators/setting.hpp>
+#include <indicators/terminal_size.hpp>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <mutex>
 #include <string>
 #include <thread>
@@ -158,6 +160,12 @@ private:
       start_time_point_ = std::chrono::high_resolution_clock::now();
       saved_start_time = true;
     }
+  }
+
+  size_t get_prefix_length() {
+    std::stringstream os;
+    os << get_value<details::ProgressBarOption::prefix_text>();
+    return os.str().size();
   }
 
 public:

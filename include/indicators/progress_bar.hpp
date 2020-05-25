@@ -9,6 +9,7 @@
 #include <cmath>
 #include <indicators/color.hpp>
 #include <indicators/setting.hpp>
+#include <indicators/terminal_size.hpp>
 #include <iomanip>
 #include <iostream>
 #include <sstream>

@@ -2516,6 +2516,14 @@ public:
     }
     os.flush();
 
+    // std::cout << "\n"
+    //           << prefix_length << " "
+    //           << start_length << " "
+    //           << bar_width << " "
+    //           << end_length << " "
+    //           << postfix_length << " "
+    //           << " = " << terminal_width << "\n";
+
     if ((type == ProgressType::incremental && progress_ >= max_progress) ||
         (type == ProgressType::decremental && progress_ <= min_progress)) {
       get_value<details::ProgressBarOption::completed>() = true;
