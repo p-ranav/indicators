@@ -234,9 +234,6 @@ public:
       return;
     }
 
-    auto now = std::chrono::high_resolution_clock::now();
-    auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - start_time_point_);
-
     if (get_value<details::ProgressBarOption::foreground_color>() != Color::unspecified)
       details::set_stream_color(os, get_value<details::ProgressBarOption::foreground_color>());
 
