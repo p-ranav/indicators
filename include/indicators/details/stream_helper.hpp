@@ -180,8 +180,9 @@ public:
       : os(os), bar_width(bar_width), fill(fill), lead(lead) {}
 
   std::ostream &write(size_t progress) {
-    for (size_t i = 0, current_display_width = 0; i < bar_width;) {
+    for (size_t i = 0; i < bar_width;) {
       std::string next;
+      size_t current_display_width = 0;
 
       if (i < progress) {
         next = fill;
