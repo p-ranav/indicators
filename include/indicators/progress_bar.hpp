@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include <indicators/details/stream_helper.hpp>

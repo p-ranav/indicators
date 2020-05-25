@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include <indicators/display_width.hpp>

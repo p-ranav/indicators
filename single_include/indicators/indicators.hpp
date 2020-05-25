@@ -1,5 +1,7 @@
+
 #pragma once
-// #include <indicators/termcolor.hpp>//!
+// #include <indicators/termcolor.hpp>
+//!
 //! termcolor
 //! ~~~~~~~~~
 //!
@@ -450,21 +452,22 @@ inline void win_change_attributes(std::ostream &stream, int foreground, int back
 
 #endif // TERMCOLOR_HPP_
 
+
 namespace indicators {
 enum class Color { grey, red, green, yellow, blue, magenta, cyan, white, unspecified };
 }
+
 #pragma once
-
 namespace indicators {
-
 enum class FontStyle { bold, dark, italic, underline, blink, reverse, concealed, crossed };
-
 }
+
 #pragma once
 
 namespace indicators {
 enum class ProgressType { incremental, decremental };
 }
+
 //!
 //! termcolor
 //! ~~~~~~~~~
@@ -915,6 +918,7 @@ inline void win_change_attributes(std::ostream &stream, int foreground, int back
 #undef TERMCOLOR_OS_LINUX
 
 #endif // TERMCOLOR_HPP_
+
 #pragma once
 #include <utility>
 
@@ -948,6 +952,32 @@ size_t terminal_width() { return terminal_size().second; }
 #endif
 
 } // namespace indicators
+/*
+Activity Indicators for Modern C++
+https://github.com/p-ranav/indicators
+
+Licensed under the MIT License <http://opensource.org/licenses/MIT>.
+SPDX-License-Identifier: MIT
+Copyright (c) 2019 Dawid Pilarski <dawid.pilarski@panicsoftware.com>.
+
+Permission is hereby  granted, free of charge, to any  person obtaining a copy
+of this software and associated  documentation files (the "Software"), to deal
+in the Software  without restriction, including without  limitation the rights
+to  use, copy,  modify, merge,  publish, distribute,  sublicense, and/or  sell
+copies  of  the Software,  and  to  permit persons  to  whom  the Software  is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE  IS PROVIDED "AS  IS", WITHOUT WARRANTY  OF ANY KIND,  EXPRESS OR
+IMPLIED,  INCLUDING BUT  NOT  LIMITED TO  THE  WARRANTIES OF  MERCHANTABILITY,
+FITNESS FOR  A PARTICULAR PURPOSE AND  NONINFRINGEMENT. IN NO EVENT  SHALL THE
+AUTHORS  OR COPYRIGHT  HOLDERS  BE  LIABLE FOR  ANY  CLAIM,  DAMAGES OR  OTHER
+LIABILITY, WHETHER IN AN ACTION OF  CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 #pragma once
 
 #include <cstddef>
@@ -1140,6 +1170,7 @@ using ProgressType = details::Setting<ProgressType, details::ProgressBarOption::
 using Stream = details::Setting<std::ostream &, details::ProgressBarOption::stream>;
 } // namespace option
 } // namespace indicators
+
 #pragma once
 
 #if defined(_MSC_VER)
@@ -1175,6 +1206,7 @@ static inline void show_console_cursor(bool const show) {
 #endif
 
 } // namespace indicators
+#pragma once
 
 #if defined(_MSC_VER)
 #if !defined(NOMINMAX)
@@ -1220,10 +1252,10 @@ static inline void move_left(int cols) { std::cout << "\033[" << cols << "D"; }
 #endif
 
 } // namespace indicators
+#pragma once
 
-// #include <indicators/setting.hpp>
-// #include <indicators/termcolor.hpp>
 // #include <indicators/display_width.hpp>
+
 #include <clocale>
 #include <codecvt>
 #include <cstdlib>
@@ -1521,6 +1553,9 @@ static inline int display_width(const std::wstring &input) {
 
 } // namespace unicode
 
+// #include <indicators/setting.hpp>
+// #include <indicators/termcolor.hpp>
+
 #include <algorithm>
 #include <chrono>
 #include <iomanip>
@@ -1653,21 +1688,18 @@ public:
 
   std::ostream &write(float progress) {
     auto pos = static_cast<size_t>(progress * bar_width / 100.0);
-    for (size_t i = 0; i < bar_width;) {
-      std::string next{""};
-      size_t current_display_width = 0;
+    for (size_t i = 0, current_display_width = 0; i < bar_width;) {
+      std::string next;
 
-      if (i < pos && !fill.empty()) {
+      if (i < pos) {
         next = fill;
         current_display_width = unicode::display_width(fill);
-      } else if (i == pos && !lead.empty()) {
+      } else if (i == pos) {
         next = lead;
         current_display_width = unicode::display_width(lead);
       } else {
-        if (!remainder.empty()) {
-          next = remainder;
-          current_display_width = unicode::display_width(remainder);
-        }
+        next = remainder;
+        current_display_width = unicode::display_width(remainder);
       }
 
       i += current_display_width;
@@ -2019,6 +2051,7 @@ public:
 };
 
 } // namespace indicators
+
 #pragma once
 
 // #include <indicators/color.hpp>
@@ -2262,6 +2295,7 @@ public:
 };
 
 } // namespace indicators
+
 #pragma once
 
 // #include <indicators/details/stream_helper.hpp>
@@ -2458,6 +2492,7 @@ public:
 };
 
 } // namespace indicators
+
 #pragma once
 #include <atomic>
 #include <functional>
@@ -2465,8 +2500,8 @@ public:
 #include <mutex>
 #include <vector>
 
-// #include <indicators/cursor_movement.hpp>
 // #include <indicators/color.hpp>
+// #include <indicators/cursor_movement.hpp>
 
 namespace indicators {
 
@@ -2535,6 +2570,7 @@ public:
 };
 
 } // namespace indicators
+
 #pragma once
 #include <atomic>
 #include <functional>
@@ -2648,6 +2684,7 @@ public:
 };
 
 } // namespace indicators
+
 #pragma once
 
 // #include <indicators/details/stream_helper.hpp>

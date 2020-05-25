@@ -1,3 +1,4 @@
+
 /*
 Activity Indicators for Modern C++
 https://github.com/p-ranav/indicators
