@@ -136,18 +136,21 @@ public:
 
   std::ostream &write(float progress) {
     auto pos = static_cast<size_t>(progress * bar_width / 100.0);
-    for (size_t i = 0, current_display_width = 0; i < bar_width;) {
-      std::string next;
+    for (size_t i = 0; i < bar_width;) {
+      std::string next{""};
+      size_t current_display_width = 0;
 
-      if (i < pos) {
+      if (i < pos && !fill.empty()) {
         next = fill;
         current_display_width = unicode::display_width(fill);
-      } else if (i == pos) {
+      } else if (i == pos && !lead.empty()) {
         next = lead;
         current_display_width = unicode::display_width(lead);
       } else {
-        next = remainder;
-        current_display_width = unicode::display_width(remainder);
+        if (!remainder.empty()) {
+          next = remainder;
+          current_display_width = unicode::display_width(remainder);
+        }
       }
 
       i += current_display_width;

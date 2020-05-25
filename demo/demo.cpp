@@ -53,7 +53,7 @@ int main() {
     // PROGRESS BAR 2
     //
     indicators::ProgressBar p;
-    p.set_option(option::BarWidth{40});
+    p.set_option(option::BarWidth{0});
     p.set_option(option::PrefixText{"Reading package list... "});
     p.set_option(option::Start{""});
     p.set_option(option::Fill{""});
@@ -158,6 +158,36 @@ int main() {
     thread4.join();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    {
+      //
+      // GOING BACKWARDS
+      //
+      indicators::ProgressBar p{option::BarWidth{50},
+                                option::ProgressType{ProgressType::decremental},
+                                option::Start{"["},
+                                option::Fill{"■"},
+                                option::Lead{"■"},
+                                option::Remainder{"-"},
+                                option::End{"]"},
+                                option::ForegroundColor{indicators::Color::white},
+                                option::PostfixText{"Reverting system restore"},
+                                option::FontStyles{
+                                    std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
+      auto job = [&p]() {
+        while (true) {
+          p.tick();
+          if (p.is_completed()) {
+            p.set_option(option::PostfixText{"Revert complete!"});
+            p.mark_as_completed();
+            break;
+          }
+          std::this_thread::sleep_for(std::chrono::milliseconds(60));
+        }
+      };
+      std::thread thread(job);
+      thread.join();
+    }
   }
 
   {
