@@ -663,7 +663,7 @@ int main() {
   }
 
   std::cout << termcolor::bold << termcolor::white
-  << "Task Failed Successfully\n" << termcolor::reset;
+            << "Task Failed Successfully\n" << termcolor::reset;
 
   return 0;
 }
