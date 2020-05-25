@@ -29,6 +29,7 @@ SOFTWARE.
 #include <cstddef>
 #include <indicators/color.hpp>
 #include <indicators/font_style.hpp>
+#include <indicators/progress_type.hpp>
 #include <string>
 #include <tuple>
 #include <type_traits>
@@ -91,7 +92,9 @@ enum class ProgressBarOption {
   spinner_states,
   font_styles,
   hide_bar_when_complete,
+  min_progress,
   max_progress,
+  progress_type,
   stream
 };
 
@@ -207,7 +210,9 @@ using HideBarWhenComplete =
     details::BooleanSetting<details::ProgressBarOption::hide_bar_when_complete>;
 using FontStyles =
     details::Setting<std::vector<FontStyle>, details::ProgressBarOption::font_styles>;
+using MinProgress = details::IntegerSetting<details::ProgressBarOption::min_progress>;    
 using MaxProgress = details::IntegerSetting<details::ProgressBarOption::max_progress>;
+using ProgressType = details::Setting<ProgressType, details::ProgressBarOption::progress_type>;
 using Stream = details::Setting<std::ostream&, details::ProgressBarOption::stream>;
 } // namespace option
 } // namespace indicators

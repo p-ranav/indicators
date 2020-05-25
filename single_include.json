@@ -4,6 +4,7 @@
     "sources": [
         "include/indicators/color.hpp",
         "include/indicators/font_style.hpp",
+        "include/indicators/progress_type.hpp",
         "include/indicators/termcolor.hpp",
         "include/indicators/terminal_size.hpp",
         "include/indicators/setting.hpp",

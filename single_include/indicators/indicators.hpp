@@ -461,6 +461,11 @@ namespace indicators {
 enum class FontStyle { bold, dark, italic, underline, blink, reverse, concealed, crossed };
 
 }
+#pragma once
+
+namespace indicators {
+enum class ProgressType { incremental, decremental };
+}
 //!
 //! termcolor
 //! ~~~~~~~~~
@@ -978,6 +983,7 @@ SOFTWARE.
 #include <cstddef>
 // #include <indicators/color.hpp>
 // #include <indicators/font_style.hpp>
+// #include <indicators/progress_type.hpp>
 #include <string>
 #include <tuple>
 #include <type_traits>
@@ -1040,7 +1046,9 @@ enum class ProgressBarOption {
   spinner_states,
   font_styles,
   hide_bar_when_complete,
+  min_progress,
   max_progress,
+  progress_type,
   stream
 };
 
@@ -1156,7 +1164,9 @@ using HideBarWhenComplete =
     details::BooleanSetting<details::ProgressBarOption::hide_bar_when_complete>;
 using FontStyles =
     details::Setting<std::vector<FontStyle>, details::ProgressBarOption::font_styles>;
+using MinProgress = details::IntegerSetting<details::ProgressBarOption::min_progress>;    
 using MaxProgress = details::IntegerSetting<details::ProgressBarOption::max_progress>;
+using ProgressType = details::Setting<ProgressType, details::ProgressBarOption::progress_type>;
 using Stream = details::Setting<std::ostream&, details::ProgressBarOption::stream>;
 } // namespace option
 } // namespace indicators
@@ -1719,18 +1729,21 @@ public:
 
   std::ostream &write(float progress) {
     auto pos = static_cast<size_t>(progress * bar_width / 100.0);
-    for (size_t i = 0, current_display_width = 0; i < bar_width;) {
-      std::string next;
+    for (size_t i = 0; i < bar_width;) {
+      std::string next{""};
+      size_t current_display_width = 0;
 
-      if (i < pos) {
+      if (i < pos && !fill.empty()) {
         next = fill;
         current_display_width = unicode::display_width(fill);
-      } else if (i == pos) {
+      } else if (i == pos && !lead.empty()) {
         next = lead;
         current_display_width = unicode::display_width(lead);
       } else {
-        next = remainder;
-        current_display_width = unicode::display_width(remainder);
+        if (!remainder.empty()) {
+          next = remainder;
+          current_display_width = unicode::display_width(remainder);
+        }
       }
 
       i += current_display_width;
@@ -1825,7 +1838,10 @@ class ProgressBar {
                  option::End, option::Fill, option::Lead, option::Remainder,
                  option::MaxPostfixTextLen, option::Completed, option::ShowPercentage,
                  option::ShowElapsedTime, option::ShowRemainingTime, option::SavedStartTime,
-                 option::ForegroundColor, option::FontStyles, option::MaxProgress, option::Stream>;
+                 option::ForegroundColor, option::FontStyles, 
+                 option::MinProgress, option::MaxProgress, 
+                 option::ProgressType,
+                 option::Stream>;
 
 public:
   template <typename... Args,
@@ -1865,10 +1881,23 @@ public:
                       option::ForegroundColor{Color::unspecified}, std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::font_styles>(
                       option::FontStyles{std::vector<FontStyle>{}}, std::forward<Args>(args)...),
+                  details::get<details::ProgressBarOption::min_progress>(
+                      option::MinProgress{0}, std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::max_progress>(
                       option::MaxProgress{100}, std::forward<Args>(args)...),
+                  details::get<details::ProgressBarOption::progress_type>(
+                      option::ProgressType{ProgressType::incremental}, std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::stream>(
-                      option::Stream{std::cout}, std::forward<Args>(args)...)) {}
+                      option::Stream{std::cout}, std::forward<Args>(args)...)) {
+
+    // if progress is incremental, start from min_progress
+    // else start from max_progress
+    const auto type = get_value<details::ProgressBarOption::progress_type>();
+    if (type == ProgressType::incremental)
+      progress_ = get_value<details::ProgressBarOption::min_progress>();
+    else 
+      progress_ = get_value<details::ProgressBarOption::max_progress>();
+  }
 
   template <typename T, details::ProgressBarOption id>
   void set_option(details::Setting<T, id> &&setting) {
@@ -1920,7 +1949,11 @@ public:
   void tick() {
     {
       std::lock_guard<std::mutex> lock{mutex_};
-      progress_ += 1;
+      const auto type = get_value<details::ProgressBarOption::progress_type>();
+      if (type == ProgressType::incremental)
+        progress_ += 1;
+      else 
+        progress_ -= 1;
     }
     save_start_time();
     print_progress();
@@ -1976,9 +2009,12 @@ public:
 
     auto& os = get_value<details::ProgressBarOption::stream>();
 
+    const auto type = get_value<details::ProgressBarOption::progress_type>();
+    const auto min_progress = get_value<details::ProgressBarOption::min_progress>();
     const auto max_progress = get_value<details::ProgressBarOption::max_progress>();
     if (multi_progress_mode_ && !from_multi_progress) {
-      if (progress_ >= max_progress) {
+      if ((type == ProgressType::incremental && progress_ >= max_progress) ||
+        (type == ProgressType::decremental && progress_ <= min_progress)) {
         get_value<details::ProgressBarOption::completed>() = true;
       }
       return;
@@ -2047,9 +2083,10 @@ public:
               << std::string(get_value<details::ProgressBarOption::max_postfix_text_len>(), ' ')
               << "\r";
     os.flush();
-    if (progress_ >= max_progress) {
-      get_value<details::ProgressBarOption::completed>() = true;
-    }
+      if ((type == ProgressType::incremental && progress_ >= max_progress) ||
+        (type == ProgressType::decremental && progress_ <= min_progress)) {
+        get_value<details::ProgressBarOption::completed>() = true;
+      }
     if (get_value<details::ProgressBarOption::completed>() &&
         !from_multi_progress) // Don't std::endl if calling from MultiProgress
       os << termcolor::reset << std::endl;
