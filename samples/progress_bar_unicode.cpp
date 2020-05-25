@@ -8,8 +8,6 @@ int main() {
 
   indicators::show_console_cursor(false);
 
-  std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-
   {
     // Plain old ASCII
     indicators::ProgressBar bar{indicators::option::BarWidth{50},

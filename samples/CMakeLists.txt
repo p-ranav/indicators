@@ -44,3 +44,6 @@ target_link_libraries(max_progress PRIVATE indicators::indicators)
 add_executable(indeterminate_progress_bar indeterminate_progress_bar.cpp)
 target_link_libraries(indeterminate_progress_bar PRIVATE indicators::indicators)
 
+add_executable(dynamic_postfix_text dynamic_postfix_text.cpp)
+target_link_libraries(dynamic_postfix_text PRIVATE indicators::indicators)
+
