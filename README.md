@@ -36,6 +36,7 @@
      *    [Multi Progress](#multiprogress)
      *    [Dynamic Progress](#dynamicprogress)
      *    [Progress Spinner](#progress-spinner)
+*    [Decremental Progress](#decremental-progress)
 *    [Working with Iterables](#working-with-iterables)
 *    [Unicode Support](#unicode-support)
 *    [Building Samples](#building-samples)
@@ -621,6 +622,48 @@ int main() {
   };
   std::thread thread(job);
   thread.join();  
+
+  return 0;
+}
+```
+
+## Decremental Progress
+
+`indicators` allows you to easily control the progress direction, i.e., incremental or decremental progress by using  `option::ProgressType`. To program a countdown progress bar, use `option::ProgressType::decremental`
+
+<p align="center">
+  <img src="img/progress_bar_countdown.gif"/>  
+</p>
+
+```cpp
+#include <chrono>
+#include <indicators/progress_bar.hpp>
+#include <thread>
+using namespace indicators;
+
+int main() {
+
+  ProgressBar bar{option::BarWidth{50},
+                  option::ProgressType{ProgressType::decremental},
+                  option::Start{"["},
+                  option::Fill{"■"},
+                  option::Lead{"■"},
+                  option::Remainder{"-"},
+                  option::End{"]"},
+                  option::PostfixText{"Reverting System Restore"},
+                  option::ForegroundColor{Color::yellow},
+                  option::FontStyles{std::vector<FontStyle>{FontStyle::bold}}};
+
+  // Update bar state
+  while (true) {
+    bar.tick();
+    if (bar.is_completed())
+      break;
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  }
+
+  std::cout << termcolor::bold << termcolor::white
+  << "Task Failed Successfully\n" << termcolor::reset;
 
   return 0;
 }
