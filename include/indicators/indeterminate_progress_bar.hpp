@@ -163,7 +163,7 @@ private:
     std::stringstream os;
     os << get_value<details::ProgressBarOption::prefix_text>();
     const auto result = os.str();
-    const auto result_size = result.size();
+    const auto result_size = unicode::display_width(result);
     return {result, result_size};
   }
 
@@ -172,7 +172,7 @@ private:
     os << " " << get_value<details::ProgressBarOption::postfix_text>();
 
     const auto result = os.str();
-    const auto result_size = result.size();
+    const auto result_size = unicode::display_width(result);
     return {result, result_size};
   }
 
