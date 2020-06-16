@@ -1,7 +1,10 @@
 
 #pragma once
 #include <clocale>
+#if __has_include(<codecvt>)
 #include <codecvt>
+#define INDICATORS_HAVE_CODECVT 1
+#endif
 #include <cstdlib>
 #include <locale>
 #include <string>
@@ -9,6 +12,7 @@
 
 namespace unicode {
 
+#if INDICATORS_HAVE_CODECVT
 namespace details {
 
 /*
@@ -294,5 +298,17 @@ static inline int display_width(const std::string &input) {
 static inline int display_width(const std::wstring &input) {
   return details::mk_wcswidth(input.c_str(), input.size());
 }
+
+#else
+
+static inline int display_width(const std::string &input) {
+  return input.length();
+}
+
+static inline int display_width(const std::wstring &input) {
+  return input.length();
+}
+
+#endif
 
 } // namespace unicode
