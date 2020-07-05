@@ -10,9 +10,9 @@ namespace indicators {
 
 static inline std::pair<size_t, size_t> terminal_size() {
   CONSOLE_SCREEN_BUFFER_INFO csbi;
-  int columns, rows;
+  int cols, rows;
   GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
-  columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+  cols = csbi.srWindow.Right - csbi.srWindow.Left + 1;
   rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
   return {static_cast<size_t>(rows), static_cast<size_t>(cols)};
 }
