@@ -1,7 +1,6 @@
 #include <chrono>
 #include <indicators/cursor_control.hpp>
 #include <indicators/indeterminate_progress_bar.hpp>
-#include <indicators/termcolor.hpp>
 #include <thread>
 
 int main() {
