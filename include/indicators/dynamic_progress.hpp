@@ -4,6 +4,7 @@
 #include <functional>
 #include <indicators/color.hpp>
 #include <indicators/setting.hpp>
+#include <indicators/details/stream_helper.hpp>
 #include <iostream>
 #include <mutex>
 #include <vector>

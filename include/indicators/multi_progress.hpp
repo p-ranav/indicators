@@ -8,6 +8,7 @@
 
 #include <indicators/color.hpp>
 #include <indicators/cursor_movement.hpp>
+#include <indicators/details/stream_helper.hpp>
 
 namespace indicators {
 
