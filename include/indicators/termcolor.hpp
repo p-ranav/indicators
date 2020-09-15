@@ -34,6 +34,10 @@
 #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
 #   include <unistd.h>
 #elif defined(TERMCOLOR_OS_WINDOWS)
+#if defined(_MSC_VER)
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
 #   include <io.h>
 #   include <windows.h>
 #endif

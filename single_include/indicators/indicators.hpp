@@ -51,6 +51,10 @@ enum class ProgressType { incremental, decremental };
 #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
 #   include <unistd.h>
 #elif defined(TERMCOLOR_OS_WINDOWS)
+#if defined(_MSC_VER)
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
 #   include <io.h>
 #   include <windows.h>
 #endif
@@ -656,7 +660,7 @@ namespace termcolor
 #include <utility>
 
 
-#if defined(_MSC_VER)
+#if defined(_WIN32)
 #include <windows.h>
 
 namespace indicators {
