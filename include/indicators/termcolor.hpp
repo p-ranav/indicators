@@ -41,6 +41,7 @@
 #   include <io.h>
 #   include <windows.h>
 #endif
+#endif
 
 
 #include <iostream>
