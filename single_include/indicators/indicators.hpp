@@ -58,6 +58,7 @@ enum class ProgressType { incremental, decremental };
 #   include <io.h>
 #   include <windows.h>
 #endif
+#endif
 
 
 #include <iostream>
