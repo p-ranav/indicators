@@ -2782,7 +2782,7 @@ public:
       os << get_value<details::ProgressBarOption::spinner_states>()
               [index_ % get_value<details::ProgressBarOption::spinner_states>().size()];
     if (get_value<details::ProgressBarOption::show_percentage>()) {
-      os << " " << std::min(progress_, size_t(max_progress)) << "%";
+      os << " " << std::size_t(progress_ / double(max_progress) * 100) << "%";
     }
 
     if (get_value<details::ProgressBarOption::show_elapsed_time>()) {
