@@ -1789,7 +1789,7 @@ private:
       if (saved_start_time) {
         auto eta = std::chrono::nanoseconds(
             progress_ > 0 ? static_cast<long long>(elapsed_.count() *
-                                                   max_progress / progress_)
+                                                   (max_progress / progress_))
                           : 0);
         auto remaining = eta > elapsed_ ? (eta - elapsed_) : (elapsed_ - eta);
         details::write_duration(os, remaining);
@@ -2089,7 +2089,9 @@ private:
 
       if (saved_start_time) {
         auto eta = std::chrono::nanoseconds(
-            progress_ > 0 ? static_cast<long long>(elapsed.count() * max_progress / progress_) : 0);
+            progress_ > 0 ? static_cast<long long>(elapsed.count() *
+                                                   (max_progress / progress_))
+                          : 0);
         auto remaining = eta > elapsed ? (eta - elapsed) : (elapsed - eta);
         details::write_duration(os, remaining);
       } else {
@@ -2796,7 +2798,9 @@ public:
       else
         os << " [";
       auto eta = std::chrono::nanoseconds(
-          progress_ > 0 ? static_cast<long long>(elapsed.count() * max_progress / progress_) : 0);
+          progress_ > 0 ? static_cast<long long>(elapsed.count() *
+                                                 (max_progress / progress_))
+                        : 0);
       auto remaining = eta > elapsed ? (eta - elapsed) : (elapsed - eta);
       details::write_duration(os, remaining);
       os << "]";
