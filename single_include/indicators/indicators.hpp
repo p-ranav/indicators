@@ -675,7 +675,7 @@ static inline std::pair<size_t, size_t> terminal_size() {
   return {static_cast<size_t>(rows), static_cast<size_t>(cols)};
 }
 
-size_t terminal_width() { return terminal_size().second; }
+static inline size_t terminal_width() { return terminal_size().second; }
 
 } // namespace indicators
 
