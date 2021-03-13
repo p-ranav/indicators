@@ -246,7 +246,7 @@ public:
     const auto prefix_pair = get_prefix_text();
     const auto prefix_text = prefix_pair.first;
     const auto prefix_length = prefix_pair.second;
-    os << prefix_text;
+    os << "\r" << prefix_text;
 
     os << get_value<details::ProgressBarOption::start>();
 
