@@ -687,7 +687,7 @@ static inline size_t terminal_width() { return terminal_size().second; }
 namespace indicators {
 
 static inline std::pair<size_t, size_t> terminal_size() {
-  struct winsize size;
+  struct winsize size{};
   ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
   return {static_cast<size_t>(size.ws_row), static_cast<size_t>(size.ws_col)};
 }
