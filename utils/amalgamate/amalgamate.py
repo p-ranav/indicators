@@ -62,7 +62,7 @@ class Amalgamation(object):
         return None
 
     def __init__(self, args):
-        with open(args.config, 'r') as f:
+        with open(args.config, 'r', encoding="utf8") as f:
             config = json.loads(f.read())
             for key in config:
                 setattr(self, key, config[key])
@@ -77,7 +77,7 @@ class Amalgamation(object):
         amalgamation = ""
 
         if self.prologue:
-            with open(self.prologue, 'r') as f:
+            with open(self.prologue, 'r', encoding="utf8") as f:
                 amalgamation += datetime.datetime.now().strftime(f.read())
 
         if self.verbose:
@@ -94,7 +94,7 @@ class Amalgamation(object):
             t = TranslationUnit(file_path, self, True)
             amalgamation += t.content
 
-        with open(self.target, 'w') as f:
+        with open(self.target, 'w', encoding="utf8") as f:
             f.write(amalgamation)
 
         print("...done!\n")
@@ -262,7 +262,7 @@ class TranslationUnit(object):
         actual_path = self.amalgamation.actual_path(file_path)
         if not os.path.isfile(actual_path):
             raise IOError("File not found: \"{0}\"".format(file_path))
-        with open(actual_path, 'r') as f:
+        with open(actual_path, 'r', encoding="utf8") as f:
             self.content = f.read()
             self._process()
 

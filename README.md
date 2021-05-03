@@ -12,7 +12,7 @@
   <a href="https://github.com/p-ranav/indicators/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="license"/>
   </a>
-  <img src="https://img.shields.io/badge/version-2.0-blue.svg?cacheSeconds=2592000" alt="version"/>
+  <img src="https://img.shields.io/badge/version-2.1-blue.svg?cacheSeconds=2592000" alt="version"/>
 </p>
 
 
@@ -942,6 +942,16 @@ cd indicators
 mkdir build && cd build
 cmake -DINDICATORS_SAMPLES=ON -DINDICATORS_DEMO=ON ..
 make
+```
+
+### WinLibs + MinGW
+
+For Windows, if you use WinLibs like I do, the cmake command would look like this:
+
+```console
+foo@bar:~$ mkdir build && cd build
+foo@bar:~$ cmake -G "MinGW Makefiles" -DCMAKE_CXX_COMPILER="C:/WinLibs/mingw64/bin/g++.exe" -DINDICATORS_SAMPLES=ON -DINDICATORS_DEMO=ON ..
+foo@bar:~$ make -j4
 ```
 
 ## Generating Single Header

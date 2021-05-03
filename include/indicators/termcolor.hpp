@@ -1,4 +1,3 @@
-
 //!
 //! termcolor
 //! ~~~~~~~~~
@@ -13,39 +12,37 @@
 #ifndef TERMCOLOR_HPP_
 #define TERMCOLOR_HPP_
 
-// the following snippet of code detects the current OS and
-// defines the appropriate macro that is used to wrap some
-// platform specific things
+#include <iostream>
+#include <cstdio>
+
+// Detect target's platform and set some macros in order to wrap platform
+// specific code this library depends on.
 #if defined(_WIN32) || defined(_WIN64)
-#   define TERMCOLOR_OS_WINDOWS
-#elif defined(__APPLE__)
-#   define TERMCOLOR_OS_MACOS
-#elif defined(__unix__) || defined(__unix)
-#   define TERMCOLOR_OS_LINUX
-#else
-#   error unsupported platform
+#   define TERMCOLOR_TARGET_WINDOWS
+#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
+#   define TERMCOLOR_TARGET_POSIX
 #endif
 
+// If implementation has not been explicitly set, try to choose one based on
+// target platform.
+#if !defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES) && !defined(TERMCOLOR_USE_WINDOWS_API) && !defined(TERMCOLOR_USE_NOOP)
+#   if defined(TERMCOLOR_TARGET_POSIX)
+#       define TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES
+#       define TERMCOLOR_AUTODETECTED_IMPLEMENTATION
+#   elif defined(TERMCOLOR_TARGET_WINDOWS)
+#       define TERMCOLOR_USE_WINDOWS_API
+#       define TERMCOLOR_AUTODETECTED_IMPLEMENTATION
+#   endif
+#endif
 
-// This headers provides the `isatty()`/`fileno()` functions,
-// which are used for testing whether a standart stream refers
-// to the terminal. As for Windows, we also need WinApi funcs
-// for changing colors attributes of the terminal.
-#if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+// These headers provide isatty()/fileno() functions, which are used for
+// testing whether a standard stream refers to the terminal.
+#if defined(TERMCOLOR_TARGET_POSIX)
 #   include <unistd.h>
-#elif defined(TERMCOLOR_OS_WINDOWS)
-#if defined(_MSC_VER)
-#if !defined(NOMINMAX)
-#define NOMINMAX
-#endif
+#elif defined(TERMCOLOR_TARGET_WINDOWS)
 #   include <io.h>
 #   include <windows.h>
 #endif
-#endif
-
-
-#include <iostream>
-#include <cstdio>
 
 
 namespace termcolor
@@ -54,15 +51,12 @@ namespace termcolor
     // All comments are below.
     namespace _internal
     {
-        // An index to be used to access a private storage of I/O streams. See
-        // colorize / nocolorize I/O manipulators for details.
-        static int colorize_index = std::ios_base::xalloc();
-
+        inline int colorize_index();
         inline FILE* get_standard_stream(const std::ostream& stream);
         inline bool is_colorized(std::ostream& stream);
         inline bool is_atty(const std::ostream& stream);
 
-    #if defined(TERMCOLOR_OS_WINDOWS)
+    #if defined(TERMCOLOR_TARGET_WINDOWS)
         inline void win_change_attributes(std::ostream& stream, int foreground, int background=-1);
     #endif
     }
@@ -70,14 +64,14 @@ namespace termcolor
     inline
     std::ostream& colorize(std::ostream& stream)
     {
-        stream.iword(_internal::colorize_index) = 1L;
+        stream.iword(_internal::colorize_index()) = 1L;
         return stream;
     }
 
     inline
     std::ostream& nocolorize(std::ostream& stream)
     {
-        stream.iword(_internal::colorize_index) = 0L;
+        stream.iword(_internal::colorize_index()) = 0L;
         return stream;
     }
 
@@ -86,9 +80,9 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[00m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1, -1);
         #endif
         }
@@ -100,9 +94,9 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[1m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
         #endif
         }
         return stream;
@@ -113,9 +107,9 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[2m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
         #endif
         }
         return stream;
@@ -126,9 +120,9 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[3m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
         #endif
         }
         return stream;
@@ -139,9 +133,10 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[4m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+            _internal::win_change_attributes(stream, -1, COMMON_LVB_UNDERSCORE);
         #endif
         }
         return stream;
@@ -152,9 +147,9 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[5m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
         #endif
         }
         return stream;
@@ -165,9 +160,9 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[7m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
         #endif
         }
         return stream;
@@ -178,9 +173,9 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[8m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
         #endif
         }
         return stream;
@@ -191,9 +186,9 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[9m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
         #endif
         }
         return stream;
@@ -204,11 +199,11 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             char command[12];
             std::snprintf(command, sizeof(command), "\033[38;5;%dm", code);
             stream << command;
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
         #endif
         }
         return stream;
@@ -219,11 +214,11 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             char command[12];
             std::snprintf(command, sizeof(command), "\033[48;5;%dm", code);
             stream << command;
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
         #endif
         }
         return stream;
@@ -234,11 +229,11 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             char command[20];
             std::snprintf(command, sizeof(command), "\033[38;2;%d;%d;%dm", r, g, b);
             stream << command;
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
         #endif
         }
         return stream;
@@ -249,11 +244,11 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             char command[20];
             std::snprintf(command, sizeof(command), "\033[48;2;%d;%d;%dm", r, g, b);
             stream << command;
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
         #endif
         }
         return stream;
@@ -264,9 +259,9 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[30m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
                 0   // grey (black)
             );
@@ -280,9 +275,9 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[31m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
                 FOREGROUND_RED
             );
@@ -296,9 +291,9 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[32m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
                 FOREGROUND_GREEN
             );
@@ -312,9 +307,9 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[33m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
                 FOREGROUND_GREEN | FOREGROUND_RED
             );
@@ -328,9 +323,9 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[34m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
                 FOREGROUND_BLUE
             );
@@ -344,9 +339,9 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[35m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
                 FOREGROUND_BLUE | FOREGROUND_RED
             );
@@ -360,9 +355,9 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[36m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
                 FOREGROUND_BLUE | FOREGROUND_GREEN
             );
@@ -376,9 +371,9 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[37m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream,
                 FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED
             );
@@ -388,15 +383,143 @@ namespace termcolor
     }
 
 
+    inline
+    std::ostream& bright_grey(std::ostream& stream)
+    {
+        if (_internal::is_colorized(stream))
+        {
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+            stream << "\033[90m";
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+            _internal::win_change_attributes(stream,
+                0 | FOREGROUND_INTENSITY   // grey (black)
+            );
+        #endif
+        }
+        return stream;
+    }
+
+    inline
+    std::ostream& bright_red(std::ostream& stream)
+    {
+        if (_internal::is_colorized(stream))
+        {
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+            stream << "\033[91m";
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+            _internal::win_change_attributes(stream,
+                FOREGROUND_RED | FOREGROUND_INTENSITY
+            );
+        #endif
+        }
+        return stream;
+    }
+
+    inline
+    std::ostream& bright_green(std::ostream& stream)
+    {
+        if (_internal::is_colorized(stream))
+        {
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+            stream << "\033[92m";
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+            _internal::win_change_attributes(stream,
+                FOREGROUND_GREEN | FOREGROUND_INTENSITY
+            );
+        #endif
+        }
+        return stream;
+    }
+
+    inline
+    std::ostream& bright_yellow(std::ostream& stream)
+    {
+        if (_internal::is_colorized(stream))
+        {
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+            stream << "\033[93m";
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+            _internal::win_change_attributes(stream,
+                FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY
+            );
+        #endif
+        }
+        return stream;
+    }
+
+    inline
+    std::ostream& bright_blue(std::ostream& stream)
+    {
+        if (_internal::is_colorized(stream))
+        {
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+            stream << "\033[94m";
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+            _internal::win_change_attributes(stream,
+                FOREGROUND_BLUE | FOREGROUND_INTENSITY
+            );
+        #endif
+        }
+        return stream;
+    }
+
+    inline
+    std::ostream& bright_magenta(std::ostream& stream)
+    {
+        if (_internal::is_colorized(stream))
+        {
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+            stream << "\033[95m";
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+            _internal::win_change_attributes(stream,
+                FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_INTENSITY
+            );
+        #endif
+        }
+        return stream;
+    }
+
+    inline
+    std::ostream& bright_cyan(std::ostream& stream)
+    {
+        if (_internal::is_colorized(stream))
+        {
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+            stream << "\033[96m";
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+            _internal::win_change_attributes(stream,
+                FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY
+            );
+        #endif
+        }
+        return stream;
+    }
+
+    inline
+    std::ostream& bright_white(std::ostream& stream)
+    {
+        if (_internal::is_colorized(stream))
+        {
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+            stream << "\033[97m";
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+            _internal::win_change_attributes(stream,
+                FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY
+            );
+        #endif
+        }
+        return stream;
+    }
+
 
     inline
     std::ostream& on_grey(std::ostream& stream)
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[40m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
                 0   // grey (black)
             );
@@ -410,9 +533,9 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[41m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
                 BACKGROUND_RED
             );
@@ -426,9 +549,9 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[42m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
                 BACKGROUND_GREEN
             );
@@ -442,9 +565,9 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[43m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
                 BACKGROUND_GREEN | BACKGROUND_RED
             );
@@ -458,9 +581,9 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[44m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
                 BACKGROUND_BLUE
             );
@@ -474,9 +597,9 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[45m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
                 BACKGROUND_BLUE | BACKGROUND_RED
             );
@@ -490,9 +613,9 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[46m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
                 BACKGROUND_GREEN | BACKGROUND_BLUE
             );
@@ -506,11 +629,141 @@ namespace termcolor
     {
         if (_internal::is_colorized(stream))
         {
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
             stream << "\033[47m";
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
             _internal::win_change_attributes(stream, -1,
                 BACKGROUND_GREEN | BACKGROUND_BLUE | BACKGROUND_RED
+            );
+        #endif
+        }
+
+        return stream;
+    }
+
+
+    inline
+    std::ostream& on_bright_grey(std::ostream& stream)
+    {
+        if (_internal::is_colorized(stream))
+        {
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+            stream << "\033[100m";
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+            _internal::win_change_attributes(stream, -1,
+                0 | BACKGROUND_INTENSITY   // grey (black)
+            );
+        #endif
+        }
+        return stream;
+    }
+
+    inline
+    std::ostream& on_bright_red(std::ostream& stream)
+    {
+        if (_internal::is_colorized(stream))
+        {
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+            stream << "\033[101m";
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+            _internal::win_change_attributes(stream, -1,
+                BACKGROUND_RED | BACKGROUND_INTENSITY
+            );
+        #endif
+        }
+        return stream;
+    }
+
+    inline
+    std::ostream& on_bright_green(std::ostream& stream)
+    {
+        if (_internal::is_colorized(stream))
+        {
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+            stream << "\033[102m";
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+            _internal::win_change_attributes(stream, -1,
+                BACKGROUND_GREEN | BACKGROUND_INTENSITY
+            );
+        #endif
+        }
+        return stream;
+    }
+
+    inline
+    std::ostream& on_bright_yellow(std::ostream& stream)
+    {
+        if (_internal::is_colorized(stream))
+        {
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+            stream << "\033[103m";
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+            _internal::win_change_attributes(stream, -1,
+                BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY
+            );
+        #endif
+        }
+        return stream;
+    }
+
+    inline
+    std::ostream& on_bright_blue(std::ostream& stream)
+    {
+        if (_internal::is_colorized(stream))
+        {
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+            stream << "\033[104m";
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+            _internal::win_change_attributes(stream, -1,
+                BACKGROUND_BLUE | BACKGROUND_INTENSITY
+            );
+        #endif
+        }
+        return stream;
+    }
+
+    inline
+    std::ostream& on_bright_magenta(std::ostream& stream)
+    {
+        if (_internal::is_colorized(stream))
+        {
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+            stream << "\033[105m";
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+            _internal::win_change_attributes(stream, -1,
+                BACKGROUND_BLUE | BACKGROUND_RED | BACKGROUND_INTENSITY
+            );
+        #endif
+        }
+        return stream;
+    }
+
+    inline
+    std::ostream& on_bright_cyan(std::ostream& stream)
+    {
+        if (_internal::is_colorized(stream))
+        {
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+            stream << "\033[106m";
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+            _internal::win_change_attributes(stream, -1,
+                BACKGROUND_GREEN | BACKGROUND_BLUE | BACKGROUND_INTENSITY
+            );
+        #endif
+        }
+        return stream;
+    }
+
+    inline
+    std::ostream& on_bright_white(std::ostream& stream)
+    {
+        if (_internal::is_colorized(stream))
+        {
+        #if defined(TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES)
+            stream << "\033[107m";
+        #elif defined(TERMCOLOR_USE_WINDOWS_API)
+            _internal::win_change_attributes(stream, -1,
+                BACKGROUND_GREEN | BACKGROUND_BLUE | BACKGROUND_RED | BACKGROUND_INTENSITY
             );
         #endif
         }
@@ -526,6 +779,17 @@ namespace termcolor
     //! the user code.
     namespace _internal
     {
+        // An index to be used to access a private storage of I/O streams. See
+        // colorize / nocolorize I/O manipulators for details. Due to the fact
+        // that static variables ain't shared between translation units, inline
+        // function with local static variable is used to do the trick and share
+        // the variable value between translation units.
+        inline int colorize_index()
+        {
+            static int colorize_index = std::ios_base::xalloc();
+            return colorize_index;
+        }
+
         //! Since C++ hasn't a true way to extract stream handler
         //! from the a given `std::ostream` object, I have to write
         //! this kind of hack.
@@ -546,7 +810,7 @@ namespace termcolor
         inline
         bool is_colorized(std::ostream& stream)
         {
-            return is_atty(stream) || static_cast<bool>(stream.iword(colorize_index));
+            return is_atty(stream) || static_cast<bool>(stream.iword(colorize_index()));
         }
 
         //! Test whether a given `std::ostream` object refers to
@@ -563,14 +827,16 @@ namespace termcolor
             if (!std_stream)
                 return false;
 
-        #if defined(TERMCOLOR_OS_MACOS) || defined(TERMCOLOR_OS_LINUX)
+        #if defined(TERMCOLOR_TARGET_POSIX)
             return ::isatty(fileno(std_stream));
-        #elif defined(TERMCOLOR_OS_WINDOWS)
+        #elif defined(TERMCOLOR_TARGET_WINDOWS)
             return ::_isatty(_fileno(std_stream));
+        #else
+            return false;
         #endif
         }
 
-    #if defined(TERMCOLOR_OS_WINDOWS)
+    #if defined(TERMCOLOR_TARGET_WINDOWS)
         //! Change Windows Terminal colors attribute. If some
         //! parameter is `-1` then attribute won't changed.
         inline void win_change_attributes(std::ostream& stream, int foreground, int background)
@@ -627,15 +893,19 @@ namespace termcolor
 
             SetConsoleTextAttribute(hTerminal, info.wAttributes);
         }
-    #endif // TERMCOLOR_OS_WINDOWS
+    #endif // TERMCOLOR_TARGET_WINDOWS
 
     } // namespace _internal
 
 } // namespace termcolor
 
 
-#undef TERMCOLOR_OS_WINDOWS
-#undef TERMCOLOR_OS_MACOS
-#undef TERMCOLOR_OS_LINUX
+#undef TERMCOLOR_TARGET_POSIX
+#undef TERMCOLOR_TARGET_WINDOWS
+
+#if defined(TERMCOLOR_AUTODETECTED_IMPLEMENTATION)
+#   undef TERMCOLOR_USE_ANSI_ESCAPE_SEQUENCES
+#   undef TERMCOLOR_USE_WINDOWS_API
+#endif
 
 #endif // TERMCOLOR_HPP_
