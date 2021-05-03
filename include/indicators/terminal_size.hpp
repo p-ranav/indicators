@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef INDICATORS_TERMINAL_SIZE
+#define INDICATORS_TERMINAL_SIZE
 #include <utility>
 
 
@@ -40,3 +41,4 @@ static inline size_t terminal_width() { return terminal_size().second; }
 
 #endif
 
+#endif

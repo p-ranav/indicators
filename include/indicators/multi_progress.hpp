@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef INDICATORS_MULTI_PROGRESS
+#define INDICATORS_MULTI_PROGRESS
 #include <atomic>
 #include <functional>
 #include <iostream>
@@ -77,3 +78,5 @@ public:
 };
 
 } // namespace indicators
+
+#endif

@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef INDICATORS_CURSOR_CONTROL
+#define INDICATORS_CURSOR_CONTROL
 
 #if defined(_MSC_VER)
 #if !defined(NOMINMAX)
@@ -34,3 +35,5 @@ static inline void show_console_cursor(bool const show) {
 #endif
 
 } // namespace indicators
+
+#endif

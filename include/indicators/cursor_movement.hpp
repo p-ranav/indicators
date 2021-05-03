@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef INDICATORS_CURSOR_MOVEMENT
+#define INDICATORS_CURSOR_MOVEMENT
 
 #if defined(_MSC_VER)
 #if !defined(NOMINMAX)
@@ -45,3 +46,5 @@ static inline void move_left(int cols) { std::cout << "\033[" << cols << "D"; }
 #endif
 
 } // namespace indicators
+
+#endif

@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef INDICATORS_BLOCK_PROGRESS_BAR
+#define INDICATORS_BLOCK_PROGRESS_BAR
 
 #include <indicators/color.hpp>
 #include <indicators/details/stream_helper.hpp>
@@ -285,3 +286,5 @@ public:
 };
 
 } // namespace indicators
+
+#endif

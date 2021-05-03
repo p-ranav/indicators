@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef INDICATORS_STREAM_HELPER
+#define INDICATORS_STREAM_HELPER
 
 #include <indicators/display_width.hpp>
 #include <indicators/setting.hpp>
@@ -218,3 +219,5 @@ private:
 
 } // namespace details
 } // namespace indicators
+
+#endif

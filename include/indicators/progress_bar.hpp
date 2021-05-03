@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef INDICATORS_PROGRESS_BAR
+#define INDICATORS_PROGRESS_BAR
 
 #include <indicators/details/stream_helper.hpp>
 
@@ -355,3 +356,5 @@ public:
 };
 
 } // namespace indicators
+
+#endif

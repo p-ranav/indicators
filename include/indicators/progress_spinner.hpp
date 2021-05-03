@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef INDICATORS_PROGRESS_SPINNER
+#define INDICATORS_PROGRESS_SPINNER
 
 #include <indicators/details/stream_helper.hpp>
 
@@ -222,3 +223,5 @@ public:
 };
 
 } // namespace indicators
+
+#endif

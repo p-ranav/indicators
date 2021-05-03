@@ -1,20 +1,35 @@
 
-#pragma once
+#ifndef INDICATORS_COLOR
+#define INDICATORS_COLOR
 
 namespace indicators {
 enum class Color { grey, red, green, yellow, blue, magenta, cyan, white, unspecified };
 }
 
-#pragma once
+#endif
+
+
+
+#ifndef INDICATORS_FONT_STYLE
+#define INDICATORS_FONT_STYLE
+
 namespace indicators {
 enum class FontStyle { bold, dark, italic, underline, blink, reverse, concealed, crossed };
 }
 
-#pragma once
+#endif
+
+
+
+#ifndef INDICATORS_PROGRESS_TYPE
+#define INDICATORS_PROGRESS_TYPE
 
 namespace indicators {
 enum class ProgressType { incremental, decremental };
 }
+
+#endif
+
 //!
 //! termcolor
 //! ~~~~~~~~~
@@ -57,6 +72,11 @@ enum class ProgressType { incremental, decremental };
 #if defined(TERMCOLOR_TARGET_POSIX)
 #   include <unistd.h>
 #elif defined(TERMCOLOR_TARGET_WINDOWS)
+#if defined(_MSC_VER)
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
+#endif
 #   include <io.h>
 #   include <windows.h>
 #endif
@@ -927,7 +947,10 @@ namespace termcolor
 
 #endif // TERMCOLOR_HPP_
 
-#pragma once
+
+
+#ifndef INDICATORS_TERMINAL_SIZE
+#define INDICATORS_TERMINAL_SIZE
 #include <utility>
 
 
@@ -968,6 +991,8 @@ static inline size_t terminal_width() { return terminal_size().second; }
 
 #endif
 
+#endif
+
 
 /*
 Activity Indicators for Modern C++
@@ -995,29 +1020,39 @@ LIABILITY, WHETHER IN AN ACTION OF  CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#pragma once
+#ifndef INDICATORS_SETTING
+#define INDICATORS_SETTING
 
 #include <cstddef>
 // #include <indicators/color.hpp>
-
+#ifndef INDICATORS_COLOR
+#define INDICATORS_COLOR
 
 namespace indicators {
 enum class Color { grey, red, green, yellow, blue, magenta, cyan, white, unspecified };
 }
 
+#endif
+
 // #include <indicators/font_style.hpp>
+#ifndef INDICATORS_FONT_STYLE
+#define INDICATORS_FONT_STYLE
 
 namespace indicators {
 enum class FontStyle { bold, dark, italic, underline, blink, reverse, concealed, crossed };
 }
 
-// #include <indicators/progress_type.hpp>
+#endif
 
+// #include <indicators/progress_type.hpp>
+#ifndef INDICATORS_PROGRESS_TYPE
+#define INDICATORS_PROGRESS_TYPE
 
 namespace indicators {
 enum class ProgressType { incremental, decremental };
 }
 
+#endif
 #include <string>
 #include <tuple>
 #include <type_traits>
@@ -1205,7 +1240,11 @@ using Stream = details::Setting<std::ostream &, details::ProgressBarOption::stre
 } // namespace option
 } // namespace indicators
 
-#pragma once
+#endif
+
+
+#ifndef INDICATORS_CURSOR_CONTROL
+#define INDICATORS_CURSOR_CONTROL
 
 #if defined(_MSC_VER)
 #if !defined(NOMINMAX)
@@ -1240,7 +1279,12 @@ static inline void show_console_cursor(bool const show) {
 #endif
 
 } // namespace indicators
-#pragma once
+
+#endif
+
+
+#ifndef INDICATORS_CURSOR_MOVEMENT
+#define INDICATORS_CURSOR_MOVEMENT
 
 #if defined(_MSC_VER)
 #if !defined(NOMINMAX)
@@ -1286,9 +1330,16 @@ static inline void move_left(int cols) { std::cout << "\033[" << cols << "D"; }
 #endif
 
 } // namespace indicators
-#pragma once
+
+#endif
+
+
+#ifndef INDICATORS_STREAM_HELPER
+#define INDICATORS_STREAM_HELPER
 
 // #include <indicators/display_width.hpp>
+#ifndef INDICATORS_DISPLAY_WIDTH
+#define INDICATORS_DISPLAY_WIDTH
 
 #include <clocale>
 #if __has_include(<codecvt>)
@@ -1603,6 +1654,7 @@ static inline int display_width(const std::wstring &input) {
 
 } // namespace unicode
 
+#endif
 // #include <indicators/setting.hpp>
 /*
 Activity Indicators for Modern C++
@@ -1630,7 +1682,8 @@ LIABILITY, WHETHER IN AN ACTION OF  CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
+#ifndef INDICATORS_SETTING
+#define INDICATORS_SETTING
 
 #include <cstddef>
 // #include <indicators/color.hpp>
@@ -1823,6 +1876,7 @@ using Stream = details::Setting<std::ostream &, details::ProgressBarOption::stre
 } // namespace option
 } // namespace indicators
 
+#endif
 // #include <indicators/termcolor.hpp>//!
 //! termcolor
 //! ~~~~~~~~~
@@ -1865,6 +1919,11 @@ using Stream = details::Setting<std::ostream &, details::ProgressBarOption::stre
 #if defined(TERMCOLOR_TARGET_POSIX)
 #   include <unistd.h>
 #elif defined(TERMCOLOR_TARGET_WINDOWS)
+#if defined(_MSC_VER)
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
+#endif
 #   include <io.h>
 #   include <windows.h>
 #endif
@@ -2949,10 +3008,16 @@ private:
 
 } // namespace details
 } // namespace indicators
-#pragma once
+
+#endif
+
+
+#ifndef INDICATORS_PROGRESS_BAR
+#define INDICATORS_PROGRESS_BAR
 
 // #include <indicators/details/stream_helper.hpp>
-
+#ifndef INDICATORS_STREAM_HELPER
+#define INDICATORS_STREAM_HELPER
 
 // #include <indicators/display_width.hpp>
 // #include <indicators/setting.hpp>
@@ -3172,6 +3237,8 @@ private:
 } // namespace details
 } // namespace indicators
 
+#endif
+
 #include <algorithm>
 #include <atomic>
 #include <chrono>
@@ -3179,7 +3246,8 @@ private:
 // #include <indicators/color.hpp>
 // #include <indicators/setting.hpp>
 // #include <indicators/terminal_size.hpp>
-
+#ifndef INDICATORS_TERMINAL_SIZE
+#define INDICATORS_TERMINAL_SIZE
 #include <utility>
 
 
@@ -3220,7 +3288,7 @@ static inline size_t terminal_width() { return terminal_size().second; }
 
 #endif
 
-
+#endif
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -3567,7 +3635,11 @@ public:
 
 } // namespace indicators
 
-#pragma once
+#endif
+
+
+#ifndef INDICATORS_BLOCK_PROGRESS_BAR
+#define INDICATORS_BLOCK_PROGRESS_BAR
 
 // #include <indicators/color.hpp>
 // #include <indicators/details/stream_helper.hpp>
@@ -3854,7 +3926,11 @@ public:
 
 } // namespace indicators
 
-#pragma once
+#endif
+
+
+#ifndef INDICATORS_INDETERMINATE_PROGRESS_BAR
+#define INDICATORS_INDETERMINATE_PROGRESS_BAR
 
 // #include <indicators/details/stream_helper.hpp>
 
@@ -4088,7 +4164,11 @@ public:
 
 } // namespace indicators
 
-#pragma once
+#endif
+
+
+#ifndef INDICATORS_MULTI_PROGRESS
+#define INDICATORS_MULTI_PROGRESS
 #include <atomic>
 #include <functional>
 #include <iostream>
@@ -4097,7 +4177,8 @@ public:
 
 // #include <indicators/color.hpp>
 // #include <indicators/cursor_movement.hpp>
-
+#ifndef INDICATORS_CURSOR_MOVEMENT
+#define INDICATORS_CURSOR_MOVEMENT
 
 #if defined(_MSC_VER)
 #if !defined(NOMINMAX)
@@ -4143,6 +4224,8 @@ static inline void move_left(int cols) { std::cout << "\033[" << cols << "D"; }
 #endif
 
 } // namespace indicators
+
+#endif
 // #include <indicators/details/stream_helper.hpp>
 
 namespace indicators {
@@ -4213,7 +4296,12 @@ public:
 
 } // namespace indicators
 
-#pragma once
+#endif
+
+
+#ifndef INDICATORS_DYNAMIC_PROGRESS
+#define INDICATORS_DYNAMIC_PROGRESS
+
 #include <atomic>
 #include <functional>
 // #include <indicators/color.hpp>
@@ -4328,7 +4416,11 @@ public:
 
 } // namespace indicators
 
-#pragma once
+#endif
+
+
+#ifndef INDICATORS_PROGRESS_SPINNER
+#define INDICATORS_PROGRESS_SPINNER
 
 // #include <indicators/details/stream_helper.hpp>
 
@@ -4551,3 +4643,6 @@ public:
 };
 
 } // namespace indicators
+
+#endif
+

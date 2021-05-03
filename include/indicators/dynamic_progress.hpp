@@ -1,5 +1,7 @@
 
-#pragma once
+#ifndef INDICATORS_DYNAMIC_PROGRESS
+#define INDICATORS_DYNAMIC_PROGRESS
+
 #include <atomic>
 #include <functional>
 #include <indicators/color.hpp>
@@ -113,3 +115,5 @@ public:
 };
 
 } // namespace indicators
+
+#endif

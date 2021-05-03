@@ -25,7 +25,8 @@ LIABILITY, WHETHER IN AN ACTION OF  CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#pragma once
+#ifndef INDICATORS_SETTING
+#define INDICATORS_SETTING
 
 #include <cstddef>
 #include <indicators/color.hpp>
@@ -217,3 +218,5 @@ using ProgressType = details::Setting<ProgressType, details::ProgressBarOption::
 using Stream = details::Setting<std::ostream &, details::ProgressBarOption::stream>;
 } // namespace option
 } // namespace indicators
+
+#endif

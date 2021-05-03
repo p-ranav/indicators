@@ -40,6 +40,11 @@
 #if defined(TERMCOLOR_TARGET_POSIX)
 #   include <unistd.h>
 #elif defined(TERMCOLOR_TARGET_WINDOWS)
+#if defined(_MSC_VER)
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
+#endif
 #   include <io.h>
 #   include <windows.h>
 #endif

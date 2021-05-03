@@ -1,5 +1,7 @@
 
-#pragma once
+#ifndef INDICATORS_DISPLAY_WIDTH
+#define INDICATORS_DISPLAY_WIDTH
+
 #include <clocale>
 #if __has_include(<codecvt>)
 #include <codecvt>
@@ -312,3 +314,5 @@ static inline int display_width(const std::wstring &input) {
 #endif
 
 } // namespace unicode
+
+#endif
