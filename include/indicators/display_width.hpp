@@ -6,6 +6,7 @@
 #if __has_include(<codecvt>)
 #include <codecvt>
 #define INDICATORS_HAVE_CODECVT 1
+#define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
 #endif
 #include <cstdlib>
 #include <locale>
