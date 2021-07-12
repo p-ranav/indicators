@@ -2900,7 +2900,7 @@ public:
   std::ostream &write(float progress) {
     std::string fill_text{"█"};
     std::vector<std::string> lead_characters{" ", "▏", "▎", "▍", "▌", "▋", "▊", "▉"};
-    auto value = std::min(1.0f, std::max(0.0f, progress / 100.0f));
+    auto value = (std::min)(1.0f, (std::max)(0.0f, progress / 100.0f));
     auto whole_width = std::floor(value * bar_width);
     auto remainder_width = fmod((value * bar_width), 1.0f);
     auto part_width = std::floor(remainder_width * lead_characters.size());
@@ -3128,7 +3128,7 @@ public:
   std::ostream &write(float progress) {
     std::string fill_text{"█"};
     std::vector<std::string> lead_characters{" ", "▏", "▎", "▍", "▌", "▋", "▊", "▉"};
-    auto value = std::min(1.0f, std::max(0.0f, progress / 100.0f));
+    auto value = (std::min)(1.0f, (std::max)(0.0f, progress / 100.0f));
     auto whole_width = std::floor(value * bar_width);
     auto remainder_width = fmod((value * bar_width), 1.0f);
     auto part_width = std::floor(remainder_width * lead_characters.size());
@@ -3445,7 +3445,7 @@ public:
 
   size_t current() {
     std::lock_guard<std::mutex> lock{mutex_};
-    return std::min(
+    return (std::min)(
         progress_,
         size_t(get_value<details::ProgressBarOption::max_progress>()));
   }
@@ -3510,7 +3510,7 @@ private:
 
     if (get_value<details::ProgressBarOption::show_percentage>()) {
       os << " "
-         << std::min(static_cast<size_t>(static_cast<float>(progress_) /
+         << (std::min)(static_cast<size_t>(static_cast<float>(progress_) /
                                          max_progress * 100),
                      size_t(100))
          << "%";
@@ -3762,7 +3762,7 @@ public:
 
   size_t current() {
     std::lock_guard<std::mutex> lock{mutex_};
-    return std::min(static_cast<size_t>(progress_),
+    return (std::min)(static_cast<size_t>(progress_),
                     size_t(get_value<details::ProgressBarOption::max_progress>()));
   }
 
@@ -3819,7 +3819,7 @@ private:
     auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - start_time_point_);
 
     if (get_value<details::ProgressBarOption::show_percentage>()) {
-      os << " " << std::min(static_cast<size_t>(progress_ / max_progress * 100.0), size_t(100))
+      os << " " << (std::min)(static_cast<size_t>(progress_ / max_progress * 100.0), size_t(100))
          << "%";
     }
 
@@ -4544,7 +4544,7 @@ public:
 
   size_t current() {
     std::lock_guard<std::mutex> lock{mutex_};
-    return std::min(progress_, size_t(get_value<details::ProgressBarOption::max_progress>()));
+    return (std::min)(progress_, size_t(get_value<details::ProgressBarOption::max_progress>()));
   }
 
   bool is_completed() const { return get_value<details::ProgressBarOption::completed>(); }
