@@ -122,7 +122,7 @@ public:
 
   size_t current() {
     std::lock_guard<std::mutex> lock{mutex_};
-    return std::min(static_cast<size_t>(progress_),
+    return (std::min)(static_cast<size_t>(progress_),
                     size_t(get_value<details::ProgressBarOption::max_progress>()));
   }
 
@@ -179,7 +179,7 @@ private:
     auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - start_time_point_);
 
     if (get_value<details::ProgressBarOption::show_percentage>()) {
-      os << " " << std::min(static_cast<size_t>(progress_ / max_progress * 100.0), size_t(100))
+      os << " " << (std::min)(static_cast<size_t>(progress_ / max_progress * 100.0), size_t(100))
          << "%";
     }
 

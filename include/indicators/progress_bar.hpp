@@ -166,7 +166,7 @@ public:
 
   size_t current() {
     std::lock_guard<std::mutex> lock{mutex_};
-    return std::min(
+    return (std::min)(
         progress_,
         size_t(get_value<details::ProgressBarOption::max_progress>()));
   }
@@ -231,7 +231,7 @@ private:
 
     if (get_value<details::ProgressBarOption::show_percentage>()) {
       os << " "
-         << std::min(static_cast<size_t>(static_cast<float>(progress_) /
+         << (std::min)(static_cast<size_t>(static_cast<float>(progress_) /
                                          max_progress * 100),
                      size_t(100))
          << "%";

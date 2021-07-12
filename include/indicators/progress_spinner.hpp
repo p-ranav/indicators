@@ -123,7 +123,7 @@ public:
 
   size_t current() {
     std::lock_guard<std::mutex> lock{mutex_};
-    return std::min(progress_, size_t(get_value<details::ProgressBarOption::max_progress>()));
+    return (std::min)(progress_, size_t(get_value<details::ProgressBarOption::max_progress>()));
   }
 
   bool is_completed() const { return get_value<details::ProgressBarOption::completed>(); }
