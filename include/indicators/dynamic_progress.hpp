@@ -6,6 +6,8 @@
 #include <functional>
 #include <indicators/color.hpp>
 #include <indicators/setting.hpp>
+#include <indicators/cursor_control.hpp>
+#include <indicators/cursor_movement.hpp>
 #include <indicators/details/stream_helper.hpp>
 #include <iostream>
 #include <mutex>
@@ -83,8 +85,11 @@ public:
     if (hide_bar_when_complete) {
       // Hide completed bars
       if (started_) {
-        for (size_t i = 0; i < incomplete_count_; ++i)
-          std::cout << "\033[A\r\033[K" << std::flush;
+        for (size_t i = 0; i < incomplete_count_; ++i) {
+          move_up(1);
+          erase_line();
+          std::cout << std::flush;
+        }
       }
       incomplete_count_ = 0;
       for (auto &bar : bars_) {
@@ -98,10 +103,8 @@ public:
         started_ = true;
     } else {
       // Don't hide any bars
-      if (started_) {
-        for (size_t i = 0; i < total_count_; ++i)
-          std::cout << "\x1b[A";
-      }
+      if (started_)
+        move_up(static_cast<int>(total_count_));
       for (auto &bar : bars_) {
         bar.get().print_progress(true);
         std::cout << "\n";
