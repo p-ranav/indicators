@@ -3,10 +3,10 @@
 #define INDICATORS_DISPLAY_WIDTH
 
 #include <clocale>
-#if __has_include(<codecvt>)
-#include <codecvt>
+#if defined __has_include
+#if __has_include (<codecvt>)
 #define INDICATORS_HAVE_CODECVT 1
-#define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
+#endif
 #endif
 #include <cstdlib>
 #include <locale>
