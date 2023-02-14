@@ -1346,7 +1346,6 @@ static inline void move_left(int cols) { std::cout << "\033[" << cols << "D"; }
 #include <cstdlib>
 #include <locale>
 #include <string>
-#include <vector>
 #include <wchar.h>
 
 namespace unicode {

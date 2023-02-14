@@ -6,7 +6,6 @@
 #include <cstdlib>
 #include <locale>
 #include <string>
-#include <vector>
 #include <wchar.h>
 
 namespace unicode {
