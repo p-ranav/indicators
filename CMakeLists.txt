@@ -5,14 +5,14 @@ if(DEFINED PROJECT_NAME)
 endif()
 
 if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.12")
-  project(indicators VERSION 2.2.0 LANGUAGES CXX
+  project(indicators VERSION 2.3.0 LANGUAGES CXX
     HOMEPAGE_URL "https://github.com/p-ranav/indicators"
     DESCRIPTION "Activity Indicators for Modern C++")
 elseif(CMAKE_VERSION VERSION_GREATER_EQUAL "3.9")
-  project(indicators VERSION 2.2.0 LANGUAGES CXX
+  project(indicators VERSION 2.3.0 LANGUAGES CXX
     DESCRIPTION "Activity Indicators for Modern C++")
 else()
-  project(indicators VERSION 2.2.0 LANGUAGES CXX)
+  project(indicators VERSION 2.3.0 LANGUAGES CXX)
 endif()
 
 if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
