@@ -275,6 +275,7 @@ Are you in need of a smooth block progress bar using [unicode block elements](ht
 
 ```cpp
 #include <indicators/block_progress_bar.hpp>
+#include <indicators/cursor_control.hpp>
 #include <thread>
 #include <chrono>
 
