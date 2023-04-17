@@ -160,7 +160,7 @@ private:
   template <typename Indicator> friend class DynamicProgress;
   std::atomic<bool> multi_progress_mode_{false};
 
-  std::pair<std::string, size_t> get_prefix_text() {
+  std::pair<std::string, int> get_prefix_text() {
     std::stringstream os;
     os << get_value<details::ProgressBarOption::prefix_text>();
     const auto result = os.str();
@@ -168,7 +168,7 @@ private:
     return {result, result_size};
   }
 
-  std::pair<std::string, size_t> get_postfix_text() {
+  std::pair<std::string, int> get_postfix_text() {
     std::stringstream os;
     os << " " << get_value<details::ProgressBarOption::postfix_text>();
 
@@ -219,7 +219,9 @@ public:
     const auto terminal_width = terminal_size().second;
     // prefix + bar_width + postfix should be <= terminal_width
     const int remaining = terminal_width - (prefix_length + start_length + bar_width + end_length + postfix_length);
-    if (remaining > 0) {
+    if (prefix_length == -1 || postfix_length == -1) {
+      os << "\r";
+    } else if (remaining > 0) {
       os << std::string(remaining, ' ') << "\r";
     } else if (remaining < 0) {
       // Do nothing. Maybe in the future truncate postfix with ...
