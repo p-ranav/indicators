@@ -1652,7 +1652,10 @@ static inline int mk_wcswidth_cjk(const wchar_t *pwcs, size_t n) {
 // convert UTF-8 string to wstring
 #ifdef _MSC_VER
 static inline std::wstring utf8_decode(const std::string& s) {
-    std::string curLocale = setlocale(LC_ALL, "");
+    auto r = setlocale(LC_ALL, "");
+    std::string curLocale;
+    if (r)
+      curLocale = r;
     const char* _Source = s.c_str();
     size_t _Dsize = std::strlen(_Source) + 1;
     wchar_t* _Dest = new wchar_t[_Dsize];
@@ -1665,7 +1668,10 @@ static inline std::wstring utf8_decode(const std::string& s) {
 }
 #else 
 static inline std::wstring utf8_decode(const std::string& s) {
-    std::string curLocale = setlocale(LC_ALL, "");
+    auto r = setlocale(LC_ALL, "");
+    std::string curLocale;
+    if (r)
+      curLocale = r;
     const char* _Source = s.c_str();
     size_t _Dsize = mbstowcs(NULL, _Source, 0) + 1;
     wchar_t* _Dest = new wchar_t[_Dsize];
