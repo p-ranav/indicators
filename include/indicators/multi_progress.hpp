@@ -6,6 +6,7 @@
 #include <iostream>
 #include <mutex>
 #include <vector>
+#include <numeric>
 
 #include <indicators/color.hpp>
 #include <indicators/cursor_movement.hpp>
@@ -65,9 +66,21 @@ private:
 public:
   void print_progress() {
     std::lock_guard<std::mutex> lock{mutex_};
-    if (started_)
-      move_up(count);
+    
+    if (started_) {
+      // move all the way up to start of first progress bar
+      const auto wrapped_lines = std::accumulate(begin(bars_), end(bars_), 0, [](size_t acc, auto &bar) {
+        return acc + bar.get().extra_wrapped_lines();
+      });
+      move_up(count + wrapped_lines);
+    }
+
     for (auto &bar : bars_) {
+      auto wrapped_line = bar.get().extra_wrapped_lines();
+      if (wrapped_line > 0) {
+        // for each bar before calling `print_progress`, cursor needs to be on last line that bar printed
+        move_down(wrapped_line);
+      }
       bar.get().print_progress(true);
       std::cout << "\n";
     }

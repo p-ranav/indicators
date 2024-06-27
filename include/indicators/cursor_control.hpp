@@ -2,6 +2,8 @@
 #ifndef INDICATORS_CURSOR_CONTROL
 #define INDICATORS_CURSOR_CONTROL
 
+#include <indicators/cursor_movement.hpp>
+
 #if defined(_MSC_VER)
 #if !defined(NOMINMAX)
 #define NOMINMAX
@@ -60,6 +62,13 @@ static inline void erase_line() {
 }
 
 #endif
+
+static inline void erase_lines(size_t lines) {
+  for (size_t i = 0; i < lines; ++i) {
+    erase_line();
+    move_up(1);
+  }
+}
 
 } // namespace indicators
 
