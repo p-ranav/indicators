@@ -32,7 +32,7 @@ static inline void move(int x, int y) {
 }
 
 static inline void move_up(int lines) { move(0, -lines); }
-static inline void move_down(int lines) { move(0, -lines); }
+static inline void move_down(int lines) { move(0, lines); }
 static inline void move_right(int cols) { move(cols, 0); }
 static inline void move_left(int cols) { move(-cols, 0); }
 
