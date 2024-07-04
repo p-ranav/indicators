@@ -3,6 +3,7 @@
 #define INDICATORS_INDETERMINATE_PROGRESS_BAR
 
 #include <indicators/details/stream_helper.hpp>
+#include <indicators/cursor_control.hpp>
 
 #include <algorithm>
 #include <atomic>
@@ -138,6 +139,11 @@ public:
     print_progress();
   }
 
+  size_t extra_wrapped_lines() {
+    std::lock_guard<std::mutex> lock{mutex_};
+    return extra_wrapped_lines_;
+  }
+
 private:
   template <details::ProgressBarOption id>
   auto get_value() -> decltype((details::get_value<id>(std::declval<Settings &>()).value)) {
@@ -155,6 +161,7 @@ private:
   Settings settings_;
   std::chrono::nanoseconds elapsed_;
   std::mutex mutex_;
+  size_t extra_wrapped_lines_{0};
 
   template <typename Indicator, size_t count> friend class MultiProgress;
   template <typename Indicator> friend class DynamicProgress;
@@ -191,6 +198,10 @@ public:
 
     for (auto &style : get_value<details::ProgressBarOption::font_styles>())
       details::set_font_style(os, style);
+    
+    // Need to erase previously written text across multiple lines to solve
+    // issue https://github.com/p-ranav/indicators/issues/132
+    erase_lines(extra_wrapped_lines_);
 
     const auto prefix_pair = get_prefix_text();
     const auto prefix_text = prefix_pair.first;
@@ -217,16 +228,17 @@ public:
     const auto bar_width = get_value<details::ProgressBarOption::bar_width>();
     const auto end_length = get_value<details::ProgressBarOption::end>().size();
     const auto terminal_width = terminal_size().second;
-    // prefix + bar_width + postfix should be <= terminal_width
-    const int remaining = terminal_width - (prefix_length + start_length + bar_width + end_length + postfix_length);
+    const auto number_of_characters = prefix_length + start_length + bar_width + end_length + postfix_length;
+    // If prefix + bar_width + postfix > terminal_width, lines will be wrapped
+    const int remaining = terminal_width - number_of_characters;
     if (prefix_length == -1 || postfix_length == -1) {
       os << "\r";
     } else if (remaining > 0) {
       os << std::string(remaining, ' ') << "\r";
-    } else if (remaining < 0) {
-      // Do nothing. Maybe in the future truncate postfix with ...
     }
     os.flush();
+
+    extra_wrapped_lines_ = details::extra_wrapped_lines(number_of_characters);
 
     if (get_value<details::ProgressBarOption::completed>() &&
         !from_multi_progress) // Don't std::endl if calling from MultiProgress

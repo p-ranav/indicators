@@ -5,6 +5,7 @@
 #include <indicators/display_width.hpp>
 #include <indicators/setting.hpp>
 #include <indicators/termcolor.hpp>
+#include <indicators/terminal_size.hpp>
 
 #include <algorithm>
 #include <chrono>
@@ -216,6 +217,21 @@ private:
   std::string fill;
   std::string lead;
 };
+
+inline size_t extra_wrapped_lines(size_t number_of_characters)
+{
+  const auto number_of_columns = indicators::terminal_width();
+  if (number_of_columns == 0) {
+    return 0;
+  }
+  
+  const auto extra_lines = number_of_characters / number_of_columns;
+  // cursor does not wrap when writing to the last column
+  if ((extra_lines > 0) && (number_of_characters % number_of_columns) == 0) {
+    return extra_lines-1;
+  }
+  return extra_lines;
+}
 
 } // namespace details
 } // namespace indicators
