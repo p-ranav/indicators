@@ -19,10 +19,10 @@ template <typename Indicator> class DynamicProgress {
   using Settings = std::tuple<option::HideBarWhenComplete>;
 
 public:
-  template <typename... Indicators> explicit DynamicProgress(Indicators &... bars) {
-    bars_ = {bars...};
+  template <typename... Indicators> explicit DynamicProgress(Indicators &&... bars) {
+    (bars_.emplace_back(std::move(bars)), ...);
     for (auto &bar : bars_) {
-      bar.get().multi_progress_mode_ = true;
+      bar->multi_progress_mode_ = true;
       ++total_count_;
       ++incomplete_count_;
     }
@@ -31,13 +31,13 @@ public:
   Indicator &operator[](size_t index) {
     print_progress();
     std::lock_guard<std::mutex> lock{mutex_};
-    return bars_[index].get();
+    return *bars_[index];
   }
 
-  size_t push_back(Indicator &bar) {
+  size_t push_back(std::unique_ptr<Indicator> bar) {
     std::lock_guard<std::mutex> lock{mutex_};
-    bar.multi_progress_mode_ = true;
-    bars_.push_back(bar);
+    bar->multi_progress_mode_ = true;
+    bars_.push_back(std::move(bar));
     return bars_.size() - 1;
   }
 
@@ -63,7 +63,7 @@ private:
   Settings settings_;
   std::atomic<bool> started_{false};
   std::mutex mutex_;
-  std::vector<std::reference_wrapper<Indicator>> bars_;
+  std::vector<std::unique_ptr<Indicator>> bars_;
   std::atomic<size_t> total_count_{0};
   std::atomic<size_t> incomplete_count_{0};
 
@@ -93,8 +93,8 @@ public:
       }
       incomplete_count_ = 0;
       for (auto &bar : bars_) {
-        if (!bar.get().is_completed()) {
-          bar.get().print_progress(true);
+        if (!bar->is_completed()) {
+          bar->print_progress(true);
           std::cout << "\n";
           ++incomplete_count_;
         }
@@ -106,7 +106,7 @@ public:
       if (started_)
         move_up(static_cast<int>(total_count_));
       for (auto &bar : bars_) {
-        bar.get().print_progress(true);
+        bar->print_progress(true);
         std::cout << "\n";
       }
       if (!started_)
