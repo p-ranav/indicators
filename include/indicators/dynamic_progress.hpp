@@ -10,6 +10,7 @@
 #include <indicators/cursor_movement.hpp>
 #include <indicators/details/stream_helper.hpp>
 #include <iostream>
+#include <memory>
 #include <mutex>
 #include <vector>
 
