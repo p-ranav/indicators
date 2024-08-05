@@ -4,57 +4,60 @@ using namespace indicators;
 
 int main() {
 
-  ProgressBar bar1{option::BarWidth{50},
+  auto bar1 = std::make_unique<ProgressBar>(option::BarWidth{50},
                    option::ForegroundColor{Color::red},
                    option::ShowElapsedTime{true},
                    option::ShowRemainingTime{true},
                    option::PrefixText{"5c90d4a2d1a8: Downloading "},
                    indicators::option::FontStyles{
-                       std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
+                       std::vector<indicators::FontStyle>{indicators::FontStyle::bold}});
 
-  ProgressBar bar2{option::BarWidth{50},
+  auto bar2 = std::make_unique<ProgressBar>(option::BarWidth{50},
                    option::ForegroundColor{Color::yellow},
                    option::ShowElapsedTime{true},
                    option::ShowRemainingTime{true},
                    option::PrefixText{"22337bfd13a9: Downloading "},
                    indicators::option::FontStyles{
-                       std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
+                       std::vector<indicators::FontStyle>{indicators::FontStyle::bold}});
 
-  ProgressBar bar3{option::BarWidth{50},
+  auto bar3 = std::make_unique<ProgressBar>(option::BarWidth{50},
                    option::ForegroundColor{Color::green},
                    option::ShowElapsedTime{true},
                    option::ShowRemainingTime{true},
                    option::PrefixText{"10f26c680a34: Downloading "},
                    indicators::option::FontStyles{
-                       std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
+                       std::vector<indicators::FontStyle>{indicators::FontStyle::bold}});
 
-  ProgressBar bar4{option::BarWidth{50},
+  auto bar4 = std::make_unique<ProgressBar>(option::BarWidth{50},
                    option::ForegroundColor{Color::white},
                    option::ShowElapsedTime{true},
                    option::ShowRemainingTime{true},
                    option::PrefixText{"6364e0d7a283: Downloading "},
                    indicators::option::FontStyles{
-                       std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
+                       std::vector<indicators::FontStyle>{indicators::FontStyle::bold}});
 
-  ProgressBar bar5{option::BarWidth{50},
+  auto bar5 = std::make_unique<ProgressBar>(option::BarWidth{50},
                    option::ForegroundColor{Color::blue},
                    option::ShowElapsedTime{true},
                    option::ShowRemainingTime{true},
                    option::PrefixText{"ff1356ba118b: Downloading "},
                    indicators::option::FontStyles{
-                       std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
+                       std::vector<indicators::FontStyle>{indicators::FontStyle::bold}});
 
-  ProgressBar bar6{option::BarWidth{50},
+  auto bar6 = std::make_unique<ProgressBar>(option::BarWidth{50},
                    option::ForegroundColor{Color::cyan},
                    option::ShowElapsedTime{true},
                    option::ShowRemainingTime{true},
                    option::PrefixText{"5a17453338b4: Downloading "},
                    indicators::option::FontStyles{
-                       std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
+                       std::vector<indicators::FontStyle>{indicators::FontStyle::bold}});
 
   std::cout << termcolor::bold << termcolor::white << "Pulling image foo:bar/baz\n";
 
+  // Construct with 3 progress bars. We'll add 3 more at a later point
   DynamicProgress<ProgressBar> bars(bar1, bar2, bar3);
+
+  // Do not hide bars when completed
   bars.set_option(option::HideBarWhenComplete{false});
 
   std::thread fourth_job, fifth_job, sixth_job;
@@ -101,7 +104,7 @@ int main() {
       if (bars[0].is_completed()) {
         bars[0].set_option(option::PrefixText{"5c90d4a2d1a8: Pull complete "});
         // bar1 is completed, adding bar6
-        auto i = bars.push_back(bar6);
+        auto i = bars.push_back(std::move(bar6));
         sixth_job = std::thread(job6, i);
         sixth_job.join();
         break;
@@ -116,7 +119,7 @@ int main() {
       if (bars[1].is_completed()) {
         bars[1].set_option(option::PrefixText{"22337bfd13a9: Pull complete "});
         // bar2 is completed, adding bar5
-        auto i = bars.push_back(bar5);
+        auto i = bars.push_back(std::move(bar5));
         fifth_job = std::thread(job5, i);
         fifth_job.join();
         break;
@@ -131,7 +134,7 @@ int main() {
       if (bars[2].is_completed()) {
         bars[2].set_option(option::PrefixText{"10f26c680a34: Pull complete "});
         // bar3 is completed, adding bar4
-        auto i = bars.push_back(bar4);
+        auto i = bars.push_back(std::move(bar4));
         fourth_job = std::thread(job4, i);
         fourth_job.join();
         break;
