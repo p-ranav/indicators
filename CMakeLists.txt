@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.8)
 
-if(DEFINED PROJECT_NAME)
-  set(INDICATORS_SUBPROJECT ON)
+if(NOT DEFINED PROJECT_NAME)
+  set(INDICATORS_IS_TOP_LEVEL ON)
+else()
+  set(INDICATORS_IS_TOP_LEVEL OFF)
 endif()
 
 if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.12")
@@ -20,6 +22,8 @@ if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
     conan_basic_setup()
 endif()
 
+option(INDICATORS_INSTALL "Include an install target" ${INDICATORS_IS_TOP_LEVEL})
+option(INDICATORS_PACKAGE "Include package targets" ${INDICATORS_IS_TOP_LEVEL})
 option(INDICATORS_BUILD_TESTS "Build indicators tests + enable CTest")
 option(INDICATORS_SAMPLES "Build indicators samples")
 option(INDICATORS_DEMO "Build indicators demo" OFF)
@@ -46,7 +50,7 @@ if(INDICATORS_SAMPLES)
   add_subdirectory(samples)
 endif()
 
-if(NOT INDICATORS_SUBPROJECT)
+if(INDICATORS_INSTALL)
   configure_package_config_file(indicatorsConfig.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/indicatorsConfig.cmake
     INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/indicators)
@@ -71,7 +75,9 @@ if(NOT INDICATORS_SUBPROJECT)
           PATTERN "*.hpp")
   install(FILES LICENSE LICENSE.termcolor
           DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/licenses/indicators)
+endif()
 
+if(INDICATORS_PACKAGE)
   if(EXISTS "${PROJECT_SOURCE_DIR}/.gitignore")
     # Simple glob to regex conversion (.gitignore => CPACK_SOURCE_IGNORE_FILES)
     file(READ ".gitignore" DOT_GITIGNORE)
