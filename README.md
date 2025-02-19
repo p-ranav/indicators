@@ -80,6 +80,7 @@ int main() {
     option::End{"]"},
     option::PostfixText{"Extracting Archive"},
     option::ForegroundColor{Color::green},
+    option::ShowPercentage{true},
     option::FontStyles{std::vector<FontStyle>{FontStyle::bold}}
   };
   
@@ -127,8 +128,8 @@ int main() {
     option::End{" ]"},
     option::PostfixText{"Loading dependency 1/4"},
     option::ForegroundColor{Color::cyan},
-    option::FontStyles{std::vector<FontStyle>{FontStyle::bold}}
-  };
+    option::ShowPercentage{true},
+    option::FontStyles{std::vector<FontStyle>{FontStyle::bold}}  };
 
   // Update bar state
   bar.set_progress(10); // 10% done
@@ -190,6 +191,7 @@ int main() {
     option::End{"]"},
     option::PrefixText{"Training Gaze Network 👀"},
     option::ForegroundColor{Color::yellow},
+    option::ShowPercentage{true},
     option::ShowElapsedTime{true},
     option::ShowRemainingTime{true},
     option::FontStyles{std::vector<FontStyle>{FontStyle::bold}}
@@ -291,6 +293,7 @@ int main() {
     option::Start{"["},
     option::End{"]"},
     option::ForegroundColor{Color::white}  ,
+    option::ShowPercentage{true},
     option::FontStyles{std::vector<FontStyle>{FontStyle::bold}}
   };
   
@@ -340,6 +343,7 @@ int main() {
     option::Remainder{" "},
     option::End{" ]"},
     option::ForegroundColor{Color::yellow},
+    option::ShowPercentage{true},
     option::ShowElapsedTime{true},
     option::ShowRemainingTime{true},
     option::PrefixText{"Progress Bar #1 "},
@@ -356,6 +360,7 @@ int main() {
     option::Remainder{" "},
     option::End{" ]"},
     option::ForegroundColor{Color::cyan},
+    option::ShowPercentage{true},
     option::ShowElapsedTime{true},
     option::ShowRemainingTime{true},
     option::PrefixText{"Progress Bar #2 "},
@@ -371,6 +376,7 @@ int main() {
     option::Remainder{" "},
     option::End{" ]"},
     option::ForegroundColor{Color::red},
+    option::ShowPercentage{true},
     option::ShowElapsedTime{true},
     option::ShowRemainingTime{true},
     option::PrefixText{"Progress Bar #3 "},
@@ -723,6 +729,7 @@ int main() {
   BlockProgressBar bar{
     option::BarWidth{80},
     option::ForegroundColor{Color::white},
+    option::ShowPercentage{true},
     option::FontStyles{
           std::vector<FontStyle>{FontStyle::bold}},
     option::MaxProgress{numbers.size()}
