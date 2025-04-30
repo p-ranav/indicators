@@ -17,7 +17,7 @@ int main() {
   auto progress = 0.0f;
   while (true) {
     bar.set_progress(progress);
-    progress += 0.25f;
+    progress += 1;
     if (bar.is_completed())
       break;
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
