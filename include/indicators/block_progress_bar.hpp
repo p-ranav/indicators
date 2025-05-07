@@ -24,12 +24,11 @@ namespace indicators {
 class BlockProgressBar {
   // clang-format off
   using Settings = std::tuple<option::BarWidth, option::Start, option::End,
-                              option::PrefixText, option::PostfixText,
-                              option::MaxPostfixTextLen, option::Completed,
-                              option::ShowPercentage, option::ShowElapsedTime,
-                              option::ShowRemainingTime, option::SavedStartTime,
+                              option::PrefixText, option::PostfixText, option::MaxPostfixTextLen,
+                              option::ShowPercentage,
+                              option::ShowElapsedTime, option::ShowRemainingTime, option::SavedStartTime,
+                              option::MaxProgress, option::Completed,
                               option::ForegroundColor, option::FontStyles,
-                              option::MaxProgress,
                               option::Stream>;
   // clang-format on
 
@@ -53,8 +52,6 @@ public:
                 option::PostfixText{}, std::forward<Args>(args)...),
             details::get<details::ProgressBarOption::max_postfix_text_len>(
                 option::MaxPostfixTextLen{0}, std::forward<Args>(args)...),
-            details::get<details::ProgressBarOption::completed>(
-                option::Completed{false}, std::forward<Args>(args)...),
             details::get<details::ProgressBarOption::show_percentage>(
                 option::ShowPercentage{true}, std::forward<Args>(args)...),
             details::get<details::ProgressBarOption::show_elapsed_time>(
@@ -63,14 +60,16 @@ public:
                 option::ShowRemainingTime{false}, std::forward<Args>(args)...),
             details::get<details::ProgressBarOption::saved_start_time>(
                 option::SavedStartTime{false}, std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::max_progress>(
+                option::MaxProgress{100}, std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::completed>(
+                option::Completed{false}, std::forward<Args>(args)...),
             details::get<details::ProgressBarOption::foreground_color>(
                 option::ForegroundColor{Color::unspecified},
                 std::forward<Args>(args)...),
             details::get<details::ProgressBarOption::font_styles>(
                 option::FontStyles{std::vector<FontStyle>{}},
                 std::forward<Args>(args)...),
-            details::get<details::ProgressBarOption::max_progress>(
-                option::MaxProgress{100}, std::forward<Args>(args)...),
             details::get<details::ProgressBarOption::stream>(
                 option::Stream{std::cout}, std::forward<Args>(args)...)) {}
 
@@ -169,8 +168,8 @@ private:
   }
 
   Settings settings_;
-  float progress_{0.0};
   size_t tick_{0};
+  float progress_{0.0};
   std::chrono::time_point<std::chrono::high_resolution_clock> start_time_point_;
   std::mutex mutex_;
 

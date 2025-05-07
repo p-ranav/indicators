@@ -27,8 +27,8 @@ class IndeterminateProgressBar {
   // clang-format off
   using Settings = std::tuple<option::BarWidth, option::Start, option::End,
                               option::Fill, option::Lead,
-                              option::PrefixText, option::PostfixText,
-                              option::MaxPostfixTextLen, option::Completed,
+                              option::PrefixText, option::PostfixText, option::MaxPostfixTextLen,
+                              option::Completed,
                               option::ForegroundColor, option::FontStyles,
                               option::Stream>;
   // clang-format on
@@ -135,11 +135,11 @@ public:
       if (get_value<details::ProgressBarOption::completed>())
         return;
 
-      progress_ += (direction_ == Direction::forward) ? 1 : -1;
-      if (direction_ == Direction::forward && progress_ == max_progress_) {
+      tick_ += (direction_ == Direction::forward) ? 1 : -1;
+      if (direction_ == Direction::forward && tick_ == max_progress_) {
         // time to go back
         direction_ = Direction::backward;
-      } else if (direction_ == Direction::backward && progress_ == 0) {
+      } else if (direction_ == Direction::backward && tick_ == 0) {
         direction_ = Direction::forward;
       }
     }
@@ -169,7 +169,7 @@ private:
   }
 
   Settings settings_;
-  size_t progress_{0};
+  size_t tick_{0};
   size_t max_progress_;
   std::chrono::nanoseconds elapsed_;
   std::mutex mutex_;
@@ -223,7 +223,7 @@ public:
         os, get_value<details::ProgressBarOption::bar_width>(),
         get_value<details::ProgressBarOption::fill>(),
         get_value<details::ProgressBarOption::lead>()};
-    writer.write(progress_);
+    writer.write(tick_);
 
     os << get_value<details::ProgressBarOption::end>();
 
