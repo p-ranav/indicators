@@ -201,9 +201,6 @@ private:
 
   std::pair<std::string, int> get_postfix_text() {
     std::stringstream os;
-    const auto max_progress =
-        get_value<details::ProgressBarOption::max_progress>();
-    progress_ = static_cast<float>(tick_) / max_progress;
     auto now = std::chrono::high_resolution_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(
         now - start_time_point_);
@@ -263,6 +260,9 @@ public:
 
     const auto max_progress =
         get_value<details::ProgressBarOption::max_progress>();
+
+    progress_ = static_cast<float>(tick_) / max_progress;
+
     if (multi_progress_mode_ && !from_multi_progress) {
       if (tick_ > max_progress) {
         get_value<details::ProgressBarOption::completed>() = true;
