@@ -93,9 +93,9 @@ public:
     // else start from max_progress
     const auto type = get_value<details::ProgressBarOption::progress_type>();
     if (type == ProgressType::incremental)
-      progress_ = get_value<details::ProgressBarOption::min_progress>();
+      tick_ = get_value<details::ProgressBarOption::min_progress>();
     else
-      progress_ = get_value<details::ProgressBarOption::max_progress>();
+      tick_ = get_value<details::ProgressBarOption::max_progress>();
   }
 
   template <typename T, details::ProgressBarOption id>
