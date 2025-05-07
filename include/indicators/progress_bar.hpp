@@ -2,19 +2,19 @@
 #ifndef INDICATORS_PROGRESS_BAR
 #define INDICATORS_PROGRESS_BAR
 
+#include <indicators/color.hpp>
 #include <indicators/details/stream_helper.hpp>
+#include <indicators/setting.hpp>
+#include <indicators/terminal_size.hpp>
 
 #include <algorithm>
 #include <atomic>
 #include <chrono>
 #include <cmath>
-#include <indicators/color.hpp>
-#include <indicators/setting.hpp>
-#include <indicators/terminal_size.hpp>
 #include <iomanip>
 #include <iostream>
-#include <sstream>
 #include <mutex>
+#include <sstream>
 #include <string>
 #include <thread>
 #include <tuple>
