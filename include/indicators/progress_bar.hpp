@@ -283,6 +283,9 @@ public:
   void print_progress(bool from_multi_progress = false) {
     std::lock_guard<std::mutex> lock{mutex_};
 
+    if (get_value<details::ProgressBarOption::completed>())
+      return;
+
     auto &os = get_value<details::ProgressBarOption::stream>();
 
     const auto type = get_value<details::ProgressBarOption::progress_type>();
@@ -293,11 +296,11 @@ public:
 
     progress_ = static_cast<float>(tick_) / max_progress;
 
+    if ((type == ProgressType::incremental && tick_ >= max_progress) ||
+        (type == ProgressType::decremental && tick_ <= min_progress)) {
+      get_value<details::ProgressBarOption::completed>() = true;
+    }
     if (multi_progress_mode_ && !from_multi_progress) {
-      if ((type == ProgressType::incremental && tick_ >= max_progress) ||
-          (type == ProgressType::decremental && tick_ <= min_progress)) {
-        get_value<details::ProgressBarOption::completed>() = true;
-      }
       return;
     }
 
@@ -349,10 +352,6 @@ public:
     }
     os.flush();
 
-    if ((type == ProgressType::incremental && tick_ >= max_progress) ||
-        (type == ProgressType::decremental && tick_ <= min_progress)) {
-      get_value<details::ProgressBarOption::completed>() = true;
-    }
     if (get_value<details::ProgressBarOption::completed>() &&
         !from_multi_progress) // Don't std::endl if calling from MultiProgress
       os << termcolor::reset << std::endl;
