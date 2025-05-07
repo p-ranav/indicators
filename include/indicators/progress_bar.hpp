@@ -24,15 +24,18 @@
 namespace indicators {
 
 class ProgressBar {
-  using Settings =
-      std::tuple<option::BarWidth, option::PrefixText, option::PostfixText,
-                 option::Start, option::End, option::Fill, option::Lead,
-                 option::Remainder, option::MaxPostfixTextLen,
-                 option::Completed, option::ShowPercentage,
-                 option::ShowElapsedTime, option::ShowRemainingTime,
-                 option::SavedStartTime, option::ForegroundColor,
-                 option::FontStyles, option::MinProgress, option::MaxProgress,
-                 option::ProgressType, option::Stream>;
+  // clang-format off
+  using Settings = std::tuple<option::BarWidth, option::Start, option::End,
+                              option::Fill, option::Lead, option::Remainder,
+                              option::PrefixText, option::PostfixText,
+                              option::MaxPostfixTextLen, option::Completed,
+                              option::ShowPercentage, option::ShowElapsedTime,
+                              option::ShowRemainingTime, option::SavedStartTime,
+                              option::ForegroundColor, option::FontStyles,
+                              option::MinProgress, option::MaxProgress,
+                              option::ProgressType,
+                              option::Stream>;
+  // clang-format on
 
 public:
   template <typename... Args,
@@ -40,14 +43,10 @@ public:
                 details::are_settings_from_tuple<
                     Settings, typename std::decay<Args>::type...>::value,
                 void *>::type = nullptr>
-  explicit ProgressBar(Args &&... args)
+  explicit ProgressBar(Args &&...args)
       : settings_(
             details::get<details::ProgressBarOption::bar_width>(
                 option::BarWidth{100}, std::forward<Args>(args)...),
-            details::get<details::ProgressBarOption::prefix_text>(
-                option::PrefixText{}, std::forward<Args>(args)...),
-            details::get<details::ProgressBarOption::postfix_text>(
-                option::PostfixText{}, std::forward<Args>(args)...),
             details::get<details::ProgressBarOption::start>(
                 option::Start{"["}, std::forward<Args>(args)...),
             details::get<details::ProgressBarOption::end>(
@@ -58,6 +57,10 @@ public:
                 option::Lead{">"}, std::forward<Args>(args)...),
             details::get<details::ProgressBarOption::remainder>(
                 option::Remainder{" "}, std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::prefix_text>(
+                option::PrefixText{}, std::forward<Args>(args)...),
+            details::get<details::ProgressBarOption::postfix_text>(
+                option::PostfixText{}, std::forward<Args>(args)...),
             details::get<details::ProgressBarOption::max_postfix_text_len>(
                 option::MaxPostfixTextLen{0}, std::forward<Args>(args)...),
             details::get<details::ProgressBarOption::completed>(
@@ -143,10 +146,9 @@ public:
 
   void set_progress(size_t new_progress) {
     {
-      std::lock_guard<std::mutex> lock(mutex_);
-      progress_ = new_progress;
+      std::lock_guard<std::mutex> lock{mutex_};
+      tick_ = new_progress;
     }
-
     save_start_time();
     print_progress();
   }
@@ -156,9 +158,9 @@ public:
       std::lock_guard<std::mutex> lock{mutex_};
       const auto type = get_value<details::ProgressBarOption::progress_type>();
       if (type == ProgressType::incremental)
-        progress_ += 1;
+        tick_++;
       else
-        progress_ -= 1;
+        tick_--;
     }
     save_start_time();
     print_progress();
@@ -166,9 +168,10 @@ public:
 
   size_t current() {
     std::lock_guard<std::mutex> lock{mutex_};
-    return (std::min)(
-        progress_,
-        size_t(get_value<details::ProgressBarOption::max_progress>()));
+    return (
+        std::min)(tick_,
+                  size_t(
+                      get_value<details::ProgressBarOption::max_progress>()));
   }
 
   bool is_completed() const {
@@ -188,13 +191,14 @@ private:
   }
 
   template <details::ProgressBarOption id>
-  auto get_value() const -> decltype(
-      (details::get_value<id>(std::declval<const Settings &>()).value)) {
+  auto get_value() const -> decltype((
+      details::get_value<id>(std::declval<const Settings &>()).value)) {
     return details::get_value<id>(settings_).value;
   }
 
-  size_t progress_{0};
   Settings settings_;
+  float progress_{0.0};
+  size_t tick_{0};
   std::chrono::nanoseconds elapsed_;
   std::chrono::time_point<std::chrono::high_resolution_clock> start_time_point_;
   std::mutex mutex_;
@@ -228,12 +232,11 @@ private:
     std::stringstream os;
     const auto max_progress =
         get_value<details::ProgressBarOption::max_progress>();
+    progress_ = static_cast<float>(tick_) / max_progress;
 
     if (get_value<details::ProgressBarOption::show_percentage>()) {
       os << " "
-         << (std::min)(static_cast<size_t>(static_cast<float>(progress_) /
-                                         max_progress * 100),
-                     size_t(100))
+         << (std::min)(static_cast<size_t>(progress_ * 100.0), size_t(100))
          << "%";
     }
 
@@ -256,10 +259,9 @@ private:
 
       if (saved_start_time) {
         auto eta = std::chrono::nanoseconds(
-            progress_ > 0
-                ? static_cast<long long>(std::ceil(float(elapsed_.count()) *
-                                                   max_progress / progress_))
-                : 0);
+            tick_ > 0 ? static_cast<long long>(std::ceil(
+                            float(elapsed_.count()) * max_progress / progress_))
+                      : 0);
         auto remaining = eta > elapsed_ ? (eta - elapsed_) : (elapsed_ - eta);
         details::write_duration(os, remaining);
       } else {
@@ -291,8 +293,8 @@ public:
     const auto max_progress =
         get_value<details::ProgressBarOption::max_progress>();
     if (multi_progress_mode_ && !from_multi_progress) {
-      if ((type == ProgressType::incremental && progress_ >= max_progress) ||
-          (type == ProgressType::decremental && progress_ <= min_progress)) {
+      if ((type == ProgressType::incremental && tick_ >= max_progress) ||
+          (type == ProgressType::decremental && tick_ <= min_progress)) {
         get_value<details::ProgressBarOption::completed>() = true;
       }
       return;
@@ -322,7 +324,7 @@ public:
         get_value<details::ProgressBarOption::fill>(),
         get_value<details::ProgressBarOption::lead>(),
         get_value<details::ProgressBarOption::remainder>()};
-    writer.write(double(progress_) / double(max_progress) * 100.0f);
+    writer.write(progress_ * 100);
 
     os << get_value<details::ProgressBarOption::end>();
 
@@ -332,12 +334,15 @@ public:
     os << postfix_text;
 
     // Get length of prefix text and postfix text
-    const auto start_length = get_value<details::ProgressBarOption::start>().size();
+    const auto start_length =
+        get_value<details::ProgressBarOption::start>().size();
     const auto bar_width = get_value<details::ProgressBarOption::bar_width>();
     const auto end_length = get_value<details::ProgressBarOption::end>().size();
     const auto terminal_width = terminal_size().second;
     // prefix + bar_width + postfix should be <= terminal_width
-    const int remaining = terminal_width - (prefix_length + start_length + bar_width + end_length + postfix_length);
+    const int remaining =
+        terminal_width - (prefix_length + start_length + bar_width +
+                          end_length + postfix_length);
     if (prefix_length == -1 || postfix_length == -1) {
       os << "\r";
     } else if (remaining > 0) {
@@ -347,8 +352,8 @@ public:
     }
     os.flush();
 
-    if ((type == ProgressType::incremental && progress_ >= max_progress) ||
-        (type == ProgressType::decremental && progress_ <= min_progress)) {
+    if ((type == ProgressType::incremental && tick_ >= max_progress) ||
+        (type == ProgressType::decremental && tick_ <= min_progress)) {
       get_value<details::ProgressBarOption::completed>() = true;
     }
     if (get_value<details::ProgressBarOption::completed>() &&
