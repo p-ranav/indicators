@@ -102,10 +102,10 @@ public:
     }
   }
 
-  void set_progress(float value) {
+  void set_progress(size_t value) {
     {
       std::lock_guard<std::mutex> lock{mutex_};
-      progress_ = value;
+      tick_ = value;
     }
     save_start_time();
     print_progress();
@@ -114,7 +114,7 @@ public:
   void tick() {
     {
       std::lock_guard<std::mutex> lock{mutex_};
-      progress_ += 1;
+      tick_++;
     }
     save_start_time();
     print_progress();
@@ -122,8 +122,7 @@ public:
 
   size_t current() {
     std::lock_guard<std::mutex> lock{mutex_};
-    return (std::min)(static_cast<size_t>(progress_),
-                    size_t(get_value<details::ProgressBarOption::max_progress>()));
+    return (std::min)(tick_, size_t(get_value<details::ProgressBarOption::max_progress>()));
   }
 
   bool is_completed() const { return get_value<details::ProgressBarOption::completed>(); }
@@ -147,6 +146,7 @@ private:
 
   Settings settings_;
   float progress_{0.0};
+  size_t tick_{0};
   std::chrono::time_point<std::chrono::high_resolution_clock> start_time_point_;
   std::mutex mutex_;
 
@@ -175,11 +175,12 @@ private:
   std::pair<std::string, int> get_postfix_text() {
     std::stringstream os;
     const auto max_progress = get_value<details::ProgressBarOption::max_progress>();
+    progress_ = static_cast<float>(tick_)/max_progress;
     auto now = std::chrono::high_resolution_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - start_time_point_);
 
     if (get_value<details::ProgressBarOption::show_percentage>()) {
-      os << " " << (std::min)(static_cast<size_t>(progress_ / max_progress * 100.0), size_t(100))
+      os << " " << (std::min)(static_cast<size_t>(progress_ * 100.0), size_t(100))
          << "%";
     }
 
@@ -201,9 +202,8 @@ private:
 
       if (saved_start_time) {
         auto eta = std::chrono::nanoseconds(
-            progress_ > 0
-                ? static_cast<long long>(std::ceil(float(elapsed.count()) *
-                                                   max_progress / progress_))
+            tick_ > 0
+                ? static_cast<long long>(std::ceil(float(elapsed.count()) * progress_))
                 : 0);
         auto remaining = eta > elapsed ? (eta - elapsed) : (elapsed - eta);
         details::write_duration(os, remaining);
@@ -232,7 +232,7 @@ public:
 
     const auto max_progress = get_value<details::ProgressBarOption::max_progress>();
     if (multi_progress_mode_ && !from_multi_progress) {
-      if (progress_ > max_progress) {
+      if (tick_ > max_progress) {
         get_value<details::ProgressBarOption::completed>() = true;
       }
       return;
@@ -253,7 +253,7 @@ public:
 
     details::BlockProgressScaleWriter writer{os,
                                              get_value<details::ProgressBarOption::bar_width>()};
-    writer.write(progress_ / max_progress * 100);
+    writer.write(progress_ * 100);
 
     os << get_value<details::ProgressBarOption::end>();
 
@@ -278,7 +278,7 @@ public:
     }
     os.flush();
 
-    if (progress_ > max_progress) {
+    if (tick_ > max_progress) {
       get_value<details::ProgressBarOption::completed>() = true;
     }
     if (get_value<details::ProgressBarOption::completed>() &&
