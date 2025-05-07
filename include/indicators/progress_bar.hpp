@@ -199,7 +199,6 @@ private:
   Settings settings_;
   float progress_{0.0};
   size_t tick_{0};
-  std::chrono::nanoseconds elapsed_;
   std::chrono::time_point<std::chrono::high_resolution_clock> start_time_point_;
   std::mutex mutex_;
 
@@ -233,6 +232,9 @@ private:
     const auto max_progress =
         get_value<details::ProgressBarOption::max_progress>();
     progress_ = static_cast<float>(tick_) / max_progress;
+    auto now = std::chrono::high_resolution_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(
+        now - start_time_point_);
 
     if (get_value<details::ProgressBarOption::show_percentage>()) {
       os << " "
@@ -246,7 +248,7 @@ private:
     if (get_value<details::ProgressBarOption::show_elapsed_time>()) {
       os << " [";
       if (saved_start_time)
-        details::write_duration(os, elapsed_);
+        details::write_duration(os, elapsed);
       else
         os << "00:00s";
     }
@@ -259,10 +261,10 @@ private:
 
       if (saved_start_time) {
         auto eta = std::chrono::nanoseconds(
-            tick_ > 0 ? static_cast<long long>(std::ceil(
-                            float(elapsed_.count()) * max_progress / progress_))
+            tick_ > 0 ? static_cast<long long>(
+                            std::ceil(float(elapsed.count()) / progress_))
                       : 0);
-        auto remaining = eta > elapsed_ ? (eta - elapsed_) : (elapsed_ - eta);
+        auto remaining = eta > elapsed ? (eta - elapsed) : (elapsed - eta);
         details::write_duration(os, remaining);
       } else {
         os << "00:00s";
@@ -299,10 +301,6 @@ public:
       }
       return;
     }
-    auto now = std::chrono::high_resolution_clock::now();
-    if (!get_value<details::ProgressBarOption::completed>())
-      elapsed_ = std::chrono::duration_cast<std::chrono::nanoseconds>(
-          now - start_time_point_);
 
     if (get_value<details::ProgressBarOption::foreground_color>() !=
         Color::unspecified)

@@ -77,7 +77,6 @@ public:
     //             ^^^^^^^^^^^^^^^^^ bar_width
     //             ^^^^^^^^^^^^ (bar_width - len(lead))
     // progress_ = bar_width - len(lead)
-    progress_ = 0;
     max_progress_ = get_value<details::ProgressBarOption::bar_width>() -
                     get_value<details::ProgressBarOption::lead>().size() +
                     get_value<details::ProgressBarOption::start>().size() +
@@ -169,9 +168,9 @@ private:
     return details::get_value<id>(settings_).value;
   }
 
+  Settings settings_;
   size_t progress_{0};
   size_t max_progress_;
-  Settings settings_;
   std::chrono::nanoseconds elapsed_;
   std::mutex mutex_;
 
