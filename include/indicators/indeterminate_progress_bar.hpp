@@ -2,33 +2,36 @@
 #ifndef INDICATORS_INDETERMINATE_PROGRESS_BAR
 #define INDICATORS_INDETERMINATE_PROGRESS_BAR
 
+#include <indicators/color.hpp>
 #include <indicators/details/stream_helper.hpp>
+#include <indicators/setting.hpp>
+#include <indicators/terminal_size.hpp>
 
 #include <algorithm>
 #include <atomic>
 #include <chrono>
 #include <cmath>
-#include <indicators/color.hpp>
-#include <indicators/setting.hpp>
-#include <indicators/terminal_size.hpp>
 #include <iomanip>
 #include <iostream>
 #include <mutex>
+#include <sstream>
 #include <string>
 #include <thread>
 #include <tuple>
 #include <type_traits>
-#include <sstream>
 #include <utility>
 
 namespace indicators {
 
 class IndeterminateProgressBar {
-  using Settings =
-      std::tuple<option::BarWidth, option::PrefixText, option::PostfixText, option::Start,
-                 option::End, option::Fill, option::Lead, option::MaxPostfixTextLen,
-                 option::Completed, option::ForegroundColor, option::FontStyles, option::Stream>;
-
+  // clang-format off
+  using Settings = std::tuple<option::BarWidth, option::Start, option::End,
+                              option::Fill, option::Lead,
+                              option::PrefixText, option::PostfixText, option::MaxPostfixTextLen,
+                              option::Completed,
+                              option::ForegroundColor, option::FontStyles,
+                              option::Stream>;
+  // clang-format on
   enum class Direction { forward, backward };
 
   Direction direction_{Direction::forward};
@@ -38,13 +41,9 @@ public:
             typename std::enable_if<details::are_settings_from_tuple<
                                         Settings, typename std::decay<Args>::type...>::value,
                                     void *>::type = nullptr>
-  explicit IndeterminateProgressBar(Args &&... args)
+  explicit IndeterminateProgressBar(Args &&...args)
       : settings_(details::get<details::ProgressBarOption::bar_width>(option::BarWidth{100},
                                                                       std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::prefix_text>(
-                      option::PrefixText{}, std::forward<Args>(args)...),
-                  details::get<details::ProgressBarOption::postfix_text>(
-                      option::PostfixText{}, std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::start>(option::Start{"["},
                                                                   std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::end>(option::End{"]"},
@@ -53,6 +52,10 @@ public:
                                                                  std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::lead>(option::Lead{"<==>"},
                                                                  std::forward<Args>(args)...),
+                  details::get<details::ProgressBarOption::prefix_text>(
+                      option::PrefixText{}, std::forward<Args>(args)...),
+                  details::get<details::ProgressBarOption::postfix_text>(
+                      option::PostfixText{}, std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::max_postfix_text_len>(
                       option::MaxPostfixTextLen{0}, std::forward<Args>(args)...),
                   details::get<details::ProgressBarOption::completed>(option::Completed{false},
@@ -70,7 +73,6 @@ public:
     //             ^^^^^^^^^^^^^^^^^ bar_width
     //             ^^^^^^^^^^^^ (bar_width - len(lead))
     // progress_ = bar_width - len(lead)
-    progress_ = 0;
     max_progress_ = get_value<details::ProgressBarOption::bar_width>() -
                     get_value<details::ProgressBarOption::lead>().size() +
                     get_value<details::ProgressBarOption::start>().size() +
@@ -120,11 +122,11 @@ public:
       if (get_value<details::ProgressBarOption::completed>())
         return;
 
-      progress_ += (direction_ == Direction::forward) ? 1 : -1;
-      if (direction_ == Direction::forward && progress_ == max_progress_) {
+      tick_ += (direction_ == Direction::forward) ? 1 : -1;
+      if (direction_ == Direction::forward && tick_ == max_progress_) {
         // time to go back
         direction_ = Direction::backward;
-      } else if (direction_ == Direction::backward && progress_ == 0) {
+      } else if (direction_ == Direction::backward && tick_ == 0) {
         direction_ = Direction::forward;
       }
     }
@@ -150,9 +152,9 @@ private:
     return details::get_value<id>(settings_).value;
   }
 
-  size_t progress_{0};
-  size_t max_progress_;
   Settings settings_;
+  size_t tick_{0};
+  size_t max_progress_;
   std::chrono::nanoseconds elapsed_;
   std::mutex mutex_;
 
@@ -203,7 +205,7 @@ public:
         os, get_value<details::ProgressBarOption::bar_width>(),
         get_value<details::ProgressBarOption::fill>(),
         get_value<details::ProgressBarOption::lead>()};
-    writer.write(progress_);
+    writer.write(tick_);
 
     os << get_value<details::ProgressBarOption::end>();
 
@@ -218,7 +220,8 @@ public:
     const auto end_length = get_value<details::ProgressBarOption::end>().size();
     const auto terminal_width = terminal_size().second;
     // prefix + bar_width + postfix should be <= terminal_width
-    const int remaining = terminal_width - (prefix_length + start_length + bar_width + end_length + postfix_length);
+    const int remaining =
+        terminal_width - (prefix_length + start_length + bar_width + end_length + postfix_length);
     if (prefix_length == -1 || postfix_length == -1) {
       os << "\r";
     } else if (remaining > 0) {
