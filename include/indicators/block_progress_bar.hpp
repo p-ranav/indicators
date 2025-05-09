@@ -203,7 +203,7 @@ private:
       if (saved_start_time) {
         auto eta = std::chrono::nanoseconds(
             tick_ > 0
-                ? static_cast<long long>(std::ceil(float(elapsed.count()) * progress_))
+                ? static_cast<long long>(std::ceil(float(elapsed.count()) / progress_))
                 : 0);
         auto remaining = eta > elapsed ? (eta - elapsed) : (elapsed - eta);
         details::write_duration(os, remaining);
