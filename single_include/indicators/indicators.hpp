@@ -975,14 +975,19 @@ static inline size_t terminal_width() { return terminal_size().second; }
 
 #else
 
-#include <sys/ioctl.h> //ioctl() and TIOCGWINSZ
-#include <unistd.h>    // for STDOUT_FILENO
+#include <fcntl.h>     // open and O_RDWR
+#include <sys/ioctl.h> // ioctl() and TIOCGWINSZ
+#include <unistd.h>    // close
 
 namespace indicators {
 
 static inline std::pair<size_t, size_t> terminal_size() {
   struct winsize size{};
-  ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
+  int fd = open("/dev/tty", O_RDWR);
+  if (fd >= 0) {
+    ioctl(fd, TIOCGWINSZ, &size);
+    close(fd);
+  }
   return {static_cast<size_t>(size.ws_row), static_cast<size_t>(size.ws_col)};
 }
 
