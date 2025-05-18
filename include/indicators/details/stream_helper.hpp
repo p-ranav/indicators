@@ -105,7 +105,7 @@ inline std::ostream &write_duration(std::ostream &os, std::chrono::nanoseconds n
 
 class BlockProgressScaleWriter {
 public:
-  BlockProgressScaleWriter(std::ostream &os, size_t bar_width) : os(os), bar_width(bar_width) {}
+  BlockProgressScaleWriter(std::ostream &_os, size_t _bar_width) : os(_os), bar_width(_bar_width) {}
 
   std::ostream &write(float progress) {
     std::string fill_text{"█"};
@@ -132,9 +132,9 @@ private:
 
 class ProgressScaleWriter {
 public:
-  ProgressScaleWriter(std::ostream &os, size_t bar_width, const std::string &fill,
-                      const std::string &lead, const std::string &remainder)
-      : os(os), bar_width(bar_width), fill(fill), lead(lead), remainder(remainder) {}
+  ProgressScaleWriter(std::ostream &_os, size_t _bar_width, const std::string &_fill,
+                      const std::string &_lead, const std::string &_remainder)
+      : os(_os), bar_width(_bar_width), fill(_fill), lead(_lead), remainder(_remainder) {}
 
   std::ostream &write(float progress) {
     auto pos = static_cast<size_t>(progress * bar_width / 100.0);
@@ -176,9 +176,9 @@ private:
 
 class IndeterminateProgressScaleWriter {
 public:
-  IndeterminateProgressScaleWriter(std::ostream &os, size_t bar_width, const std::string &fill,
-                                   const std::string &lead)
-      : os(os), bar_width(bar_width), fill(fill), lead(lead) {}
+  IndeterminateProgressScaleWriter(std::ostream &_os, size_t _bar_width, const std::string &_fill,
+                                   const std::string &_lead)
+      : os(_os), bar_width(_bar_width), fill(_fill), lead(_lead) {}
 
   std::ostream &write(size_t progress) {
     for (size_t i = 0; i < bar_width;) {
