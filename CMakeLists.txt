@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.8...3.10)
 
 if(DEFINED PROJECT_NAME)
   set(INDICATORS_SUBPROJECT ON)
