@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.8...3.10)
 
 if(NOT DEFINED PROJECT_NAME)
   set(INDICATORS_IS_TOP_LEVEL ON)
