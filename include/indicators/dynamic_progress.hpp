@@ -5,10 +5,10 @@
 #include <atomic>
 #include <functional>
 #include <indicators/color.hpp>
-#include <indicators/setting.hpp>
 #include <indicators/cursor_control.hpp>
 #include <indicators/cursor_movement.hpp>
 #include <indicators/details/stream_helper.hpp>
+#include <indicators/setting.hpp>
 #include <iostream>
 #include <memory>
 #include <mutex>
@@ -20,7 +20,7 @@ template <typename Indicator> class DynamicProgress {
   using Settings = std::tuple<option::HideBarWhenComplete>;
 
 public:
-  template <typename... Indicators> explicit DynamicProgress(Indicators &&... bars) {
+  template <typename... Indicators> explicit DynamicProgress(Indicators &&...bars) {
     (bars_.emplace_back(std::move(bars)), ...);
     for (auto &bar : bars_) {
       bar->multi_progress_mode_ = true;

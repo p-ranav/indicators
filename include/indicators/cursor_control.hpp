@@ -43,8 +43,7 @@ static inline void erase_line() {
 
   FillConsoleOutputCharacterA(hStdout, ' ', csbiInfo.dwSize.X, cursor, &count);
 
-  FillConsoleOutputAttribute(hStdout, csbiInfo.wAttributes, csbiInfo.dwSize.X,
-                             cursor, &count);
+  FillConsoleOutputAttribute(hStdout, csbiInfo.wAttributes, csbiInfo.dwSize.X, cursor, &count);
 
   SetConsoleCursorPosition(hStdout, cursor);
 }
@@ -55,9 +54,7 @@ static inline void show_console_cursor(bool const show) {
   std::fputs(show ? "\033[?25h" : "\033[?25l", stdout);
 }
 
-static inline void erase_line() {
-  std::fputs("\r\033[K", stdout);
-}
+static inline void erase_line() { std::fputs("\r\033[K", stdout); }
 
 #endif
 

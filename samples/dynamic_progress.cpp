@@ -4,53 +4,59 @@ using namespace indicators;
 
 int main() {
 
-  auto bar1 = std::make_unique<ProgressBar>(option::BarWidth{50},
-                   option::ForegroundColor{Color::red},
-                   option::ShowElapsedTime{true},
-                   option::ShowRemainingTime{true},
-                   option::PrefixText{"5c90d4a2d1a8: Downloading "},
-                   indicators::option::FontStyles{
-                       std::vector<indicators::FontStyle>{indicators::FontStyle::bold}});
+  auto bar1 = std::make_unique<ProgressBar>(
+      option::BarWidth{50},                             //
+      option::ForegroundColor{Color::red},              //
+      option::ShowElapsedTime{true},                    //
+      option::ShowRemainingTime{true},                  //
+      option::PrefixText{"5c90d4a2d1a8: Downloading "}, //
+      indicators::option::FontStyles{
+          std::vector<indicators::FontStyle>{indicators::FontStyle::bold}});
 
-  auto bar2 = std::make_unique<ProgressBar>(option::BarWidth{50},
-                   option::ForegroundColor{Color::yellow},
-                   option::ShowElapsedTime{true},
-                   option::ShowRemainingTime{true},
-                   option::PrefixText{"22337bfd13a9: Downloading "},
-                   indicators::option::FontStyles{
-                       std::vector<indicators::FontStyle>{indicators::FontStyle::bold}});
+  auto bar2 = std::make_unique<ProgressBar>(
+      option::BarWidth{50},                             //
+      option::ForegroundColor{Color::yellow},           //
+      option::ShowElapsedTime{true},                    //
+      option::ShowRemainingTime{true},                  //
+      option::PrefixText{"22337bfd13a9: Downloading "}, //
+      indicators::option::FontStyles{
+          std::vector<indicators::FontStyle>{indicators::FontStyle::bold}});
 
-  auto bar3 = std::make_unique<ProgressBar>(option::BarWidth{50},
-                   option::ForegroundColor{Color::green},
-                   option::ShowElapsedTime{true},
-                   option::ShowRemainingTime{true},
-                   option::PrefixText{"10f26c680a34: Downloading "},
-                   indicators::option::FontStyles{
-                       std::vector<indicators::FontStyle>{indicators::FontStyle::bold}});
+  auto bar3 = std::make_unique<ProgressBar>(
+      option::BarWidth{50},                             //
+      option::ForegroundColor{Color::green},            //
+      option::ShowElapsedTime{true},                    //
+      option::ShowRemainingTime{true},                  //
+      option::PrefixText{"10f26c680a34: Downloading "}, //
+      indicators::option::FontStyles{
+          std::vector<indicators::FontStyle>{indicators::FontStyle::bold}});
 
-  auto bar4 = std::make_unique<ProgressBar>(option::BarWidth{50},
-                   option::ForegroundColor{Color::white},
-                   option::ShowElapsedTime{true},
-                   option::ShowRemainingTime{true},
-                   option::PrefixText{"6364e0d7a283: Downloading "},
-                   indicators::option::FontStyles{
-                       std::vector<indicators::FontStyle>{indicators::FontStyle::bold}});
+  auto bar4 = std::make_unique<ProgressBar>(
+      option::BarWidth{50},                             //
+      option::ForegroundColor{Color::white},            //
+      option::ShowElapsedTime{true},                    //
+      option::ShowRemainingTime{true},                  //
+      option::PrefixText{"6364e0d7a283: Downloading "}, //
+      indicators::option::FontStyles{
+          std::vector<indicators::FontStyle>{indicators::FontStyle::bold}});
 
-  auto bar5 = std::make_unique<ProgressBar>(option::BarWidth{50},
-                   option::ForegroundColor{Color::blue},
-                   option::ShowElapsedTime{true},
-                   option::ShowRemainingTime{true},
-                   option::PrefixText{"ff1356ba118b: Downloading "},
-                   indicators::option::FontStyles{
-                       std::vector<indicators::FontStyle>{indicators::FontStyle::bold}});
+  auto bar5 = std::make_unique<ProgressBar>(
+      option::BarWidth{50},                             //
+      option::ForegroundColor{Color::blue},             //
+      option::ShowElapsedTime{true},                    //
+      option::ShowRemainingTime{true},                  //
+      option::PrefixText{"ff1356ba118b: Downloading "}, //
+      indicators::option::FontStyles{
+          std::vector<indicators::FontStyle>{indicators::FontStyle::bold}});
 
-  auto bar6 = std::make_unique<ProgressBar>(option::BarWidth{50},
-                   option::ForegroundColor{Color::cyan},
-                   option::ShowElapsedTime{true},
-                   option::ShowRemainingTime{true},
-                   option::PrefixText{"5a17453338b4: Downloading "},
-                   indicators::option::FontStyles{
-                       std::vector<indicators::FontStyle>{indicators::FontStyle::bold}});
+  auto bar6 = std::make_unique<ProgressBar>(
+      option::BarWidth{50},                             //
+      option::ForegroundColor{Color::cyan},             //
+      option::ShowElapsedTime{true},                    //
+      option::ShowRemainingTime{true},                  //
+      option::PrefixText{"5a17453338b4: Downloading "}, //
+      indicators::option::FontStyles{
+          std::vector<indicators::FontStyle>{indicators::FontStyle::bold}});
 
   std::cout << termcolor::bold << termcolor::white << "Pulling image foo:bar/baz\n";
 

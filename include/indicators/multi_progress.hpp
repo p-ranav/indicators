@@ -17,7 +17,7 @@ template <typename Indicator, size_t count> class MultiProgress {
 public:
   template <typename... Indicators,
             typename = typename std::enable_if<(sizeof...(Indicators) == count)>::type>
-  explicit MultiProgress(Indicators &... bars) {
+  explicit MultiProgress(Indicators &...bars) {
     bars_ = {bars...};
     for (auto &bar : bars_) {
       bar.get().multi_progress_mode_ = true;

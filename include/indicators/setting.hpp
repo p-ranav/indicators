@@ -44,9 +44,13 @@ namespace details {
 
 template <bool condition> struct if_else;
 
-template <> struct if_else<true> { using type = std::true_type; };
+template <> struct if_else<true> {
+  using type = std::true_type;
+};
 
-template <> struct if_else<false> { using type = std::false_type; };
+template <> struct if_else<false> {
+  using type = std::false_type;
+};
 
 template <bool condition, typename True, typename False> struct if_else_type;
 
@@ -103,7 +107,7 @@ enum class ProgressBarOption {
 template <typename T, ProgressBarOption Id> struct Setting {
   template <typename... Args,
             typename = typename std::enable_if<std::is_constructible<T, Args...>::value>::type>
-  explicit Setting(Args &&... args) : value(std::forward<Args>(args)...) {}
+  explicit Setting(Args &&...args) : value(std::forward<Args>(args)...) {}
   Setting(const Setting &) = default;
   Setting(Setting &&) = default;
 
@@ -134,21 +138,23 @@ template <typename Tuple, typename... Settings>
 struct are_settings_from_tuple
     : if_else<conjuction<is_setting_from_tuple<Settings, Tuple>...>::value>::type {};
 
-template <ProgressBarOption Id> struct always_true { static constexpr auto value = true; };
+template <ProgressBarOption Id> struct always_true {
+  static constexpr auto value = true;
+};
 
 template <ProgressBarOption Id, typename Default> Default &&get_impl(Default &&def) {
   return std::forward<Default>(def);
 }
 
 template <ProgressBarOption Id, typename Default, typename T, typename... Args>
-auto get_impl(Default && /*def*/, T &&first, Args &&... /*tail*/) ->
+auto get_impl(Default && /*def*/, T &&first, Args &&.../*tail*/) ->
     typename std::enable_if<(std::decay<T>::type::id == Id),
                             decltype(std::forward<T>(first))>::type {
   return std::forward<T>(first);
 }
 
 template <ProgressBarOption Id, typename Default, typename T, typename... Args>
-auto get_impl(Default &&def, T && /*first*/, Args &&... tail) ->
+auto get_impl(Default &&def, T && /*first*/, Args &&...tail) ->
     typename std::enable_if<(std::decay<T>::type::id != Id),
                             decltype(get_impl<Id>(std::forward<Default>(def),
                                                   std::forward<Args>(tail)...))>::type {
@@ -157,7 +163,7 @@ auto get_impl(Default &&def, T && /*first*/, Args &&... tail) ->
 
 template <ProgressBarOption Id, typename Default, typename... Args,
           typename = typename std::enable_if<are_settings<Args...>::value, void>::type>
-auto get(Default &&def, Args &&... args)
+auto get(Default &&def, Args &&...args)
     -> decltype(details::get_impl<Id>(std::forward<Default>(def), std::forward<Args>(args)...)) {
   return details::get_impl<Id>(std::forward<Default>(def), std::forward<Args>(args)...);
 }

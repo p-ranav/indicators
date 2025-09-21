@@ -3,7 +3,6 @@
 #define INDICATORS_TERMINAL_SIZE
 #include <utility>
 
-
 #if defined(_WIN32)
 #include <windows.h>
 
