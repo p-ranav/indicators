@@ -84,7 +84,7 @@ public:
                 option::ProgressType{ProgressType::incremental},
                 std::forward<Args>(args)...),
             details::get<details::ProgressBarOption::stream>(
-                option::Stream{std::cout}, std::forward<Args>(args)...)) {
+                                                             option::Stream{TerminalHandle::StdOut}, std::forward<Args>(args)...)) {
 
     // if progress is incremental, start from min_progress
     // else start from max_progress
@@ -278,12 +278,18 @@ private:
     const auto result_size = unicode::display_width(result);
     return {result, result_size};
   }
+private:
+  std::ostream& as_stream(TerminalHandle hndl) {
+    if (hndl == TerminalHandle::StdOut) { return std::cout; }
+    return std::cerr;
+  }
 
 public:
   void print_progress(bool from_multi_progress = false) {
     std::lock_guard<std::mutex> lock{mutex_};
 
-    auto &os = get_value<details::ProgressBarOption::stream>();
+    auto stream_type = get_value<details::ProgressBarOption::stream>();
+    auto &os = as_stream(stream_type);
 
     const auto type = get_value<details::ProgressBarOption::progress_type>();
     const auto min_progress =
@@ -335,7 +341,7 @@ public:
     const auto start_length = get_value<details::ProgressBarOption::start>().size();
     const auto bar_width = get_value<details::ProgressBarOption::bar_width>();
     const auto end_length = get_value<details::ProgressBarOption::end>().size();
-    const auto terminal_width = terminal_size().second;
+    const auto terminal_width = terminal_size(stream_type).second;
     // prefix + bar_width + postfix should be <= terminal_width
     const int remaining = terminal_width - (prefix_length + start_length + bar_width + end_length + postfix_length);
     if (prefix_length == -1 || postfix_length == -1) {

@@ -10,6 +10,7 @@ if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.12")
   project(indicators VERSION 2.3.0 LANGUAGES CXX
     HOMEPAGE_URL "https://github.com/p-ranav/indicators"
     DESCRIPTION "Activity Indicators for Modern C++")
+  cmake_minimum_required(VERSION 3.12)
 elseif(CMAKE_VERSION VERSION_GREATER_EQUAL "3.9")
   project(indicators VERSION 2.3.0 LANGUAGES CXX
     DESCRIPTION "Activity Indicators for Modern C++")

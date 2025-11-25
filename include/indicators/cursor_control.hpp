@@ -1,4 +1,3 @@
-
 #ifndef INDICATORS_CURSOR_CONTROL
 #define INDICATORS_CURSOR_CONTROL
 
@@ -12,12 +11,14 @@
 #include <cstdio>
 #endif
 
+#include "terminal_size.hpp"
+
 namespace indicators {
 
 #if defined(_MSC_VER)
 
-static inline void show_console_cursor(bool const show) {
-  HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+static inline void show_console_cursor(bool const show, TerminalHandle hndl = TerminalHandle::StdOut) {
+  HANDLE out = GetStdHandle(os_handle(hndl));
 
   CONSOLE_CURSOR_INFO cursorInfo;
 
@@ -26,8 +27,8 @@ static inline void show_console_cursor(bool const show) {
   SetConsoleCursorInfo(out, &cursorInfo);
 }
 
-static inline void erase_line() {
-  auto hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+static inline void erase_line(TerminalHandle hndl = TerminalHandle::StdOut) {
+  auto hStdout = GetStdHandle(os_handle(hndl));
   if (!hStdout)
     return;
 
@@ -51,12 +52,21 @@ static inline void erase_line() {
 
 #else
 
-static inline void show_console_cursor(bool const show) {
-  std::fputs(show ? "\033[?25h" : "\033[?25l", stdout);
+static inline FILE* os_stream(TerminalHandle hndl)
+{
+  switch (hndl) {
+    case TerminalHandle::StdOut: return stdout;
+    case TerminalHandle::StdErr: return stderr;
+  }
+  return stdout;
 }
 
-static inline void erase_line() {
-  std::fputs("\r\033[K", stdout);
+static inline void show_console_cursor(bool const show, TerminalHandle hndl = TerminalHandle::StdOut) {
+  std::fputs(show ? "\033[?25h" : "\033[?25l", os_stream(hndl));
+}
+
+static inline void erase_line(TerminalHandle hndl = TerminalHandle::StdOut) {
+  std::fputs("\r\033[K", os_stream(hndl));
 }
 
 #endif

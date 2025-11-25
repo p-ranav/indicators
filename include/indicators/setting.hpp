@@ -32,6 +32,7 @@ SOFTWARE.
 #include <indicators/color.hpp>
 #include <indicators/font_style.hpp>
 #include <indicators/progress_type.hpp>
+#include <indicators/terminal_size.hpp>
 #include <string>
 #include <tuple>
 #include <type_traits>
@@ -215,7 +216,8 @@ using FontStyles =
 using MinProgress = details::IntegerSetting<details::ProgressBarOption::min_progress>;
 using MaxProgress = details::IntegerSetting<details::ProgressBarOption::max_progress>;
 using ProgressType = details::Setting<ProgressType, details::ProgressBarOption::progress_type>;
-using Stream = details::Setting<std::ostream &, details::ProgressBarOption::stream>;
+
+using Stream = details::Setting<TerminalHandle, details::ProgressBarOption::stream>;
 } // namespace option
 } // namespace indicators
 
