@@ -1658,11 +1658,10 @@ static inline std::wstring utf8_decode(const std::string& s) {
       curLocale = r;
     const char* _Source = s.c_str();
     size_t _Dsize = std::strlen(_Source) + 1;
-    wchar_t* _Dest = new wchar_t[_Dsize];
+    std::wstring result(_Dsize, L'\0');
     size_t _Osize;
-    mbstowcs_s(&_Osize, _Dest, _Dsize, _Source, _Dsize);
-    std::wstring result = _Dest;
-    delete[] _Dest;
+    mbstowcs_s(&_Osize, &result[0], _Dsize, _Source, _Dsize);
+    result.resize(std::wcslen(result.c_str()));
     setlocale(LC_ALL, curLocale.c_str());
     return result;
 }
@@ -1674,11 +1673,9 @@ static inline std::wstring utf8_decode(const std::string& s) {
       curLocale = r;
     const char* _Source = s.c_str();
     size_t _Dsize = mbstowcs(NULL, _Source, 0) + 1;
-    wchar_t* _Dest = new wchar_t[_Dsize];
-    wmemset(_Dest, 0, _Dsize);
-    mbstowcs(_Dest, _Source, _Dsize);
-    std::wstring result = _Dest;
-    delete[] _Dest;
+    std::wstring result(_Dsize, L'\0');
+    mbstowcs(&result[0], _Source, _Dsize);
+    result.resize(std::wcslen(result.c_str()));
     setlocale(LC_ALL, curLocale.c_str());
     return result;
 }
