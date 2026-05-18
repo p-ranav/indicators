@@ -74,8 +74,8 @@ namespace details {
  */
 
 struct interval {
-  int first;
-  int last;
+  wchar_t first;
+  wchar_t last;
 };
 
 /* auxiliary function for binary search in interval table */
