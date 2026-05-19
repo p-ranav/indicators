@@ -152,6 +152,11 @@ public:
         current_display_width = unicode::display_width(remainder);
       }
 
+      if (current_display_width == 0) {
+        // Avoid infinite loop when string has zero display width (e.g. empty fill/lead/remainder)
+        current_display_width = 1;
+      }
+
       i += current_display_width;
 
       if (i > bar_width) {
@@ -194,6 +199,11 @@ public:
       } else {
         next = fill;
         current_display_width = unicode::display_width(fill);
+      }
+
+      if (current_display_width == 0) {
+        // Avoid infinite loop when string has zero display width (e.g. empty lead)
+        current_display_width = 1;
       }
 
       i += current_display_width;

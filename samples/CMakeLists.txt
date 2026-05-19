@@ -47,3 +47,6 @@ target_link_libraries(indeterminate_progress_bar PRIVATE indicators::indicators)
 add_executable(dynamic_postfix_text dynamic_postfix_text.cpp)
 target_link_libraries(dynamic_postfix_text PRIVATE indicators::indicators)
 
+add_executable(test_indeterminate_lead_fix test_indeterminate_lead_fix.cpp)
+target_link_libraries(test_indeterminate_lead_fix PRIVATE indicators::indicators)
+

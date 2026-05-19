@@ -71,10 +71,16 @@ public:
     //             ^^^^^^^^^^^^ (bar_width - len(lead))
     // progress_ = bar_width - len(lead)
     progress_ = 0;
-    max_progress_ = get_value<details::ProgressBarOption::bar_width>() -
-                    get_value<details::ProgressBarOption::lead>().size() +
-                    get_value<details::ProgressBarOption::start>().size() +
-                    get_value<details::ProgressBarOption::end>().size();
+    auto lead_str = get_value<details::ProgressBarOption::lead>();
+    if (lead_str.empty()) {
+      // No visible lead; let progress range over the full bar width
+      max_progress_ = get_value<details::ProgressBarOption::bar_width>();
+    } else {
+      max_progress_ = get_value<details::ProgressBarOption::bar_width>() -
+                      lead_str.size() +
+                      get_value<details::ProgressBarOption::start>().size() +
+                      get_value<details::ProgressBarOption::end>().size();
+    }
   }
 
   template <typename T, details::ProgressBarOption id>
