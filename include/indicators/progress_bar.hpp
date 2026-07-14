@@ -231,6 +231,7 @@ private:
 
     if (get_value<details::ProgressBarOption::show_percentage>()) {
       os << " "
+         << std::setw(3) // Left pad to 3 characters
          << (std::min)(static_cast<size_t>(static_cast<float>(progress_) /
                                          max_progress * 100),
                      size_t(100))
