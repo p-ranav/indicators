@@ -1652,7 +1652,7 @@ static inline int mk_wcswidth_cjk(const wchar_t *pwcs, size_t n) {
 // convert UTF-8 string to wstring
 #ifdef _MSC_VER
 static inline std::wstring utf8_decode(const std::string& s) {
-    auto r = setlocale(LC_ALL, "");
+    auto r = setlocale(LC_ALL, NULL);
     std::string curLocale;
     if (r)
       curLocale = r;
@@ -1668,7 +1668,7 @@ static inline std::wstring utf8_decode(const std::string& s) {
 }
 #else 
 static inline std::wstring utf8_decode(const std::string& s) {
-    auto r = setlocale(LC_ALL, "");
+    auto r = setlocale(LC_ALL, NULL);
     std::string curLocale;
     if (r)
       curLocale = r;
@@ -2384,10 +2384,10 @@ public:
     }
   }
 
-  void set_progress(float value) {
+  void set_progress(size_t value) {
     {
       std::lock_guard<std::mutex> lock{mutex_};
-      progress_ = value;
+      tick_ = value;
     }
     save_start_time();
     print_progress();
@@ -2396,7 +2396,7 @@ public:
   void tick() {
     {
       std::lock_guard<std::mutex> lock{mutex_};
-      progress_ += 1;
+      tick_++;
     }
     save_start_time();
     print_progress();
@@ -2404,8 +2404,7 @@ public:
 
   size_t current() {
     std::lock_guard<std::mutex> lock{mutex_};
-    return (std::min)(static_cast<size_t>(progress_),
-                    size_t(get_value<details::ProgressBarOption::max_progress>()));
+    return (std::min)(tick_, size_t(get_value<details::ProgressBarOption::max_progress>()));
   }
 
   bool is_completed() const { return get_value<details::ProgressBarOption::completed>(); }
@@ -2429,6 +2428,7 @@ private:
 
   Settings settings_;
   float progress_{0.0};
+  size_t tick_{0};
   std::chrono::time_point<std::chrono::high_resolution_clock> start_time_point_;
   std::mutex mutex_;
 
@@ -2457,11 +2457,12 @@ private:
   std::pair<std::string, int> get_postfix_text() {
     std::stringstream os;
     const auto max_progress = get_value<details::ProgressBarOption::max_progress>();
+    progress_ = static_cast<float>(tick_)/max_progress;
     auto now = std::chrono::high_resolution_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - start_time_point_);
 
     if (get_value<details::ProgressBarOption::show_percentage>()) {
-      os << " " << (std::min)(static_cast<size_t>(progress_ / max_progress * 100.0), size_t(100))
+      os << " " << (std::min)(static_cast<size_t>(progress_ * 100.0), size_t(100))
          << "%";
     }
 
@@ -2483,9 +2484,8 @@ private:
 
       if (saved_start_time) {
         auto eta = std::chrono::nanoseconds(
-            progress_ > 0
-                ? static_cast<long long>(std::ceil(float(elapsed.count()) *
-                                                   max_progress / progress_))
+            tick_ > 0
+                ? static_cast<long long>(std::ceil(float(elapsed.count()) / progress_))
                 : 0);
         auto remaining = eta > elapsed ? (eta - elapsed) : (elapsed - eta);
         details::write_duration(os, remaining);
@@ -2514,7 +2514,7 @@ public:
 
     const auto max_progress = get_value<details::ProgressBarOption::max_progress>();
     if (multi_progress_mode_ && !from_multi_progress) {
-      if (progress_ > max_progress) {
+      if (tick_ > max_progress) {
         get_value<details::ProgressBarOption::completed>() = true;
       }
       return;
@@ -2535,7 +2535,7 @@ public:
 
     details::BlockProgressScaleWriter writer{os,
                                              get_value<details::ProgressBarOption::bar_width>()};
-    writer.write(progress_ / max_progress * 100);
+    writer.write(progress_ * 100);
 
     os << get_value<details::ProgressBarOption::end>();
 
@@ -2560,7 +2560,7 @@ public:
     }
     os.flush();
 
-    if (progress_ > max_progress) {
+    if (tick_ > max_progress) {
       get_value<details::ProgressBarOption::completed>() = true;
     }
     if (get_value<details::ProgressBarOption::completed>() &&
@@ -2572,6 +2572,7 @@ public:
 } // namespace indicators
 
 #endif
+
 
 
 #ifndef INDICATORS_INDETERMINATE_PROGRESS_BAR
@@ -2646,10 +2647,6 @@ public:
     //             ^^^^^^^^^^^^ (bar_width - len(lead))
     // progress_ = bar_width - len(lead)
     progress_ = 0;
-    max_progress_ = get_value<details::ProgressBarOption::bar_width>() -
-                    get_value<details::ProgressBarOption::lead>().size() +
-                    get_value<details::ProgressBarOption::start>().size() +
-                    get_value<details::ProgressBarOption::end>().size();
   }
 
   template <typename T, details::ProgressBarOption id>
@@ -2695,12 +2692,30 @@ public:
       if (get_value<details::ProgressBarOption::completed>())
         return;
 
-      progress_ += (direction_ == Direction::forward) ? 1 : -1;
-      if (direction_ == Direction::forward && progress_ == max_progress_) {
-        // time to go back
-        direction_ = Direction::backward;
-      } else if (direction_ == Direction::backward && progress_ == 0) {
+      const auto width = get_value<details::ProgressBarOption::bar_width>();
+      const int lead_columns = unicode::display_width(get_value<details::ProgressBarOption::lead>());
+
+      const std::size_t max_progress =
+          lead_columns > 0 && static_cast<std::size_t>(lead_columns) <= width
+              ? width - static_cast<std::size_t>(lead_columns)
+              : 0;
+
+      if (max_progress == 0) {
+        progress_ = 0;
         direction_ = Direction::forward;
+      } else if (progress_ > max_progress) {
+        progress_ = max_progress;
+        direction_ = Direction::backward;
+      } else if (direction_ == Direction::forward) {
+        if (progress_ < max_progress)
+          ++progress_;
+        if (progress_ == max_progress)
+          direction_ = Direction::backward;
+      } else {
+        if (progress_ > 0)
+          --progress_;
+        if (progress_ == 0)
+          direction_ = Direction::forward;
       }
     }
     print_progress();
@@ -2726,7 +2741,6 @@ private:
   }
 
   size_t progress_{0};
-  size_t max_progress_;
   Settings settings_;
   std::chrono::nanoseconds elapsed_;
   std::mutex mutex_;
@@ -2908,6 +2922,7 @@ public:
 // #include <indicators/cursor_movement.hpp>
 // #include <indicators/details/stream_helper.hpp>
 #include <iostream>
+#include <memory>
 #include <mutex>
 #include <vector>
 
@@ -2917,10 +2932,10 @@ template <typename Indicator> class DynamicProgress {
   using Settings = std::tuple<option::HideBarWhenComplete>;
 
 public:
-  template <typename... Indicators> explicit DynamicProgress(Indicators &... bars) {
-    bars_ = {bars...};
+  template <typename... Indicators> explicit DynamicProgress(Indicators &&... bars) {
+    (bars_.emplace_back(std::move(bars)), ...);
     for (auto &bar : bars_) {
-      bar.get().multi_progress_mode_ = true;
+      bar->multi_progress_mode_ = true;
       ++total_count_;
       ++incomplete_count_;
     }
@@ -2929,13 +2944,13 @@ public:
   Indicator &operator[](size_t index) {
     print_progress();
     std::lock_guard<std::mutex> lock{mutex_};
-    return bars_[index].get();
+    return *bars_[index];
   }
 
-  size_t push_back(Indicator &bar) {
+  size_t push_back(std::unique_ptr<Indicator> bar) {
     std::lock_guard<std::mutex> lock{mutex_};
-    bar.multi_progress_mode_ = true;
-    bars_.push_back(bar);
+    bar->multi_progress_mode_ = true;
+    bars_.push_back(std::move(bar));
     return bars_.size() - 1;
   }
 
@@ -2961,7 +2976,7 @@ private:
   Settings settings_;
   std::atomic<bool> started_{false};
   std::mutex mutex_;
-  std::vector<std::reference_wrapper<Indicator>> bars_;
+  std::vector<std::unique_ptr<Indicator>> bars_;
   std::atomic<size_t> total_count_{0};
   std::atomic<size_t> incomplete_count_{0};
 
@@ -2991,8 +3006,8 @@ public:
       }
       incomplete_count_ = 0;
       for (auto &bar : bars_) {
-        if (!bar.get().is_completed()) {
-          bar.get().print_progress(true);
+        if (!bar->is_completed()) {
+          bar->print_progress(true);
           std::cout << "\n";
           ++incomplete_count_;
         }
@@ -3004,7 +3019,7 @@ public:
       if (started_)
         move_up(static_cast<int>(total_count_));
       for (auto &bar : bars_) {
-        bar.get().print_progress(true);
+        bar->print_progress(true);
         std::cout << "\n";
       }
       if (!started_)
@@ -3018,6 +3033,7 @@ public:
 } // namespace indicators
 
 #endif
+
 
 
 #ifndef INDICATORS_PROGRESS_SPINNER

@@ -71,10 +71,6 @@ public:
     //             ^^^^^^^^^^^^ (bar_width - len(lead))
     // progress_ = bar_width - len(lead)
     progress_ = 0;
-    max_progress_ = get_value<details::ProgressBarOption::bar_width>() -
-                    get_value<details::ProgressBarOption::lead>().size() +
-                    get_value<details::ProgressBarOption::start>().size() +
-                    get_value<details::ProgressBarOption::end>().size();
   }
 
   template <typename T, details::ProgressBarOption id>
@@ -120,12 +116,30 @@ public:
       if (get_value<details::ProgressBarOption::completed>())
         return;
 
-      progress_ += (direction_ == Direction::forward) ? 1 : -1;
-      if (direction_ == Direction::forward && progress_ == max_progress_) {
-        // time to go back
-        direction_ = Direction::backward;
-      } else if (direction_ == Direction::backward && progress_ == 0) {
+      const auto width = get_value<details::ProgressBarOption::bar_width>();
+      const int lead_columns = unicode::display_width(get_value<details::ProgressBarOption::lead>());
+
+      const std::size_t max_progress =
+          lead_columns > 0 && static_cast<std::size_t>(lead_columns) <= width
+              ? width - static_cast<std::size_t>(lead_columns)
+              : 0;
+
+      if (max_progress == 0) {
+        progress_ = 0;
         direction_ = Direction::forward;
+      } else if (progress_ > max_progress) {
+        progress_ = max_progress;
+        direction_ = Direction::backward;
+      } else if (direction_ == Direction::forward) {
+        if (progress_ < max_progress)
+          ++progress_;
+        if (progress_ == max_progress)
+          direction_ = Direction::backward;
+      } else {
+        if (progress_ > 0)
+          --progress_;
+        if (progress_ == 0)
+          direction_ = Direction::forward;
       }
     }
     print_progress();
@@ -151,7 +165,6 @@ private:
   }
 
   size_t progress_{0};
-  size_t max_progress_;
   Settings settings_;
   std::chrono::nanoseconds elapsed_;
   std::mutex mutex_;
