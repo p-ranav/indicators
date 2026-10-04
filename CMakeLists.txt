@@ -42,6 +42,11 @@ target_include_directories(indicators INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>)
 target_link_libraries(indicators INTERFACE Threads::Threads)
 
+if(INDICATORS_BUILD_TESTS)
+  enable_testing()
+  add_subdirectory(tests)
+endif()
+
 if(INDICATORS_DEMO)
   add_subdirectory(demo)
 endif()
