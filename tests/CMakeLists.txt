@@ -1,0 +1,12 @@
+add_executable(progress_spinner_completion progress_spinner_completion.cpp)
+target_link_libraries(progress_spinner_completion PRIVATE indicators::indicators)
+add_test(NAME progress_spinner_completion COMMAND progress_spinner_completion)
+
+add_executable(progress_spinner_completion_single_header progress_spinner_completion.cpp)
+target_link_libraries(progress_spinner_completion_single_header PRIVATE indicators::indicators)
+target_include_directories(progress_spinner_completion_single_header PRIVATE
+  ${PROJECT_SOURCE_DIR}/single_include)
+target_compile_definitions(progress_spinner_completion_single_header PRIVATE
+  INDICATORS_TEST_SINGLE_HEADER)
+add_test(NAME progress_spinner_completion_single_header
+  COMMAND progress_spinner_completion_single_header)

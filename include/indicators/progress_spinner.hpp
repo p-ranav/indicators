@@ -214,7 +214,7 @@ public:
        << std::string(get_value<details::ProgressBarOption::max_postfix_text_len>(), ' ') << "\r";
     os.flush();
     index_ += 1;
-    if (progress_ > max_progress) {
+    if (progress_ >= max_progress) {
       get_value<details::ProgressBarOption::completed>() = true;
     }
     if (get_value<details::ProgressBarOption::completed>())
